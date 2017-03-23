@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+   <title>企业注册</title>
+   <link rel="stylesheet" href="./css/normalize.css">
+   <link rel="stylesheet" type="text/css" href="./css/companysign.css">
+</head>
+<body>
+	<div class="singup_head">
+		<div class="lm_zone">
+			<div class="logo"><img src="./images/logo.png"></div>
+			<div class="menu">
+				<ul>
+					<li><a href="">首页</a></li>
+					<li><a href="">下载APP</a></li>
+					<li><a href="">关于我们</a></li>
+					<li><a href="">客服</a></li>
+					<li><a href="">招聘</a></li>
+					<li><a href="">开店</a></li>
+					<li><a href="">卖家中心</a></li>
+				</ul>
+			</div>
+		</div>
+		<div class="stepszone">
+			<img src="./images/sing_up_steps.png">
+		</div>
+		<div class="up_title">提交注册资料</div>
+	</div>
+	<form method="post" action="/testSettleIn/SupplierAddorUpdate.html" class="form_zone">
+		<input type="hidden" name="upload_g_size" id="upload_g_size" value="100:100:m|640:640:m|427:427:m|640:854:m">
+		<input type="hidden" name="" value="">
+		<div class="form_main">
+			<div class="comp_info">
+				<p class="title">企业信息</p>
+				<p  class="oneline">店主名称<b class="colorstar">*</b><input type="text" value="" name="company_name" maxlength="" placeholder=""></p>
+				<div class="single_pic_zone">营业执照<b class="colorstar">*</b>
+					<ul>
+						<li class="up_tips colorstar">注意：证件上的文字必须清晰可见</li>
+						<li class="up_btn"><img src="./images/up_img_btn.png"><input type="file" name="business_license" id="business_license" class="fileinput"></li>
+						<li class="up_tips fs_12">营业执照照片／扫描件<b class="colorstar">*</b></li>
+					</ul>
+				</div>
+				<p class="oneline mg_t15">法人名称<b class="colorstar">*</b><input type="text" value="" name="corporate_name" maxlength="" placeholder=""></p>
+				
+				<p class="oneline mg_t15">法人身份证号<b class="colorstar">*</b><input type="text" value="" name="identity_num" maxlength="" placeholder="需店主本人身份证号码"></p>
+				<div class="single_pic_zone">法人身份证照<b class="colorstar">*</b>
+					<ul>
+						<li class="up_tips colorstar">注意：证件上的文字必须清晰可见</li>
+						<li class="up_btn"><img src="./images/up_img_btn.png"><input type="file" name="identity_front" id="identity_front" class="fileinput"></li>
+						<li class="up_tips fs_12">身份证正面照／扫描件<b class="colorstar">*</b></li>
+					</ul>
+					<ul style="left: 310px;">
+						<li class="up_tips colorstar" style="visibility: hidden;">注意：证件上的文字必须清晰可见</li>
+						<li class="up_btn"><img src="./images/up_img_btn.png"><input type="file" name="identity_back" id="identity_back" class="fileinput"></li>
+						<li class="up_tips fs_12">身份证反面照／扫描件<b class="colorstar">*</b></li>
+					</ul>
+				</div>
+			</div>
+			<div class="comp_local">
+				<p class="title">企业所在地区<b class="colorstar">*</b></p>
+				<div class="local_province">
+					<select>
+						<option value="">-请选择省份-</option>
+						<option value="" data-types=""  data-typesa="">广东省</option>
+					</select>
+					<span class="more_arrow"><img src="./images/more_arrow.png"></span>
+				</div>
+				<div class="local_city">
+					<select>
+						<option value="">-请选择省份-</option>
+						<option value="" data-types=""  data-typesa="">广州市</option>
+					</select>
+					<span class="more_arrow"><img src="./images/more_arrow.png"></span>
+				</div>
+			</div>
+			<div class="contact_info">
+				<p class="title">联系人信息</p>
+				<p class="oneline mg_t15">联系人信息<b class="colorstar">*</b><input type="text" value="" name="需要一个name" maxlength="" placeholder=""></p>
+				<p class="oneline mg_t15">邮箱<b class="colorstar">*</b><input type="text" value="" name="email" maxlength="" placeholder=""></p>
+			</div>
+			<div class="store_info">
+				<p class="title">店铺信息</p>
+				<p class="oneline mg_t15">店铺名称<b class="colorstar">*</b><input type="text" value="" name="需要一个name" maxlength="" placeholder=""></p>
+			</div>
+			<div class="copm_ss_zone">
+				<p class="title">企业实力与风格认证</p>
+				<div class="comp_strength">
+					<p>店铺类型<b class="colorstar">*</b></p>
+					<div class="raido_zone">
+						<ul>
+							<li><span>有网店</span><span class="raidos"></span><input type="radio" name="supplier_type" value="v_company"></li>
+							<li>有实体店<span class="raidos"></span><input type="radio" name="supplier_type" value="r_company"></li>
+							<li>无网店实体店<span class="raidos checked"></span><input type="radio" name="supplier_type" value="n_company" checked></li>
+						</ul>
+						<div class="netstore">
+							<img src="./images/example.jpg">
+							<p class="goods_captcha">验证码：<input type="text" name="goods_captcha" maxlength="" disabled value="sdas"></p>
+							<p>已改标题的商品链接<b class="colorstar">*</b><input type="text" value="" name="goods_link" maxlength="" placeholder=""></p>
+						</div>
+						<div class="realstore fileinput">
+							<p class="mg_t15">请上传10张产品实拍图片，一款商品上传一张图片即可<br/>光线清晰自然，突显商品真实色彩，便于我去买判定店铺流行度。</p>
+							<div class="realstore_up_zone">
+								<img src="./images/up_img_btn.png"><img src="./images/up_img_btn.png"><img src="./images/up_img_btn.png"><img src="./images/up_img_btn.png"><img src="./images/up_img_btn.png"><img src="./images/up_img_btn.png"><img src="./images/up_img_btn.png"><img src="./images/up_img_btn.png"><img src="./images/up_img_btn.png"><img src="./images/up_img_btn.png">
+								<input type="file" name="check_goods" id="check_goods" class="fileinput">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="brand_zone">
+				<p class="title">品牌授权认证书（选填）</p>
+				<div class="brand_up_zone">
+					<p class="brand_tip">品牌商标：由国家商标总局颁发的商标注册证或商标注册申请受理通知书复印件。
+授权书：与上传商标相关的授权书，且授权链完整（从商标权人到您的公司）。</p>
+					<p class="up_tips mg_t15 colorstar">注意：证件上的文字必须清晰可见</p>
+					<div class="brand_tip_pic">
+						<p class="mg_t15 bradn_up_btn"><img src="./images/up_img_btn.png"><input type="file" name="brand_license" id="brand_license" class="fileinput"></p>
+						<p class="fs_12 brand_pic_tip">品牌商标或授权书的照片／扫描件</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="submit" class="submit_btn">提交审核</div>
+	</form>
+	<div class="singup_foot">
+		<div class="foot_menu">
+			<ul>
+				<li><a href="">首页</a></li>
+				<li><a href="">下载APP</a></li>
+				<li><a href="">关于我们</a></li>
+				<li><a href="">客服</a></li>
+				<li><a href="">招聘</a></li>
+			</ul>
+			<p class="accredit">2015 我去买商城  | 上海饕餮电子商务有限公司  |  沪ICP备12029860号-2</p>
+		</div>
+	</div>
+</body>
+</html>

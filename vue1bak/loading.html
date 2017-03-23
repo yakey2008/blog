@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+<meta charset="UTF-8">
+<title>capella</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<style type="text/css" media="screen">
+.modal-backdrop{opacity: 0.1;position: absolute;width: 100%;height: 100%;z-index: 20;}
+.loading-box{width: 200px;z-index: 20; position: absolute; text-align: center; left: 0; right: 0; margin: 0 auto; top: 50%;}
+.loading-circle{position: relative;}
+.loading-circle i{width: 10px;height: 10px;position: absolute;border-radius: 50%;background-color: #ccc;}
+@keyframes loading{
+	50%{
+		transform: scale(0.5);
+	}
+	100%{
+		opacity: 0.6;
+	}
+}
+.loading-circle i:nth-child(1){
+	left: 90px;
+    top: -40px;
+	animation: loading 1s linear 1s infinite;
+}
+.loading-circle i:nth-child(2){
+	left: 76px;
+    top: -34px;
+	animation: loading 1s linear 0.758s infinite;
+}
+.loading-circle i:nth-child(3){
+	left: 69px;
+    top: -20px;
+	animation: loading 1s linear 0.615s infinite;
+}
+.loading-circle i:nth-child(4){
+	left: 75px;
+    top: -6px;
+	animation: loading 1s linear 0.472s infinite;
+}
+.loading-circle i:nth-child(5){
+	left: 90px;
+    top: 0px;
+	animation: loading 1s linear 0.329s infinite;
+}
+.loading-circle i:nth-child(6){
+	left: 106px;
+    top: -6px;
+	animation: loading 1s linear 0.286s infinite;
+}
+.loading-circle i:nth-child(7){
+	left: 113px;
+    top: -20px;
+	animation: loading 1s linear 0.143s infinite;
+}
+.loading-circle i:nth-child(8){
+	left: 105px;
+    top: -34px;
+	animation: loading 1s linear 0s infinite;
+}
+</style>
+</head>
+<div class="loading-mask">
+	<div class="modal-backdrop"></div>
+	<div class="loading-box">
+		<div class="loading-circle">
+			<i></i>
+			<i></i>
+			<i></i>
+			<i></i>
+			<i></i>
+			<i></i>
+			<i></i>
+			<i></i>
+		</div>
+		<h5>加载中</h5>
+	</div>
+</div>
+<script src="./main.js"></script>
+</body>
+</html>

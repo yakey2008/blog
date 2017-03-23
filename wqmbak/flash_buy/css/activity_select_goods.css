@@ -1,0 +1,49 @@
+body{background-color: #f5f5f5;}
+.mg_t_20{margin-top: 20px;}
+.hasbotborder{border-bottom: 1px solid #dbdbdb;}
+
+
+.acsg_top_fix{position: fixed;width: 100%; z-index: 25;}
+.acsg_botarrow{width: 18px; position: absolute; bottom: -5px; right: -1px;}
+.goods_title{background-color: #fffbf1;text-align: center;padding: 5px 0;}
+/*搜索*/
+.acsg_search_input_zone{position: relative;}
+.acsg_search_input_zone .acsg_search_icon{position: absolute; width: 16px; top: 8px; left: 15px;}
+.acsg_search_input_zone .acsg_search_icon img{width: 100%;}
+.acsg_search{padding: 10px; border-top: 1px solid #ccc; border-bottom: 1px solid #ccc;}
+.acsg_search .search_input{width: 70%; background-color: #f3f2f5; float: left; padding: 7px 0 7px 40px; border-radius: 5px;}
+.acsg_search .search_btn{float: left; padding: 5px 0 0 7%;}
+/*排序*/
+.acsg_sort_zone{}
+.acsg_sort_zone li{position: relative;width: 33%;float: left;text-align: center;padding: 10px 0;font-size: 0.8rem;}
+.acsg_sort_zone li.cur{background-color: #fff; border-bottom: 2px solid #ac9456;}
+.acsg_sort_zone li.cur a{color: #ac9456;}
+.acsg_sort_zone li a{color: #525252;}
+.acsg_sort li i {position: absolute; left: 50%; margin-left: 18px; width: 4px; height: 4px; border: 1px solid #606060; border-right: none; border-bottom: none; }
+.acsg_sort li .up {top: 15px; -webkit-transform: rotate(45deg); transform: rotate(45deg); }
+.acsg_sort li .down{top: 19px; -webkit-transform: rotate(-135deg); transform: rotate(-135deg); }
+.acsg_sort li i.j-active {border-color: #ac9456; }
+.acsg_sort li i.j-active {border-color: #ac9456; }
+
+/*商品列表*/
+#package-select-goods{padding-top: 92px;}
+.tpl_select_goods{background-color: #fff;}
+.tpl_select_goods_list{padding: 10px 0 20px 0;}
+.tpl_select_goods li{width: 22%; float: left; margin: 3px; border:1px solid transparent;position: relative;border: 1px solid #dbdbdb;}
+
+.tpl_select_goods li span{background-color: #fff; display: block; text-align: center; padding: 4px 0; }
+.tpl_select_goods img ,.goods img {width:100%;}
+.tpl_select_goods .cur {border: 1px solid #de4b50;background: #fff; background-size: 17px 16px; position: relative; }
+
+/*底部按钮*/
+
+.c-btm-item{ position:fixed; bottom:0; left:0;right:0;margin: 0 auto;max-width: 960px; width:100%; z-index: 20;}
+.c-btm-item .f-txt-item{ display:block; height:53px; line-height:53px; margin-top:1px; padding-left:10%; background:#fff; color:#606060;text-align:left;}
+
+.ui-btn{ color:#fff; border:0; background:0; font-size:0.9rem; text-align:center; float:left;width:60%;border-top: 1px solid #ccc;}
+#submit_btn{height: 54px; width: 40%; border: none; color: #fff; line-height:54px; float:right; text-align:center; font-size: 16px; border-top: 1px solid #ac9456;}
+
+
+
+
+

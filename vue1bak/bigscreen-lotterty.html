@@ -1,0 +1,515 @@
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script src="//cdn.bootcss.com/vue/1.0.26/vue.min.js"></script>
+<style>
+body{background-image: url(/images/lottery_bg.jpg); background-position: center; background-size: cover;}
+.btn.disabled, .btn[disabled], fieldset[disabled] .btn{cursor: pointer;}
+.container{width: 970px;}
+.header{height: 120px;position: relative;}
+.header h3{color:#fff;width: 650px;line-height: 90px; margin: 0 auto;text-align: center;}
+.header .logo{position: absolute; right: 30px; top: 15px;border-radius: 50%; overflow: hidden;width: 60px;height: 60px;}
+.header .logo img{width: 100%;}
+.left-side{background-color: rgba(102,102,102,0.2);padding: 15px;min-height: 430px;width: 310px;}
+.left-side .info-title{color: #fff;font-size: 16px;}
+.left-side .info-title .lotteryman{float: right;}
+.left-side .controlpad .ctrlbtn{height: 40px; width: 38px; padding: 8px 11px 10px 13px;background-color: #999; color: #fff;border: none;}
+.left-side .controlpad .radius-rightnone{border-top-right-radius: 0; border-bottom-right-radius: 0;}
+.left-side .controlpad .radius-leftnone{border-top-left-radius: 0; border-bottom-left-radius: 0;}
+.left-side .controlpad .prizecount{float: left; display: block; text-align: center; width: 204px; height: 40px; line-height: 40px;background-color: #fff;font-size: 18px;}
+.right-side{background-color: rgba(102,102,102,0.2); padding: 15px 10px; width: 65%; min-height: 430px;width: 650px;}
+.right-side .winingman{float: left; width: 100px; text-align: center; padding: 10px 0;}
+.right-side .winingman .inside-piczone{display: block;}
+.right-side .winingman .inside-piczone img{width: 60px;height: 60px;}
+.right-side .winingman .inside-name{color: #fff;font-size: 16px;display: block;}
+.routename{background-color: #fff; border-radius: 6px; height: 180px;position: relative;}
+.routename .showname{display: block; line-height: 50px; padding: 23px 0;text-align: center; font-size: 24px;}
+.routename .imgzone{/*background: url(/images/logo.jpg);*/ display: block; width: 120px; height: 120px; background-size: cover; background-position: center center; margin: 0 auto; position: absolute; top: 28px; left: 80px;}
+.left-side .startzone .sbmbtn{width: 48%;height: 40px;color:#fff;}
+.left-side .startzone .restbtn{width: 48%;height: 40px;color:#fff;background-color: #999;border-color: #999;}
+.alert-info{width: 200px; text-align: center; position: fixed; left: 50%; top: 33%;}
+</style>
+</head>
+<body>
+<div id='content'>
+	<div class="header">
+		<h3 v-text="lotteryData.title"></h3>
+		<div class="logo"><img src="/images/logo.jpg" alt="logo"></div>
+	</div>
+	<div class="container">
+		<div class="row">
+			<div class="left-side pull-left">
+				<p class="info-title"><span>现场抽奖</span><span class="lotteryman">共<b style="color:#d00;" v-text="lotteryData.lotteryMan.length"></b>人参加</span></p>
+				<p>
+					<select class="form-control prizeitem" v-model="prizeCount" v-on:change="getmanresult">
+						<option selected v-show="curMode == ''">选择奖项</option>
+						<option v-for="award in awardsList" :value="award.prizeMan+'@'+award.id+'@'+award.generatingMode+'@'+award.prizeId+'@'+$index" v-text="award.awardsName"></option>
+					</select>
+				</p>
+				<p>	
+					<select class="form-control modeitem" :value="curMode" v-on:change="modeChange" v-show="winningname.length==0">
+						<option selected v-text="curMode" v-show="curMode == '产生方式'"></option>
+						<option v-for="gener in generatingMode" :value="gener" v-text="gener"></option>
+					</select>
+
+					<select class="form-control" :value="curMode" disabled="disabled" v-on:change="modeChange" v-show="winningname.length > 0" style="display:none;">
+						<option v-text="curMode"></option>
+					</select>
+				</p>
+				<p class="controlpad clearfix">
+					<button type="button" class="btn btn-default pull-left radius-rightnone ctrlbtn" v-on:click="minusNum"><span class="glyphicon glyphicon-minus"></span></button>
+					<span class="prizecount" v-text="viewCount"></span>
+					<button type="button" class="btn btn-default pull-right radius-leftnone ctrlbtn" v-on:click="addNum"><span class="glyphicon glyphicon-plus"></span></button>
+				</p>
+				<p class="routename"><span class="showname"></span><span class="imgzone" v-show="curPrizepic != ''" v-bind:style="{backgroundImage:'url('+curPrizepic+')'}"></span></p>
+				<p class="startzone">
+					<template v-if="curMode == '逐一产生'">
+						<button type="button" class="btn btn-success pull-left sbmbtn" v-on:click="lotteryStart" v-text="lotterybtntext" v-show="lotterybtnstep == 0"></button>
+						<button type="button" class="btn btn-warning pull-left sbmbtn" v-on:click="lotteryStop" v-text="lotterybtntext" v-show="lotterybtnstep == 1"></button>
+						<button type="button" class="btn btn-success pull-left sbmbtn" v-on:click="lotteryContinue" v-text="lotterybtntext" v-show="lotterybtnstep == 2"></button>
+						<button type="button" class="btn btn-danger btn-danger pull-left sbmbtn" v-on:click="lotteryEnd" v-text="lotterybtntext" v-show="lotterybtnstep == 3"></button>
+					</template>
+					<template v-else>
+						<button type="button" class="btn btn-success pull-left sbmbtn" v-on:click="lotteryonceStart" v-text="lotterybtntext" v-show="lotterybtnonce == 0"></button>
+						<button type="button" class="btn btn-warning pull-left sbmbtn" v-text="lotterybtntext" v-show="lotterybtnonce == 1"></button>
+						<button type="button" class="btn btn-danger pull-left sbmbtn"  v-text="lotterybtntext" v-show="lotterybtnonce == 2"></button>
+					</template>
+					<button type="button" class="btn btn-default pull-right restbtn" v-on:click="lotteryRest">重新抽奖</button>
+				</p>
+			</div>
+			<div class="right-side pull-right">
+				<template v-for="item in winningname">
+					<p class="winingman" style="display:none;">
+						<span class="inside-piczone">
+							<img v-bind:src="item.avatar" alt="" v-if="item.avatar != null">
+							<img src="/images/sendmsg_noavatar.jpg" alt="" v-else>
+						</span>
+						<span class="inside-name" v-text="item.winningUserId"></span>
+						<span class="inside-name" v-text="item.winningName"></span>
+					</p>
+				</template>
+			</div>	
+		</div>
+	</div>
+</div>
+<div style="display:none;" class="alert alert-info" role="alert" id="j-showtips"></div>
+<script>
+/*
+* 大屏幕抽奖 工程一部
+* QQ：347746783	
+*/
+var vm = new Vue({
+	el:'#content',
+	data:{
+		curpageid:window.location.search.substr(4),//获取url的id
+		prizealldata:[],//全部人员名称
+		nextprize:1,//可否继续抽奖 0不可以 1可以
+		prizeCount:'选择奖项',//奖项下拉菜单
+		prizeNewCount:'',//新中奖人数
+		viewCount:'',//显示新中奖人数
+		curPrizeindex:-1,//当前奖项的索引
+		curMode:'产生方式',//更换产生方式
+		allModedata:[],//原始全部产生方式阵列 用于同步更新数据
+		allPrizeman:[],//原始全部中奖人数阵列 用于同步更新数据
+		curPrizepic:'',//当前奖品图片
+		generatingMode:[
+            '逐一产生','一次产生'
+        ],//产生方式
+		awardId:'',//奖项id
+		lotterybtntext:'抽奖',//按钮内容
+		lotterybtnstep:0,//逐一抽奖，btn状态，text内容 0：抽奖，1：停止抽奖 2：抽奖（继续抽奖），3：已结束
+		lotterybtnonce:0,//一次性抽奖，btn状态，text内容 0：抽奖，1：抽奖中，2：已结束
+		showname:[],//显示转动人员
+		winningname:[],//已中奖人员列表
+		lotteryData : [],//初始化全部信息
+		awardsList:[],//全部奖项信息
+		winmancount:0//中奖总人数
+	},
+	created:function(){
+		var curthis = this;
+		$.ajax({
+			type:"post",
+			url:"/WxLottery/selectScene.koala?lotteryId="+this.curpageid,
+			async:true
+		}).done(function(result){
+			curthis.lotteryData = result.data;
+			curthis.awardsList = result.data.wxAwards;
+			curthis.winmancount;
+			$.each(result.data.wxAwards,function(i,n){
+				curthis.winmancount = curthis.winmancount+n.prizeMan;
+				curthis.allModedata.push(n.generatingMode)
+				curthis.allPrizeman.push(n.prizeMan)
+			})
+		})
+		this.addminDisabled();
+	},
+	methods:{
+		//转动
+		changename:function(lotteryman,showname){
+			showname = [];
+			$.each(lotteryman,function(i,n){
+				if(n.manUserId !== null){
+					showname.push(n.manName+'@'+n.manUserId)
+				}else{
+					showname.push(n.manName)
+				}
+			});
+			//全部人员名称
+			this.prizealldata = showname;
+			var prizenamedata = this.prizealldata;
+			var num = this.prizealldata.length - 1;
+			function changeme(){
+				var randomVal = Math.round(Math.random() * num);
+				var userName = prizenamedata[randomVal];
+				if(typeof(userName.split('@')[1]) === 'undefined'){
+					$('.showname').html(userName.split('@')[0]);
+				}else{
+					$('.showname').html(userName.split('@')[1]+'<br>'+userName.split('@')[0]);
+				}
+			}
+			timer=setInterval(changeme,30);
+		},
+		//逐一点击开始奖项下拉，方式下拉，增减按钮，重置按钮 禁用
+		addDisabledstep:function(){
+			$('.prizeitem').attr('disabled','disabled');
+			$('.modeitem').attr('disabled','disabled');
+			$('.ctrlbtn').attr('disabled','disabled');
+			$('.restbtn').attr('disabled','disabled');
+		},
+		//抽奖按钮，奖项下拉，方式下拉，增减按钮，重置按钮 禁用
+		addDisabled:function(){
+			$('.sbmbtn').attr('disabled','disabled');
+			$('.prizeitem').attr('disabled','disabled');
+			$('.modeitem').attr('disabled','disabled');
+			$('.ctrlbtn').attr('disabled','disabled');
+			$('.restbtn').attr('disabled','disabled');
+		},
+		//抽奖按钮，奖项下拉，方式下拉，增减按钮，重置按钮 恢复
+		removeDisabled:function(){
+			$('.sbmbtn').removeAttr('disabled');
+			$('.prizeitem').removeAttr('disabled');
+			$('.modeitem').removeAttr('disabled');
+			$('.ctrlbtn').removeAttr('disabled');
+			$('.restbtn').removeAttr('disabled');
+		},
+		//已结束 减按钮 已结束按钮 禁用
+		endDisabled:function(){
+			$('.sbmbtn').attr('disabled','disabled');
+			$('.ctrlbtn').eq(0).attr('disabled','disabled');
+		},
+		//已结束 减按钮 已结束按钮 恢复
+		rmendDisabled:function(){
+			$('.sbmbtn').removeAttr('disabled');
+			$('.ctrlbtn').eq(0).removeAttr('disabled');
+		},
+		//加减请求人数 增减按钮 禁用
+		addminDisabled:function(){
+			$('.ctrlbtn').attr('disabled','disabled');
+		},
+		//加减请求人数 增减按钮 恢复
+		rmaddminDisabled:function(){
+			$('.ctrlbtn').removeAttr('disabled');
+		},
+		noticePop:function(text){
+			$('#j-showtips').text(text);
+			$('#j-showtips').show().delay(2000).hide(0);
+		},
+		//切换奖项
+		getmanresult:function(e){
+			vm.removeDisabled();
+			$('.showname').empty()
+			var awardid = $(e.target).val().split('@')[1];
+			if(typeof(awardid) === 'undefined'){
+				$('.showname').text('');
+				this.winningname = [];
+				this.curMode ='产生方式';
+			}else{
+				$.post('/WxLottery/getWin.koala?wxAwardsId='+awardid).done(function(rep){
+					vm.$data.winningname = rep.data;
+					if(vm.$data.winningname.length >= vm.$data.prizeNewCount){
+						if(vm.$data.winningname[0].winningType == "一次产生"){
+							vm.$data.lotterybtntext = '已结束';
+							vm.endDisabled();
+							vm.$data.lotterybtnonce = 2;
+						}else{
+							vm.$data.lotterybtntext = '已结束';
+							vm.endDisabled();
+							vm.$data.lotterybtnstep = 3;
+						}
+					}
+				})
+			}
+			if(typeof($(e.target).val().split('@')[3]) !== 'undefined'){
+				this.curPrizepic = '/WxPrize/getPrizeData.koala?id='+$(e.target).val().split('@')[3];
+			}else{
+				this.curPrizepic = '';
+			}
+			this.curPrizeindex = $(e.target).val().split('@')[4];
+			//中奖人数同步更新数据
+			if(this.viewCount !== ''){
+				this.viewCount = this.allPrizeman[this.curPrizeindex];
+			}
+			if(this.curMode === '产生方式' || typeof this.curMode === 'undefined'){
+				this.curMode = $(e.target).val().split('@')[2]
+			}else{
+				this.curMode = this.allModedata[this.curPrizeindex]
+			}
+			this.lotterybtnstep = 0;
+			this.lotterybtnonce = 0;
+			this.lotterybtntext = '抽奖';
+		},
+		//更换产生方式
+		modeChange:function(){
+			if(typeof(this.curMode)!== 'undefined'){
+				//因为事件执行后才获取值，所以反向赋值
+				if(this.curMode == '逐一产生'){
+					this.curMode = '一次产生';
+				}else{
+					this.curMode = '逐一产生';
+				}
+				//
+				this.allModedata[this.curPrizeindex] = this.curMode;
+				var url = '/WxLottery/toGeneratingMode.koala?lotteryId='+this.lotteryData.id+'&wxAwardsId='+this.awardId+'&generatingMode='+encodeURI(this.curMode);
+				$.post(url).done(function(rep){})
+			}
+		},
+		//增加人数
+		addNum:function(){
+			if(this.prizeNewCount>=this.lotteryData.lotteryMan.length){
+				this.noticePop('中奖人数不可超过参与人数');
+				return;
+			}else if(this.winmancount>=this.lotteryData.lotteryMan.length){
+				this.noticePop('总中奖人数不可超过总参与人数');
+				return;
+			}
+			//判断 新人数比已中奖多 按钮显示抽奖
+			if(this.prizeNewCount >= this.winningname.length){
+				if(typeof(this.winningname[0]) != 'undefined' && this.winningname[0].winningType == "一次产生"){
+					this.lotterybtntext = '抽奖';
+					this.lotterybtnonce = 0;
+				}else{
+					this.lotterybtntext = '抽奖';
+					this.lotterybtnstep = 0;
+				}
+			}
+
+			if(this.prizeNewCount == ''){
+				this.prizeNewCount = '';
+			}else{
+				this.prizeNewCount = this.prizeNewCount+1;
+				this.winmancount = this.winmancount+1;
+				this.viewCount = this.prizeNewCount;
+				this.allPrizeman[this.curPrizeindex] = this.viewCount;
+				vm.addminDisabled();
+				$.post('/WxLottery/toMan.koala?lotteryId='+this.lotteryData.id+'&wxAwardsId='+this.awardId+'&countMan='+this.lotteryData.lotteryMan.length+'&toMan='+this.prizeNewCount).done(function(){
+					vm.rmendDisabled();
+					vm.rmaddminDisabled();
+				})
+			}
+			return this.prizeNewCount;
+		},
+		//减少人数
+		minusNum:function(e){
+			if(this.prizeNewCount == ''){
+				this.prizeNewCount = '';
+			}else if(this.prizeNewCount == 1){
+				this.prizeNewCount = 1;
+				this.noticePop('中奖人数不小于1');
+				return
+			}else{
+				this.prizeNewCount = this.prizeNewCount-1;
+				this.winmancount = this.winmancount-1;
+				this.viewCount = this.prizeNewCount;
+				this.allPrizeman[this.curPrizeindex] = this.viewCount;
+				vm.addminDisabled();
+				$.post('/WxLottery/toMan.koala?lotteryId='+this.lotteryData.id+'&wxAwardsId='+this.awardId+'&countMan='+this.lotteryData.lotteryMan.length+'&toMan='+this.prizeNewCount).done(function(rep){
+					if(rep.actionError) return;
+					vm.rmendDisabled();
+					vm.rmaddminDisabled();
+					if(vm.prizeNewCount == vm.winningname.length){
+						vm.endDisabled();
+					}
+				})
+			}
+			//判断 新人数比已中奖少 按钮显示已结束
+			if(this.winningname.length >= this.prizeNewCount){
+				if(this.winningname[0].winningType == "一次产生"){
+					this.lotterybtntext = '已结束';
+					vm.endDisabled();
+					this.lotterybtnonce = 2;
+				}else{
+					this.lotterybtntext = '已结束';
+					vm.endDisabled();
+					this.lotterybtnstep = 3;
+				}
+			}
+			if(this.prizeNewCount == this.winningname.length){
+				vm.endDisabled();
+			}
+			
+			return this.prizeNewCount;
+		},
+		/*
+		* 逐一产生
+		*/
+		//点击开始按钮 切换状态 人名转动效果
+		lotteryStart:function(){
+			if(this.prizeCount != '选择奖项'){
+				vm.changename(this.lotteryData.lotteryMan,this.showname);
+				this.curPrizepic = '';
+				this.lotterybtntext = '停止抽奖';
+				this.lotterybtnstep = 1;
+				vm.addDisabledstep();
+			}
+		},
+		//点击停止得到结果
+		lotteryStop:function(e){
+			if(this.prizeNewCount != ''){
+				vm.addDisabled();
+				$.ajax({url:'/WxLottery/scene.koala?manCount='+this.viewCount+'&lotteryId='+this.lotteryData.id+'&awardId='+this.awardId}).done(function(rep){
+					vm.$data.winningname = rep.data;
+					if(typeof(rep.data[rep.data.length-1].winningUserId) === 'undefined'){
+						var curindex = $.inArray(rep.data[rep.data.length-1].winningName,vm.prizealldata);
+						$('.showname').html(vm.prizealldata[curindex].split('@')[0]);
+					}else{
+						var curindex = $.inArray(rep.data[rep.data.length-1].winningName+'@'+rep.data[rep.data.length-1].winningUserId,vm.prizealldata);
+						$('.showname').html(vm.prizealldata[curindex].split('@')[1]+'<br>'+vm.prizealldata[curindex].split('@')[0]);
+					}
+				}).complete(function(){
+					//清除定时器
+					if(typeof timer !== 'undefined'){
+						clearInterval(timer);
+						if(vm.lotterybtnstep == 2){
+							vm.removeDisabled();
+						}
+					}
+				})
+				if(this.viewCount-1 == this.winningname.length){
+					this.lotterybtntext = '已结束';
+					this.lotterybtnstep = 3;
+					vm.removeDisabled();
+					vm.endDisabled();
+				}else{
+					this.lotterybtnstep = 2;
+					this.lotterybtntext = '抽奖';
+					//原继续抽奖			
+				}
+
+			}else{
+				this.noticePop('请先检查信息');
+			}
+		},
+		//还有剩余情况下继续抽奖
+		lotteryContinue:function(){
+			vm.changename(this.lotteryData.lotteryMan,this.showname);
+			this.lotterybtnstep = 1;
+			this.lotterybtntext = '停止抽奖';
+			vm.addDisabledstep();
+		},
+		//已结束
+		lotteryEnd:function(){
+			this.lotterybtntext = '已结束';
+			this.lotterybtnstep = 3;
+			vm.endDisabled();
+		},
+		/*
+		* 一次产生
+		*/
+		//start 
+		lotteryonceStart:function(){
+			if(this.prizeCount != '选择奖项'){
+				vm.changename(this.lotteryData.lotteryMan,this.showname);
+				$('.sbmbtn').attr('disabled','disabled')
+				this.curPrizepic = '';
+				this.lotterybtntext = '抽奖中';
+				this.lotterybtnonce = 1;
+				vm.addDisabled();		
+				$.ajax({
+					url:'/WxLottery/scene.koala?manCount='+this.viewCount+'&lotteryId='+this.lotteryData.id+'&awardId='+this.awardId,
+					type:'post'
+				}).done(function(rep){
+					if(rep.data === "抽奖已结束！"){
+						vm.$data.lotterybtntext = '已结束';
+						vm.$data.lotterybtnonce = 2;
+						vm.endDisabled();
+						var closeit = confirm('该抽奖已结束，是否要关闭本页面？');
+						if(closeit){
+							window.close()
+						}
+					}else{
+						var curindex = $.inArray(rep.data[rep.data.length-1].winningName+'@'+rep.data[rep.data.length-1].winningUserId,vm.prizealldata);
+						$('.showname').html(vm.prizealldata[curindex].split('@')[1]+'<br>'+vm.prizealldata[curindex].split('@')[0]);
+						vm.$data.winningname = rep.data;			
+						vm.$data.lotterybtntext = '已结束';
+						vm.$data.lotterybtnonce = 2;
+						vm.removeDisabled();
+						vm.endDisabled();
+					}
+					//清除定时器
+					if(typeof timer !== 'undefined'){
+						clearInterval(timer);
+					}
+				})
+			}else{
+				//进入页面未选择奖项点击开始按钮
+				this.noticePop('请先选择奖项');
+			}
+		},
+		//rest 
+		lotteryRest:function(){
+			if(this.prizeNewCount != ''){
+				//清除定时器
+				if(typeof timer !== 'undefined'){
+					clearInterval(timer);
+				}
+				vm.removeDisabled();
+				if(confirm('确定要重置本奖项吗？')){
+					$.post('/WxLottery/toReset.koala?lotteryId='+this.lotteryData.id+'&wxAwardsId='+this.awardId).done(function(rep){
+						if(rep.success = true){
+							vm.$data.winningname = [];
+							this.noticePop('重置完成');
+						}
+					})
+				}
+				this.lotterybtnstep = 0;
+				this.lotterybtnonce = 0;
+				this.lotterybtntext = '抽奖';
+			}else{
+				this.noticePop('请先选择奖项');
+			}
+		}
+	},
+	watch:{
+		'prizeCount':function(newval,oldval){
+			if(newval == '选择奖项'){
+				this.prizeNewCount = '';
+			}else{
+				this.prizeNewCount = parseInt(newval.split('@')[0]);
+				this.awardId = parseInt(newval.split('@')[1]);
+				if(this.viewCount === ''){
+					this.viewCount = this.prizeNewCount;
+				}else{
+					this.prizeNewCount = this.viewCount;
+				}
+			}
+		},
+		'winningname':function(){
+			var j = 200;
+			var i = '';
+			$.each($('.right-side').find('.winingman'),function(){
+			    i=$(this).index();
+			    tt=function(id){
+			        $('.right-side').find('.winingman').eq(id).show();
+			    }
+			    setTimeout('tt('+i+')',j);
+			    j=j+200;
+			})
+		}
+	}
+})
+</script>
+</body>
+</html>

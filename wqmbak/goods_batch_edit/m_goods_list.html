@@ -1,0 +1,121 @@
+<!-- INCLUDE m_header.html -->
+<!-- IF __is_mobile -->
+<style type="text/css">
+body{
+	background-color: #f5f2f3;
+}
+.m-a-nav {
+margin: 0;
+}
+</style>
+<!-- ELSE -->
+<style type="text/css">
+.goodempty{
+	position: absolute;
+	left: 225px;
+	right: 0;
+	top: 130px;
+	z-index: 20;
+}
+#rememmend{
+	position: absolute;
+	top: 40%;
+	left: 49%;
+	}
+
+</style>
+<!-- ENDIF -->
+<div class="m-outborder nopcbg">
+<!-- IF app -->
+<nav class="navbar-default navbar-fixed-top" role="navigation">
+	    <div class="container">
+			<div class="row">
+				<!-- INCLUDE m_search.html -->
+			</div>
+			
+			<div class="row">
+				<!-- INCLUDE m_menu_store.html -->
+			</div>
+	    </div>
+</nav>
+
+
+
+
+<!-- ELSEIF __is_mobile -->
+	<nav class="navbar-default navbar-fixed-top f-post46" role="navigation">
+	    <div class="container">
+			<div class="row">
+				<!-- INCLUDE m_search.html -->
+			</div>
+			<div class="row">
+				<!-- INCLUDE m_menu_store.html -->
+			</div>
+	    </div>
+	</nav>
+	
+<!-- ELSE -->
+<div class="item_more" style="display:none; position: fixed; right: 1%; width: 16px; top: 30%; font-size: 16px;z-index:21;">下滑显示更多</div>
+<div class="pc-goods-list">
+	<nav class="navbar navbar-default navbar-fixed-top f-post46" role="navigation">
+	    <div class="pc-topbutton container">
+			<div class="row">
+				<!-- INCLUDE m_search.html -->
+				<!-- INCLUDE m_menu_store.html -->
+			</div>
+	    </div>
+	</nav>
+<!-- ENDIF -->
+<!-- IF app="woqumai_ios" -->	
+    <div id="body-iScroll" style="width: 100%;position:absolute"><!--仿原生平滑滚动-->
+    <ul class="scrollWapper" style="width: 100%;position:absolute"><!--仿原生平滑滚动-->
+<!-- ENDIF -->   
+
+	<div id="menu-store" class="container">
+		
+	</div>
+	<a href="/taobao/selectgoods.html" style="background: #de4b50; border-radius: 3px; color: #FFF; padding: 8px; margin: -40px 13px 70px 0;float:right">淘宝店复制助手 &gt;</a>
+	<!-- IF is_open_tmg == "0" --><!-- <div style="position: fixed; right:0; bottom:0; margin-right:30px; margin-bottom:60px;"><a href="/taobao/selectgoods.html" style="float:right;color:red;">淘宝店复制助手</a></div> --><!-- ENDIF -->
+  <!-- IF app="woqumai_ios" -->	
+  </ul><!--仿原生平滑滚动-->
+  </div><!--仿原生平滑滚动-->	
+  <!-- ENDIF -->
+
+<!-- IF __is_mobile -->
+<!-- ELSE -->
+</div>
+<!-- ENDIF -->
+<!-- IF __is_mobile -->
+	<div class="c-btm-item j-batch-goods" style="display:none;">
+		<button class="ui-btn ui-w2 j-batch-back s-bdt" style="color: #ac9456; height: 54px; background-color: #fff;padding:0;">返回</button>
+		<button class="ui-btn-new ui-btn-h54 ui-w3 s-bgcGoldA j-batch-submit">下架</button>
+		<button class="ui-btn-new ui-btn-h54 ui-w3 s-bgcGold2A j-batch-del">删除</button>
+		<div class="ui-btn-new ui-w2 ui-btn-h54 s-bgcW this-selected j-selAll s-bdt"><span class="selected-all-bg"></span></div>
+	</div>
+	<div class="c-btm-item goods-view01">
+	    <a href="/goods/goodsinfo.html" data-tj="tj-seller-manage-add" ><button class="ui-btn-new ui-btn-h54 ui-w6 s-bgcGoldA">添加商品</button></a>
+	    <button class="ui-btn-new ui-btn-h54 ui-w4 s-bgcGold2A j-batch-edit" data-tj="tj-seller-manage-batch">批量操作</button>
+	</div>
+	<!-- ELSE -->
+	<div class="c-btm-item j-batch-goods" style="display:none;width:100%;">
+		<button class="ui-btn ui-w2 j-batch-back" style="color: #FFA195; height: 40px; line-height: 40px; width: 150px; border: 1px solid #FFA195; background-color: #fff; border-radius: 3px;">返回</button>
+		<button class="ui-btn ui-btn-red-h54 ui-w3 j-batch-submit" style="background: #ffa195; height: 40px; line-height: 40px; width: 150px; text-align: center; margin-left: 15px; margin-bottom: 10px;">下架</button>
+		<button class="ui-btn ui-btn-green-h54 ui-w3 j-batch-del" style="background: #6cd1bf; height: 40px; line-height: 40px; width: 150px; margin-left: 15px; margin-bottom: 10px; cursor: pointer;">删除</button>
+		<div class="ui-btn ui-w2 ui-btn-h54 this-selected j-selAll" style="background-color:#fff;"><span class="selected-all-bg" style="cursor: pointer;"></span></div>
+	</div>
+	<div class="c-btm-item goods-view01">
+	    <a href="/goods/goodsinfo.html" class="ui-btn ui-btn-green-h54 ui-w6" style="height: 40px; line-height: 40px;">添加商品</a>
+	    <button class="ui-btn ui-btn-red-h54 ui-w4 j-batch-edit" style="height: 40px; line-height: 40px; margin-left: 15px; margin-bottom: 10px;">批量操作</button>
+	</div>
+	<div class="c-btm-item goods-view02" style="display:none;">
+	    <a id="good-modify" href="" ><button class="ui-btn ui-btn-green-h54 ui-w6">修改</button></a>
+	</div>
+	<!-- ENDIF -->
+</div>
+
+<input type="hidden" value="{__is_mobile}" id="is_mob" />
+<input type="hidden" value="{goods_num}" id="goods_num" />
+
+<script type="text/javascript">
+	seajs.use('pages/m_goods_list.js');
+</script>

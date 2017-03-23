@@ -1,0 +1,35 @@
+<!doctype html>
+<html class="no-js" lang="">
+  <head>
+    <meta charset="utf-8">
+    <title>路由系统</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <link rel="stylesheet" href="styles/main.css">
+  </head>
+  <body>
+<header>
+  <nav id="menu" class="clearfix">
+    <a class="btn btn-default" href="#/user/name">名字</a>
+    <a class="btn btn-default" href="#/user/age">年龄</a>
+    <a class="btn btn-default" href="#/user/hobbys/0">兴趣一</a>
+    <a class="btn btn-default" href="#/user/hobbys/1">兴趣二</a>
+    <a class="btn btn-default" href="#/user/hobbys/2">兴趣三</a>
+    <a class="btn btn-default" href="#aboutme">关于我</a>
+  </nav>
+</header>
+<section>
+  <h1 id="content-pane">你好啊！</h1>
+</section>
+    <!-- build:js scripts/vendor.js -->
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/lodash/dist/lodash.compat.js"></script>
+    <script src="bower_components/backbone/backbone.js"></script>
+    <!-- endbuild -->
+    <!-- build:js({.tmp,app}) scripts/main.js -->
+    <script src="scripts/main.js"></script>
+    <script src="scripts/templates.js"></script>
+    <!-- endbuild -->
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+<style type="text/css">
+
+</style>
+</head>
+<body>
+<ul id="j_new_ul01">
+	<li><input type="checkbox" class="hiddenthis"/>香蕉</li>
+	<li><input type="checkbox" class="hiddenthis"/>西瓜</li>
+	<li><input type="checkbox" class="hiddenthis"/>番茄</li>
+</ul>
+<ul id="j_new_ul02"></ul>
+<script type="text/javascript">
+window.onload = function(){
+	var jn01 = document.getElementById('j_new_ul01'),
+		jn02 = document.getElementById('j_new_ul02'),
+		jn01_li = jn01.getElementsByTagName('li');
+	for(var i=0;jn01_li.length>i;i++){
+		(function(i){
+			jn01_li[i].addEventListener('click',function(){
+				if(jn01_li[i].children[0].checked){
+					jn01_li[i].children[0].checked = 'false';
+					var node = jn01_li[i].cloneNode(true);
+					jn02.appendChild(node);
+				}else{
+					jn01_li[i].children[0].checked = 'true';
+				}
+			})
+		})(i);
+	}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+body{margin-bottom: 55px;}
+.acs_rule_zone{width: 95%; margin: 0 auto;}
+.acs_toppic{width: 100%;}
+.acs_toppic img{width: 100%;}
+
+.acs_rule_zone .acs_rule_title{text-align: center;height: 50px;line-height: 50px;}
+.acs_rule_time{margin-top: 40px;}
+.acs_rule_time .acs_rule_time_list li{width: 30%; float: left; height: 25px; line-height: 12px; margin: 1%; border: 1px solid #a0a0a0;text-align: center; padding: 5px 0;}
+.acs_rule_time .acs_rule_time_list li.hovertime{background-color: #de4b50;border:1px solid #de4b50;color: #fff;}
+.bot_button{position: fixed;bottom: 0;width: 100%;}
+.bot_button .button_l,.button_r{float:left;width: 50%;height: 50px;line-height: 50px;display: block;text-align: center;border-top: 1px solid #dbdbdb;}
+.bot_button .button_l .sel_this{display: block; width: 16px; height: 16px; position: absolute; top: 35%;
+  left: 4%;background: url(../images/sel_this.png) no-repeat;}
+  .bot_button .button_l .sel_this_on{background: url(../images/sel_this_on.png) no-repeat;}

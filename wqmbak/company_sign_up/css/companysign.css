@@ -1,0 +1,83 @@
+body, h1, h2, h3, h4, h5, p, dl, dd, ul, ol, form, input, textarea, th, td, select { margin: 0; padding: 0; }
+a{ text-decoration: none; }
+li { list-style: none; }
+em { font-style: normal; }
+img { border: none; vertical-align: top; }
+input,button:focus{ outline: none; }
+button{ border:none; }
+body{ font-family: "Microsoft YaHei" Light; min-width: 990px;font-size: 15px;}
+/* 修复移动端点击时背景发灰bug */
+*{ outline: 0; -webkit-tap-highlight-color: rgba(0,0,0,0) }
+.mg_t15{margin-top: 15px;}
+.fs_12{font-size: 12px;}
+.oneline{background-color: #fff;height: 40px; line-height: 40px;border-radius: 5px;  padding-left: 10px;}
+.colorstar{color: #e24146;font-size: 12px;}
+.raidos{display: inline-block;width: 15px;height: 15px;border:1px solid #c0c0c0;border-radius: 50%; position: absolute; top: 12px; margin-left: 6px;cursor: pointer;}
+.checked{background-color: #e24146;border:1px solid #e24146;}
+.single_pic_zone{height: 160px;background-color: #fff;margin-top: 15px;padding:10px;border-radius: 5px; position: relative;}
+.title{font-size: 18px;height: 40px;line-height: 40px;  padding-left: 10px;}
+.single_pic_zone ul{position: absolute; top: 10px; left: 120px;}
+.single_pic_zone ul .up_tips{line-height: 23px;}
+.single_pic_zone ul .up_btn{margin:10px 15px;}
+/*singup_head*/
+.singup_head{width: 100%;background-color: #ac9456;padding: 40px 0;}
+.singup_head .lm_zone{width: 1240px;margin:0 auto;height: 93px;background-color: #fff;position: relative;}
+.singup_head .lm_zone .logo{position:absolute;top: 16px;left: 32px; width: 82px;}
+.singup_head .lm_zone .logo img{width: 100%;}
+.singup_head .lm_zone .menu{position: absolute;right: 20px;line-height: 92px;}
+.singup_head .lm_zone .menu li{float: left;text-align: center;width: 110px;}
+.singup_head .lm_zone .menu li a{color: #0d0d0d;}
+.singup_head .stepszone{width: 700px;margin: 45px auto;}
+.singup_head .stepszone img{width: 100%;}
+.singup_head .up_title{text-align: center;font-size: 56px;}
+/*singup_foot*/
+.singup_foot{height: 240px;width: 1240px; margin: 0 auto;}
+.singup_foot .foot_menu{margin-top:100px; }
+.singup_foot .foot_menu ul li{float: left;width: 80px;text-align: center;}
+.singup_foot .foot_menu ul li a{color: #0d0d0d;}
+.singup_foot .foot_menu .accredit{float: right;}
+
+/*main_form*/
+.form_zone{background-color: #f0f0f0;padding: 5px 0;}
+.form_zone .form_main {width: 640px;margin:0 auto;}
+.form_zone .form_main .comp_info .oneline input{width: 80%; border: none;margin-left: 20px; height: 40px;line-height: 40px;}
+/*comp_local*/
+.comp_local select{width: 360px;height: 40px;line-height: 40px;border:none;margin-top: 15px;-webkit-appearance: none;border-radius: 5px;padding: 10px\0;}
+.comp_local .local_province,.comp_local .local_city{position: relative;}
+.comp_local .local_province .more_arrow,.comp_local .local_city .more_arrow{position: absolute; left: 330px; top: 30px;}
+.form_zone .form_main .contact_info .oneline input{width: 80%; border: none;margin-left: 20px;height: 40px; line-height: 40px;}
+/*contact_info*/
+.form_zone .form_main .store_info .oneline input{width: 80%; border: none;margin-left: 20px; height: 40px;line-height: 40px;}
+/*comp_strength*/
+.copm_ss_zone .comp_strength{background-color: #fff; margin-top: 15px; padding: 10px; border-radius: 5px; position: relative;}
+.copm_ss_zone .comp_strength .raido_zone{margin:10px 25px;}
+.copm_ss_zone .comp_strength ul{height: 40px;line-height: 40px;}
+.copm_ss_zone .comp_strength li{float: left;color:#606060;width: 160px;position: relative;}
+.copm_ss_zone .comp_strength .netstore,.copm_ss_zone .comp_strength .realstore{border-top:1px solid #e5e5e5;}
+.copm_ss_zone .comp_strength .raido_zone .netstore input{height: 27px;width: 390px;margin-left:15px;border:1px solid #e0e0e0;}
+.copm_ss_zone .comp_strength .netstore .goods_captcha input{width: 80px;height: 27px;padding:0 12px;color: #e24146;margin: 10px 0;}
+.copm_ss_zone .comp_strength .raido_zone .realstore_up_zone img{margin: 10px;}
+/*brand_zone*/
+.brand_zone .brand_up_zone{height: 230px; background-color: #fff; margin-top: 15px; padding: 10px; border-radius: 5px; position: relative;padding: 10px 40px} 
+
+/*brand_zone*/
+.brand_zone .brand_up_zone .brand_tip_pic{width: 200px; text-align: center; margin-left: 70px;}
+.brand_zone .brand_up_zone .brand_tip_pic .bradn_up_btn{margin: 10px 15px;}
+
+
+/*submit_btn*/
+.submit_btn{height: 40px;line-height: 40px;text-align: center; width: 220px;display: block;background-color: #0d0d0d;border-radius: 5px;margin: 30px auto;color: #fff;cursor: pointer;}
+/****************sign-up.html*****************/
+.main_zone{background: url(../images/comp_bg.jpg) no-repeat;}
+.phone_form_zone{height: 400px;}
+/****************sign-up-phone.html*****************/
+.iwanjoin{margin: 0 auto;width: 447px;}
+/****************sign-up-code.html*****************/
+.select_form_zone{background-color: #ac9456;}
+.make_select_zone{background-color: #ac9456;}
+.clause_zone{height: 300px;display: none;}
+/****************sign-up-select.html*****************/
+
+/*临时用隐藏类 上线删除*/
+.fileinput{display: none;}
+/*临时用隐藏类 上线删除*/

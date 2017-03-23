@@ -1,0 +1,11 @@
+body{background-color: #f3f2f5;margin-bottom: 80px;}
+.acgl_list{width: 90%;padding: 15px;margin: 20px auto;border: 1px solid #000;}
+.acgl_list .acgl_img{width:100%;position:relative;}
+.acgl_list .acgl_img img{width:100%;}
+.acgl_list .acgl_sub_title{position:absolute;width: 100%;bottom: 0;}
+.acgl_list .acgl_sub_title .acgl_goodname{float:left;}
+.acgl_list .acgl_sub_title .acgl_price{float: right;}
+.acgl_list .acgl_storename{width:100%;text-align:center;}
+.acgl_list .acgl_storename span{position:relative;}
+.acgl_list .acgl_storename span:before{position: absolute; top: 10px; left: -80px;  display: block; content:""; width: 60px; height: 1px; background-color: #000;}
+.acgl_list .acgl_storename span:after{ position: absolute; top: 10px; right: -80px; display: block; content:""; width: 60px; height: 1px; background-color: #000;}

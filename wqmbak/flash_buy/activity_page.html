@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+   <title>企业注册</title>
+   <link rel="stylesheet" type="text/css" href="./css/normalize.css">
+   <link rel="stylesheet" type="text/css" href="./css/activity_common.css">
+   <link rel="stylesheet" type="text/css" href="./css/activity_page.css">
+   <script type="text/javascript" src="./js/jquery-1.10.2.js"></script>
+</head>
+<body>
+	<div class="acp_zone bg_white clear" data-state="1">
+		<div class="acp_title fs_0_9 fc_60">我去买女生节</div>
+		<div class="acp_pic"><img src="./images/ap_pic01.jpg"></div>
+		<div class="acp_detail">
+			<div class="acp_req_l fc_60">
+				<p class="fs_0_8">活动要求：</p>
+				<p class="fs_0_7_5">1. 商品主图最重要，必须清晰美观无角标、文字。<br/>
+				2. 促销力度需要给力，越给力越容易审核通过。</p>
+				<p class="fs_0_7">报名截止时间：2015/4/15 12:00</p>
+			</div>
+			<div class="acp_req_r"><a href="javascript:void(0);" class="bg_red fs_0_8 fc_fff">我要报名</a></div>
+		</div>
+	</div>
+
+	<div class="acp_zone bg_white clear" data-state="2">
+		<div class="acp_title">我去买闺蜜节</div>
+		<div class="acp_pic"><img src="./images/ap_pic02.jpg"></div>
+		<div class="acp_detail">
+			<div class="acp_req_l fc_60">
+				<p class="fs_0_7_5">您报名的商品未审核，请等待。</p>
+			</div>
+			<div class="acp_req_r"><a href="javascript:void(0);" class="bg_glod fs_0_8 fc_fff">查看详情</a></div>
+		</div>
+	</div>
+<script type="text/javascript">
+$(function(){
+	if($('.acp_zone').data('state') == 1){
+		$(this).find('.acp_req_r').css('margin-top','40px');
+	}else{
+		$(this).find('.acp_req_r').css('margin-top','5px');
+	}
+	
+})
+</script>
+</body>
+</html>

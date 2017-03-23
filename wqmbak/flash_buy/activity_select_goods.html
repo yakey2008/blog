@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+   <title>企业注册</title>
+   <link rel="stylesheet" type="text/css" href="./css/normalize.css">
+   <link rel="stylesheet" type="text/css" href="./css/activity_common.css">
+   <link rel="stylesheet" type="text/css" href="./css/activity_select_goods.css">
+   <script type="text/javascript" src="./js/jquery-1.10.2.js"></script>
+</head>
+<body>
+	<div class="acsg_top_fix">
+		<form class="acsg_search bg_white clear" action="">
+			<div id="j-search" class="acsg_search_input_zone">
+				<div class="acsg_search_icon"><img src="./images/search_icon.png"></div>
+				<input type="text" class="search_input j_input fs_0_8" name="search" placeholder="搜索" value="" />
+				<div class="clearBtn j-clearBtn"></div>
+			</div>
+			<button class="search_btn fc_glod fs_0_8 bg_white" type="submit">搜索</button>	
+		</form>
+
+		<div class="acsg_sort_zone bg_white clear">
+	        <ul class="acsg_sort j-sort">
+		        <li class="j-time cur"><a href="/show/goodsList.html"><span>默认</span></a></li>
+		        <li class="j-volume"><a href="/show/goodsList.html?sort=sell_volume_{sort_volume}" class="block_a"><span>销量</span><i class="up"></i><i class="down"></i></a></li>
+		        <li class="j-inventory"><a href="/show/goodsList.html?sort=price_{sort_price}" class="block_a"><span>价格</span><i class="up"></i><i class="down"></i></a></li>
+	        </ul>
+	    </div>
+	</div>
+	<div id="package-select-goods" class="container">
+		<form method="post" action="">
+			<div class="tpl_select_goods clear">
+				<div class="goods_title fs_0_7">以下商品符合品类要求，可选择。</div>
+			    <ul class="tpl_select_goods_list clear">
+					<li class="cur">
+						<img src="./images/ace_pic.jpg" /><span>
+						￥133</span>
+						<input style="display:none;" type="checkbox" name="sel_goods[]" value="{goods_id}" checked="checked"/>
+						<b class="acsg_botarrow"><img src="./images/showcur.png"></b>
+					</li>
+					<li>
+						<img src="./images/ace_pic.jpg" /><span>
+						￥133</span>
+						<input style="display:none;" type="checkbox" name="sel_goods[]" value="{goods_id}" checked="checked"/>
+						<b class="acsg_botarrow"><img src="./images/showcur.png"></b>
+					</li>
+					<li>
+						<img src="./images/ace_pic.jpg" /><span>
+						￥133</span>
+						<input style="display:none;" type="checkbox" name="sel_goods[]" value="{goods_id}" checked="checked"/>
+						<b class="acsg_botarrow"><img src="./images/showcur.png"></b>
+					</li>
+					<li>
+						<img src="./images/ace_pic.jpg" /><span>
+						￥133</span>
+						<input style="display:none;" type="checkbox" name="sel_goods[]" value="{goods_id}" checked="checked"/>
+						<b class="acsg_botarrow"><img src="./images/showcur.png"></b>
+					</li>
+				</ul>
+			</div>
+			<div class="tpl_select_goods mg_t_20 clear">
+				<div class="goods_title fs_0_7">以下商品不符合品类要求，不可选择。</div>
+			    <ul class="tpl_select_goods_list clear">
+					<li>
+						<img src="./images/ace_pic.jpg" /><span>
+						￥133</span>
+					</li>
+					<li>
+						<img src="./images/ace_pic.jpg" /><span>
+						￥133</span>
+					</li>
+					<li>
+						<img src="./images/ace_pic.jpg" /><span>
+						￥133</span>
+					</li>
+					<li>
+						<img src="./images/ace_pic.jpg" /><span>
+						￥133</span>
+					</li>
+				</ul>
+			</div>
+			<input type="hidden" name="goods_sel" value="提交选定" />
+			<div class="c-btm-item">
+			    <div class="ui-btn">
+			    	<div class="f-txt-item">已选<span class="j-selectedNum fc_red">12</span>件，最多可选<span class="fc_red">12</span>件</div>
+			    </div>
+			    <div id="submit_btn" class="bg_glod">提交选定</div>
+			</div>
+		</form>		
+	</div>
+</body>
+</html>

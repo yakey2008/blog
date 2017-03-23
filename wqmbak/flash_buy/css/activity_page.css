@@ -1,0 +1,8 @@
+body{background-color: #f3f2f5;}
+.acp_zone{width: 100%;margin-bottom: 15px;}
+.acp_zone .acp_title{text-align: center;height: 45px;line-height: 45px;}
+.acp_zone .acp_pic{width: 100%;}
+.acp_zone .acp_pic img{width: 100%;}
+.acp_zone .acp_detail .acp_req_l{float: left;padding: 10px;width: 70%;}
+.acp_zone .acp_detail .acp_req_r{float: left;}
+.acp_zone .acp_detail .acp_req_r a{ height: 25px; line-height: 25px; width: 75px;text-align: center; display: block;border-radius: 3px;}

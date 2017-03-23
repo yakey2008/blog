@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<style type="text/css">
+#div1 {width:350px;height:70px;padding:10px;border:1px solid #aaa;}
+</style>
+</head>
+<body>
+
+<p>拖动图片到矩形框中:</p>
+
+<div id="div1"></div>
+<br>
+<img id="drag1" src="./images/share.png" draggable="true" width="336" height="69">
+<script type="text/javascript">
+window.onload = function(){
+	var div1 = document.getElementById('div1'),
+		drag1 = document.getElementById('drag1');
+	div1.addEventListener('ondrop',function (ev){
+		ev.preventDefault();
+		var data = ev.dataTransfer.getData("Text");
+		ev.target.appendChild(document.getElementById(data));
+	});
+
+	div1.addEventListener('ondragover',function (ev) {
+		ev.preventDefault();
+	});
+
+	drag1.addEventListener('ondragstart',function (ev) {
+		ev.dataTransfer.setData("Text",ev.target.id);
+	})
+}
+</script>
+</body>
+</html>

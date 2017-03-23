@@ -1,0 +1,12 @@
+{	
+	"in_title":"big frontEnd 大前端",
+	"navigation":["首頁","文章","直播"],
+	"sayhello":"hello! Allo! hola! 你好！",
+	"leadwords":"你來對了！come on in!",
+	"gobtn":"gogogo!",
+	"introducels":[
+		["第一條","第一條的内容非常有意思，請仔細閲讀"],
+		["第二條","第二條的數據是很值得思考并且會帶來很多收穫"],
+		["第三條","第三條是一個等待擴展而且不斷在加强的語言"]
+	]
+}

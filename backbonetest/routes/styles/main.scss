@@ -1,0 +1,12 @@
+$icon-font-path: "/bower_components/bootstrap-sass-official/assets/fonts/bootstrap/";
+
+@import 'bootstrap-sass-official/assets/stylesheets/bootstrap.scss';
+
+
+$fl_l:left;
+$fl_r:right;
+#menu a{
+  float:$fl_l;
+  text-decoration: none;
+  display: block;
+}
