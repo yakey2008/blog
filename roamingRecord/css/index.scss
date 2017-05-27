@@ -36,20 +36,30 @@ $col9b:#9b9b9b;
     border-radius: $val;
 }
 
+@mixin boxshadow($hs, $vs, $blur, $spread, $color:#30acf3) {
+    box-shadow: $hs $vs $blur $spread $color;
+    -ms-box-shadow: $hs $vs $blur $spread $color;
+    -webkit-box-shadow: $hs $vs $blur $spread $color;
+    -moz-box-shadow: $hs $vs $blur $spread $color;
+    -o-box-shadow: $hs $vs $blur $spread $color;
+}
+
 @include placeholder(#fff);
 html {
     width: 100%;
     height: 100%;
+    font-family: "Microsoft YaHei";
 }
 
 body {
-    background: url(../images/bg.jpg) no-repeat;
+    background: url("../../images/bg.jpg") no-repeat;
     background-size: cover;
     height: 100%;
     width: 100%;
     margin: 0;
     padding: 0;
     color: #333333;
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src="../../images/bg.jpg", sizingMethod="scale");
 }
 
 ul,
@@ -70,7 +80,7 @@ li {
     float: right;
 }
 
-.clearfix::after {
+.clearfix:after {
     display: block;
     content: "";
     clear: both;
@@ -115,6 +125,7 @@ li {
 }
 
 .select2-container--open .select2-dropdown--below {
+    @include boxshadow(0,5px,31px,-11px,#30acf3);
     border: 0;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
@@ -157,6 +168,7 @@ li {
         .css-select2-container {}
         .search-input-box {
             margin-left: 23px;
+            position: relative;
             .search-input {
                 @include elwidth(132px);
                 @include bdradius(25px);
@@ -168,6 +180,16 @@ li {
             .search-input:focus {
                 outline: none;
             }
+            .search-icon {
+                position: absolute;
+                right: 17px;
+                top: 11px;
+                width: 19px;
+                height: 19px;
+                img {
+                    width: 100%;
+                }
+            }
         }
     }
 }
@@ -175,70 +197,98 @@ li {
 .wrapper {
     @include outerwidth;
     @include bdradius(20px);
+    @include boxshadow(0,
+    0,
+    40px,
+    -12px,
+    #30acf3);
     max-width: 1200px;
     overflow: hidden;
     height: 80%;
     margin: 20px auto;
     background-color: #fff;
-    .aside {
+    .aside-container {
         @include elwidth(25%);
-        height: 720px;
-        padding: 30px 0;
-        border-right: 1px solid #000;
-        li {
-            border: 1px solid #000;
-            padding: 9px 7%;
-        }
-        li.msgactive {
-            background-color: #f0faff;
-            border-right: 4px solid #40b0f5;
-        }
-        .avatar-container {
-            @include elwidth(20%);
-            .avatar {
-                @include elwidth(40px);
-                @include bdradius(25px);
-                height: 40px;
-                overflow: hidden;
-                img {
-                    @include elwidth(100%);
+        @include boxshadow(-22px,
+        0,
+        60px,
+        0px,
+        #30acf3);
+        border-right: 1px solid #e7f6ff;
+        .aside {
+            // height: 720px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            li {
+                padding: 9px 7%;
+            }
+            li.msgactive {
+                background-color: #f0faff;
+                border-right: 4px solid #40b0f5;
+            }
+            .avatar-container {
+                @include elwidth(20%);
+                .avatar {
+                    @include elwidth(40px);
+                    @include bdradius(25px);
+                    height: 40px;
+                    overflow: hidden;
+                    img {
+                        @include elwidth(100%);
+                    }
                 }
             }
-        }
-        .msg-info {
-            @include elwidth(80%);
-            .msg-info-nametime {
-                .datetime {
+            .msg-info {
+                @include elwidth(80%);
+                .msg-info-nametime {
+                    .datetime {
+                        color: $col9b;
+                    }
+                }
+                .msg-info-personalsign {
                     color: $col9b;
+                    font-size: 14px;
+                    margin-top: 6px;
+                    word-break: break-all;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
-            }
-            .msg-info-personalsign {
-                color: $col9b;
-                font-size: 14px;
-                margin-top: 6px;
-                word-break: break-all;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
             }
         }
     }
     .msg-content {
-        @include elwidth(64%);
-        margin: 30px 5%;
-        height: 700px;
-        overflow-y: scroll;
-        .msg-item {
-            .item-nametime {
-                .datetime {
+        @include elwidth(73%);
+        position: relative;
+        .msg-item-container {
+            margin: 40px 0;
+            margin-right: 3%;
+            padding: 0 4%; // height: 700px;
+            overflow-y: scroll;
+            .msg-item {
+                .item-nametime {
+                    .datetime {
+                        color: $col9b;
+                    }
+                }
+                .item-content {
+                    font-size: 14px;
                     color: $col9b;
+                    line-height: 20px;
+                    margin: 5px 0;
                 }
             }
-            .item-content {
-                font-size: 14px;
-                color: $col9b;
-                line-height: 20px;
-                margin: 5px 0;
+        }
+        .pagenum-container {
+            @include elwidth(97%);
+            text-align: center;
+            color: #50b4f8;
+            position: absolute;
+            bottom: 0;
+            .pagenum {
+                display: inline-block;
+                margin: 0 7px;
+                cursor: pointer;
             }
         }
     }

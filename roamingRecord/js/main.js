@@ -1,17 +1,24 @@
-require('es5-shim');
-require('es5-shim/es5-sham');
-require('core-js/es6/object');
-require('../css/normalize.min.css');
-require('../lib/select2.min.css');
-require('../css/index.scss');
-var jQuery = require('jquery');
-var select2 = require('../lib/select2.min.js');
-var nicecsroll = require('../lib/jquery.nicescroll.min.js');
-
 jQuery(function ($) {
     $('#js-select2').select2({
         minimumResultsForSearch: Infinity,
         width: '180px'
     })
-    $('.msg-content').niceScroll();
+
+    //wrapper高度减上下外边
+    $('.msg-item-container').height($('.wrapper').height() - 100);
+    //wrapper高度减30上边30下边
+    $('.aside').height($('.wrapper').height() - 30 - 30);
+    //左侧滚动条优化
+    $('.aside').niceScroll({
+        cursorwidth: '14px',
+        cursorcolor: '#e2f5ff'
+    });
+    //右侧滚动条优化
+    $('.msg-item-container').niceScroll({
+        cursorwidth: '14px',
+        cursorcolor: '#e2f5ff'
+    });
+
+    
+    $('.search-input').placeholder();
 })
