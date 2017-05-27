@@ -18,7 +18,7 @@ jQuery(function ($) {
         cursorwidth: '14px',
         cursorcolor: '#e2f5ff'
     });
-
-    
+    //兼容ie placeholder
     $('.search-input').placeholder();
+
 })
