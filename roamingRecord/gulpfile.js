@@ -8,39 +8,51 @@ const rename = require('gulp-rename');
 const del = require('del');
 const reload = browserSync.reload;
 
-//del dist directory
-gulp.task('del', function (cb) {
-    return del(['dist'], cb);
+let porhtml = './index.production.html';
+let devhtml = './index.dev.html';
+
+//更换html入口名字
+gulp.task('prohtml', ['devhtml'], () => {
+    return gulp.src(porhtml)
+        .pipe(rename('./index.html'))
+        .pipe(gulp.dest('./'))
 })
-//run serve compile code ,watch code change
-gulp.task('serve', ['sass'], () => {
-    browserSync.init({
-        server: "./"
-    });
-    gulp.watch("scss/*.scss", ['sass']);
-    gulp.watch("*.html").on('change', reload);
-    gulp.watch("js/*.js").on('change', reload);
-});
-//dist code
-gulp.task('html',()=>{
-    return gulp.src('./index.production.html')
-    .pipe(rename('./index.html'))
+
+gulp.task('devhtml', () => {
+    return gulp.src(devhtml)
+        .pipe(rename('./index.html'))
+        .pipe(gulp.dest('./'))
 })
+
+gulp.task('sypro', function () {
+    return gulp.src('./index.html')
+        .pipe(rename(porhtml))
+        .pipe(gulp.dest('./'))
+})
+
+//压缩css,js
 gulp.task('style', () => {
-    return gulp.src(['./lib/css/*.css','./css/*.css'])
+    return gulp.src(['./lib/css/*.css', './css/*.css'])
         .pipe(concat('main.css'))
-        .pipe(rename({suffix:'.min'}))
+        .pipe(rename({
+            suffix: '.min'
+        }))
         .pipe(minifycss())
         .pipe(gulp.dest('./dist/css/'))
 })
 
-gulp.task('js',()=>{
-    return gulp.src(['./lib/js/jquery.min.js','./lib/js/*.js','./js/*.js'])
-    .pipe(concat('main.js'))
-    .pipe(rename({suffix:'.min'}))
-    .pipe(uglify())
-    .pipe(gulp.dest('./dist/js/'))
+gulp.task('js', () => {
+    return gulp.src(['./lib/js/jquery.min.js', './lib/js/*.js', './js/*.js'])
+        .pipe(concat('main.js'))
+        .pipe(rename({
+            suffix: '.min'
+        }))
+        .pipe(uglify())
+        .pipe(gulp.dest('./dist/js/'))
 })
+
+//静态资源加版本标记
+
 
 // scss编译后的css将注入到浏览器里实现更新
 gulp.task('sass', () => {
@@ -52,5 +64,24 @@ gulp.task('sass', () => {
         }));
 });
 
-gulp.task('build',['style','js']);
+//删除dist目录
+gulp.task('del', function (cb) {
+    return del(['dist'], cb);
+})
+
+//启动服务，编辑scss
+gulp.task('serve', ['sass'], () => {
+    browserSync.init({
+        server: "./"
+    });
+    gulp.watch("scss/*.scss", ['sass']);
+    gulp.watch("*.html").on('change', reload);
+    gulp.watch("js/*.js").on('change', reload);
+});
+//更换html入口
+gulp.task('promode', ['prohtml']);
+gulp.task('devmode', ['devhtml']);
+//构建生产环境代码
+gulp.task('build', ['style', 'js']);
+// 默认启动服务编译代码
 gulp.task('default', ['serve']);
