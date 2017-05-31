@@ -51,6 +51,10 @@ gulp.task('js', () => {
         .pipe(gulp.dest('./dist/js/'))
 })
 
+gulp.task('img',()=>{
+    return gulp.src('./images/*')
+    .pipe(gulp.dest('./dist/images/'))
+})
 //静态资源加版本标记
 
 
@@ -82,6 +86,6 @@ gulp.task('serve', ['sass'], () => {
 gulp.task('promode', ['prohtml']);
 gulp.task('devmode', ['devhtml']);
 //构建生产环境代码
-gulp.task('build', ['style', 'js']);
+gulp.task('build', ['style', 'js','img']);
 // 默认启动服务编译代码
 gulp.task('default', ['serve']);
