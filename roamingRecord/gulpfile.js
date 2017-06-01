@@ -6,6 +6,8 @@ const uglify = require('gulp-uglify');
 const minifycss = require('gulp-minify-css');
 const rename = require('gulp-rename');
 const del = require('del');
+const rev = require('gulp-rev');
+const revCollector = require('gulp-rev-collector');
 const reload = browserSync.reload;
 
 let porhtml = './index.production.html';
@@ -31,32 +33,44 @@ gulp.task('sypro', function () {
 })
 
 //压缩css,js
-gulp.task('style', () => {
+gulp.task('style', ['js'],() => {
     return gulp.src(['./lib/css/*.css', './css/*.css'])
         .pipe(concat('main.css'))
         .pipe(rename({
             suffix: '.min'
         }))
         .pipe(minifycss())
-        .pipe(gulp.dest('./dist/css/'))
+        .pipe(rev())
+        .pipe(gulp.dest('./dist/css'))
+        .pipe(rev.manifest())
+        .pipe(gulp.dest('./dist/rev/css'))
 })
 
-gulp.task('js', () => {
+gulp.task('js', ['del'],() => {
     return gulp.src(['./lib/js/jquery.min.js', './lib/js/*.js', './js/*.js'])
         .pipe(concat('main.js'))
         .pipe(rename({
             suffix: '.min'
         }))
         .pipe(uglify())
-        .pipe(gulp.dest('./dist/js/'))
+        .pipe(rev())
+        .pipe(gulp.dest('./dist/js'))
+        .pipe(rev.manifest())
+        .pipe(gulp.dest('./dist/rev/js'))
 })
 
-gulp.task('img',()=>{
+gulp.task('img', ['style'], () => {
     return gulp.src('./images/*')
-    .pipe(gulp.dest('./dist/images/'))
+        .pipe(gulp.dest('./dist/images/'))
 })
 //静态资源加版本标记
-
+gulp.task('version',['img'],()=>{
+    return gulp.src(['./dist/rev/**/*.json','./index.html'])
+    .pipe(revCollector({
+        replaceReved:true
+    }))
+    .pipe(gulp.dest('./'))
+})
 
 // scss编译后的css将注入到浏览器里实现更新
 gulp.task('sass', () => {
@@ -86,6 +100,6 @@ gulp.task('serve', ['sass'], () => {
 gulp.task('promode', ['prohtml']);
 gulp.task('devmode', ['devhtml']);
 //构建生产环境代码
-gulp.task('build', ['style', 'js','img']);
+gulp.task('build', ['version']);
 // 默认启动服务编译代码
 gulp.task('default', ['serve']);
