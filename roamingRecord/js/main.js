@@ -31,7 +31,7 @@ jQuery(function ($) {
             showMask();
         }
     });
-    
+
     $select2.on("select2:select", function (e) {
         if (e.currentTarget.value === 'costom') {
             showMask();
@@ -135,10 +135,35 @@ jQuery(function ($) {
             })
         }
     }
+    // 初始化数据
+    var initPage = function (url, tpldom, container) {
+        $.ajax({
+            url: url,
+            type: 'get',
+            dataType: "json",
+            success: function (req) {
+                var tpl = $(tpldom).html();
+                var data = req;
+                var template = Handlebars.compile(tpl);
+                var html = template(data);
+                $(container).html(html);
+                if (container === '#js-userlist') {
+                    $(container).find('li').eq(0).addClass('msgactive');
+                }
+            },
+            error: function (req) {
+                swal('网络不给力，请检查网络后刷新重试');
+            }
+        })
+
+    }
 
     //执行时间选择处理函数
     pickTime();
     //搜索事件
     searchEvt($('#js-searchbtn'), 'click');
     searchEvt($('#js-searchinput'), 'keydown');
+    // 执行初始化数据
+    initPage('./json/userlist.json', '#tpl-userlist', '#js-userlist');
+    initPage('./json/history.json', '#tpl-itemlist', '#js-itemlist');
 })
