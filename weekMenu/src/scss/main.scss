@@ -1,0 +1,92 @@
+html {
+    width: 100%;
+    height: 100%;
+    font-family: "Microsoft YaHei";
+}
+
+body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    color: #333333;
+}
+
+ul,
+p {
+    padding: 0;
+    margin: 0;
+}
+
+li {
+    list-style-type: none;
+}
+
+.fl-l {
+    float: left;
+}
+
+.fl-r {
+    float: right;
+}
+
+.clearfix:after {
+    display: block;
+    content: "";
+    clear: both;
+}
+
+.ds-n {
+    display: none;
+}
+
+//costom
+.nav-container {
+    position: relative;
+    z-index: 11;
+    .cat {
+        border-bottom: 1px solid #ddd;
+        background-color: #fff;
+        padding: 13px 0;
+        text-align: center;
+        .select-btn {
+            display: inline-block;
+            width: 49%;
+            .css-arrow {
+                display: inline-block;
+                height: 8px;
+                width: 8px;
+                border-bottom: 1px solid #98989f;
+                border-left: 1px solid #98989f;
+                transform: rotate(-45deg);
+                margin-left: 10px;
+                margin-bottom: 3px;
+            }
+            .drop {
+                transform: rotate(135deg);
+                margin-bottom: -2px;
+            }
+        }
+    }
+    .select-container {
+        position: absolute;
+        width: 100%;
+        li {
+            height: 45px;
+            line-height: 45px;
+            padding-left: 15px;
+            border-bottom: 1px solid #ddd;
+            background-color: #fff;
+        }
+    }
+}
+
+.overlay {
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 10;
+    position: fixed;
+}

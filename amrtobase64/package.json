@@ -1,0 +1,17 @@
+{
+  "name": "amrtobase64",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "amr": "^0.0.1",
+    "amrToMp3": "^1.0.7",
+    "browser-sync": "^2.18.12",
+    "gulp": "^3.9.1"
+  }
+}

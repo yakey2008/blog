@@ -53,14 +53,14 @@ html {
 }
 
 body {
-    background: url("../../images/bg.jpg") no-repeat;
+    background: url("../images/bg.jpg") no-repeat;
     background-size: cover;
     height: 100%;
     width: 100%;
     margin: 0;
     padding: 0;
     color: #333333;
-    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src="../../images/bg.jpg", sizingMethod="scale");
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src="../images/bg.jpg", sizingMethod="scale");
 }
 
 ul,
