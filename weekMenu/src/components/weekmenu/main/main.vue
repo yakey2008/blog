@@ -16,20 +16,20 @@
             margin-bottom: -2px;
         }
     }
-    .select-container {
-        position: absolute;
-        width: 100%;
-        left: 0;
-        top: 50px;
-        z-index: 11;
-        li {
-            height: 45px;
-            line-height: 45px;
-            padding-left: 15px;
-            border-bottom: 1px solid #ddd;
-            background-color: #fff;
-        }
-    }
+    // .select-container {
+    //     position: absolute;
+    //     width: 100%;
+    //     left: 0;
+    //     top: 50px;
+    //     z-index: 11;
+    //     li {
+    //         height: 45px;
+    //         line-height: 45px;
+    //         padding-left: 15px;
+    //         border-bottom: 1px solid #ddd;
+    //         background-color: #fff;
+    //     }
+    // }
 }
 
 .css-nav-container.weui-navbar {
@@ -106,22 +106,22 @@
                     {{curtime}}
                     <i class="css-arrow" :class="{drop:isShowtime}"></i>
                 </div>
-                <section class="select-container" v-show="isShowregion">
-                    <ul>
-                        <li>广新餐厅</li>
-                        <li>信义餐厅</li>
-                        <li>总部餐厅</li>
-                    </ul>
-                </section>
+                <!--<section class="select-container" v-show="isShowregion">
+                            <ul>
+                                <li>广新餐厅</li>
+                                <li>信义餐厅</li>
+                                <li>总部餐厅</li>
+                            </ul>
+                        </section>-->
                 <!--<section class="select-container" v-show="isShowtime">
-                        <li>2017-6-1</li>
-                        <li>2017-6-2</li>
-                        <li>2017-6-3</li>
-                        <li>2017-6-4</li>
-                        <li>2017-6-5</li>
-                        <li>2017-6-6</li>
-                        <li>2017-6-7</li>
-                    </section>-->
+                                    <li>2017-6-1</li>
+                                    <li>2017-6-2</li>
+                                    <li>2017-6-3</li>
+                                    <li>2017-6-4</li>
+                                    <li>2017-6-5</li>
+                                    <li>2017-6-6</li>
+                                    <li>2017-6-7</li>
+                                </section>-->
             </div>
             <div class="weui-tab__panel css-main-container" id="js-mainheight">
                 <aside class="aside-container">
@@ -187,13 +187,10 @@ export default {
         } else {
             document.querySelector('.css-bottombar').style.zIndex = -1;
         }
-
-    },
-    updated: function () {
         var curyear = new Date().getFullYear();
         var curMonth = (new Date().getMonth()) + 1;
         var curday = new Date().getDate();
-        this.curtime = curyear+'-'+curMonth+'-'+curday;
+        this.curtime = curyear + '-' + curMonth + '-' + curday;
     },
     data() {
         return {
@@ -247,16 +244,45 @@ export default {
     },
     methods: {
         showregion: function () {
+            var _this = this;
             this.isShowtime = false;
             if (this.isShowregion) {
                 this.isShowregion = false;
-                this.isOverlay = false;
+                // this.isOverlay = false;
             } else {
                 this.isShowregion = true;
-                this.isOverlay = true;
+                // this.isOverlay = true;
             }
+            weui.picker([
+                {
+                    label: '广新餐厅',
+                    value: 0,
+                },
+                {
+                    label: '总部餐厅',
+                    value: 1
+                },
+                {
+                    label: '信义餐厅',
+                    value: 3
+                }
+            ], {
+                    className: 'custom-classname',
+                    defaultValue: [0],
+                    onChange: function (result) {
+                        console.log(result)
+                    },
+                    onConfirm: function (result) {
+                        _this.$data.curregion =result[0].label;
+                    },
+                    id: 'singleLinePicker'
+                });
         },
         showtime: function () {
+            var curyear = new Date().getFullYear();
+            var curMonth = (new Date().getMonth()) + 1;
+            var curday = new Date().getDate();
+            var _this = this;
             this.isShowregion = false;
             if (this.isShowtime) {
                 this.isShowtime = false;
@@ -265,10 +291,6 @@ export default {
                 this.isShowtime = true;
                 // this.isOverlay = true;
             }
-            var curyear = new Date().getFullYear();
-            var curMonth = (new Date().getMonth()) + 1;
-            var curday = new Date().getDate();
-            var _this = this;
             weui.datePicker({
                 start: new Date(), // 从今天开始
                 end: new Date().getFullYear(),
@@ -279,10 +301,10 @@ export default {
                 },
                 onConfirm: function (result) {
                     var settime = '';
-                    for(var i=0,len=result.length;i<len;i++){
-                        settime+=result[i].label.substr(0,result[i].label.length-1)
+                    for (var i = 0, len = result.length; i < len; i++) {
+                        settime = settime + '-' + result[i].label.substr(0, result[i].label.length - 1);
                     }
-                    _this.curtime = settime;
+                    _this.$data.curtime = settime.substr(1);
                 },
                 id: 'js-datePicker'
             });
