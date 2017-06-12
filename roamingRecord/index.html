@@ -12,7 +12,11 @@
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="black">
 	<meta name="format-detection" content="telephone=no">
-	<link rel="stylesheet" href="./dist/css/main-0955c53a99.min.css">
+	<link rel="stylesheet" href="./lib/css/normalize.min.css">
+	<link rel="stylesheet" href="./lib/css/select2.min.css">
+	<link rel="stylesheet" href="./lib/css/datepicker.min.css">
+	<link rel="stylesheet" href="./lib/css/sweet-alert.min.css">
+	<link rel="stylesheet" href="./css/index.css">
 </head>
 
 <body>
@@ -23,7 +27,15 @@
 		</div>
 		<div class="search-container fl-r">
 			<div class="css-select2-container fl-l">
-				<select name="" class="css-select2" id="js-select2">
+				<select name="" class="css-select2" id="js-select2-person">
+					<option value="0">联系人</option>
+					<option value="1">一一</option>
+					<option value="2">二二</option>
+					<option value="3">三三</option>
+				</select>
+			</div>
+			<div class="css-select2-container mgl23 fl-l">
+				<select name="" class="css-select2" id="js-select2-date">
 					<option value="0">选择日期</option>
 					<option value="1">本周</option>
 					<option value="2">上周</option>
@@ -32,7 +44,7 @@
 					<option value="costom">自定义</option>
 				</select>
 			</div>
-			<div class="search-input-box fl-l">
+			<div class="search-input-box mgl23 fl-l">
 				<input type="text" class="search-input" placeholder="请输入关键词" id="js-searchinput">
 				<i class="search-icon" id="js-searchbtn"><img src="./images/search-icon.png" alt=""></i>
 			</div>
@@ -42,6 +54,7 @@
 	<div class="wrapper">
 		<div class="main-container clearfix">
 			<div class="aside-container fl-l">
+				<span class="aside-datacontainer">数据：20条</span>
 				<ul class="aside" id="js-userlist">
 					<li class="clearfix msgactive">
 						<div class="avatar-container fl-l">
@@ -323,7 +336,15 @@
 		</div>
 		{{/each}}
 	</script>
-	<script src="./dist/js/main-89958e1b83.min.js"></script>
+
+	<script src="./lib/js/jquery.min.js"></script>
+	<script src="./lib/js/handlebars.min.js"></script>
+	<script src="./lib/js/select2.min.js"></script>
+	<script src="./lib/js/jquery.nicescroll.min.js"></script>
+	<script src="./lib/js/jquery.placeholder.min.js"></script>
+	<script src="./lib/js/datepicker.min.js"></script>
+	<script src="./lib/js/sweet-alert.min.js"></script>
+	<script src="./js/main.js"></script>
 </body>
 
 </html>

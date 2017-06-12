@@ -264,7 +264,7 @@ export default {
                 },
                 {
                     label: '信义餐厅',
-                    value: 3
+                    value: 2
                 }
             ], {
                     className: 'custom-classname',
@@ -275,10 +275,11 @@ export default {
                     onConfirm: function (result) {
                         _this.$data.curregion =result[0].label;
                     },
-                    id: 'singleLinePicker'
+                    id: 'pickregion'
                 });
         },
         showtime: function () {
+            var startdate = new Date()
             var curyear = new Date().getFullYear();
             var curMonth = (new Date().getMonth()) + 1;
             var curday = new Date().getDate();
@@ -292,10 +293,10 @@ export default {
                 // this.isOverlay = true;
             }
             weui.datePicker({
-                start: new Date(), // 从今天开始
+                //start: new Date(), // 从今天开始
                 end: new Date().getFullYear(),
                 defaultValue: [curyear, curMonth, curday],
-                cron: '* * 1-6',  // 每逢周日、周六
+                cron: '* * 1-6',  // 每逢周一到周六
                 onChange: function (result) {
                     console.log(result);
                 },

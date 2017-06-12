@@ -16,23 +16,27 @@ jQuery(function ($) {
         $customSaerch.removeClass('ds-n');
     }
     //初始化select2
-    var $select2 = $('#js-select2'),
+    var $select2Person = $('#js-select2-person'),
+        $select2Date = $('#js-select2-date'),
         $pageMask = $('#js-page-mask'),
         $customSaerch = $('#js-custom-saerch');
 
+    $select2Person.select2({
+        width: '180px'
+    })
 
-    $select2.select2({
+    $select2Date.select2({
         minimumResultsForSearch: Infinity,
         width: '180px'
     })
 
-    $select2.on("select2:closing", function (e) {
+    $select2Date.on("select2:closing", function (e) {
         if (e.currentTarget.value === 'costom') {
             showMask();
         }
     });
 
-    $select2.on("select2:select", function (e) {
+    $select2Date.on("select2:select", function (e) {
         if (e.currentTarget.value === 'costom') {
             showMask();
             (function (dom) {
@@ -43,10 +47,15 @@ jQuery(function ($) {
         }
     });
 
+
     //wrapper高度减上下外边
     $('.msg-item-container').height($('.wrapper').height() - 120);
     //wrapper高度减30上边30下边
     $('.aside').height($('.wrapper').height() - 30 - 30);
+    $(window).resize(function () {
+        $('.msg-item-container').height($('.wrapper').height() - 120);
+        $('.aside').height($('.wrapper').height() - 30 - 30);
+    })
     //左侧滚动条优化
     $('.aside').niceScroll({
         cursorwidth: '14px',

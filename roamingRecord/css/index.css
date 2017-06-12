@@ -22,7 +22,7 @@ html {
 
 body {
   background: url("../images/bg.jpg") no-repeat;
-  background-size: cover;
+  background-size: 100% 100%;
   height: 100%;
   width: 100%;
   margin: 0;
@@ -51,6 +51,9 @@ li {
 
 .ds-n {
   display: none; }
+
+.mgl23 {
+  margin-left: 23px; }
 
 .select2-container--default .select2-selection--single {
   border-radius: 20px;
@@ -122,7 +125,6 @@ li {
       margin-top: 7px;
       font-size: 16px; }
   .header .search-container .search-input-box {
-    margin-left: 23px;
     position: relative; }
     .header .search-container .search-input-box .search-input {
       width: 132px;
@@ -157,6 +159,7 @@ li {
   margin: 20px auto;
   background-color: #fff; }
   .wrapper .aside-container {
+    position: relative;
     width: 25%;
     box-shadow: -22px 0 60px 0px #30acf3;
     -ms-box-shadow: -22px 0 60px 0px #30acf3;
@@ -164,6 +167,10 @@ li {
     -moz-box-shadow: -22px 0 60px 0px #30acf3;
     -o-box-shadow: -22px 0 60px 0px #30acf3;
     border-right: 1px solid #e7f6ff; }
+    .wrapper .aside-container .aside-datacontainer {
+      position: absolute;
+      left: 23px;
+      top: 5px; }
     .wrapper .aside-container .aside {
       margin-top: 30px;
       margin-bottom: 30px; }

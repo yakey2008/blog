@@ -54,7 +54,7 @@ html {
 
 body {
     background: url("../images/bg.jpg") no-repeat;
-    background-size: cover;
+    background-size: 100% 100%;
     height: 100%;
     width: 100%;
     margin: 0;
@@ -89,6 +89,10 @@ li {
 
 .ds-n {
     display: none;
+}
+
+.mgl23 {
+    margin-left: 23px;
 }
 
 //cover style select2
@@ -180,7 +184,6 @@ li {
     .search-container {
         // .css-select2-container {}
         .search-input-box {
-            margin-left: 23px;
             position: relative;
             .search-input {
                 @include elwidth(132px);
@@ -222,6 +225,7 @@ li {
     margin: 20px auto;
     background-color: #fff;
     .aside-container {
+        position: relative;
         @include elwidth(25%);
         @include boxshadow(-22px,
         0,
@@ -229,6 +233,11 @@ li {
         0px,
         #30acf3);
         border-right: 1px solid #e7f6ff;
+        .aside-datacontainer {
+            position: absolute;
+            left: 23px;
+            top: 5px;
+        }
         .aside {
             // height: 720px;
             margin-top: 30px;
@@ -298,8 +307,8 @@ li {
                     font-size: 14px;
                     color: $col9b;
                     line-height: 20px;
-                        margin-top: 5px;
-    margin-bottom: 10px;
+                    margin-top: 5px;
+                    margin-bottom: 10px;
                 }
             }
         }
@@ -326,7 +335,7 @@ li {
     top: 0;
     background-color: #000;
     opacity: 0.6;
-    filter:alpha(opacity=60);  
+    filter: alpha(opacity=60);
 }
 
 .custom-search {

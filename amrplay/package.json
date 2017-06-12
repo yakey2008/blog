@@ -1,17 +1,18 @@
 {
-  "name": "amrtobase64",
-  "version": "1.0.0",
+  "name": "amrplay",
+  "version": "0.2.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Ceasar.zou",
   "license": "MIT",
   "devDependencies": {
-    "amr": "^0.0.1",
-    "amrToMp3": "^1.0.7",
+    "babel-preset-es2015": "^6.24.1",
     "browser-sync": "^2.18.12",
-    "gulp": "^3.9.1"
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "howler": "^2.0.3"
   }
 }
