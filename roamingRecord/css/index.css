@@ -55,6 +55,9 @@ li {
 .mgl23 {
   margin-left: 23px; }
 
+.highlight {
+  color: #c00; }
+
 .select2-container--default .select2-selection--single {
   border-radius: 20px;
   height: 40px;
@@ -176,9 +179,11 @@ li {
       margin-bottom: 30px; }
       .wrapper .aside-container .aside li {
         padding: 9px 7%;
+        margin-right: 4px;
         cursor: pointer; }
       .wrapper .aside-container .aside li.msgactive {
         background-color: #f0faff;
+        margin-right: 0;
         border-right: 4px solid #40b0f5; }
       .wrapper .aside-container .aside .avatar-container {
         width: 20%; }

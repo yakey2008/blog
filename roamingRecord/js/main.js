@@ -125,27 +125,31 @@ jQuery(function ($) {
 
     //搜索事件
     var sendajax = function (data) {
-        alert('发送查询');
+        // alert('发送查询');
+        //搜索结果高亮
+        $('.wrapper').unhighlight();
+        $('.wrapper').highlight(data);
         //$.ajax({data})
     }
     var searchEvt = function (dom, evt) {
         var data = '';
         if (evt === 'keydown') {
             dom.on(evt, function (e) {
-                data = $('#js-select2').val();
+                data = $('#js-searchinput').val();
                 if (e.keyCode === 13) {
                     sendajax(data);
                 }
             })
         } else {
             dom.on(evt, function () {
-                data = $('#js-select2').val();
+                data = $('#js-searchinput').val();
                 sendajax(data);
             })
         }
     }
+
     // 初始化数据
-    var initPage = function (url, tpldom, container) {
+    var initData = function (url, tpldom, container) {
         $.ajax({
             url: url,
             type: 'get',
@@ -158,10 +162,19 @@ jQuery(function ($) {
                 $(container).html(html);
                 if (container === '#js-userlist') {
                     $(container).find('li').eq(0).addClass('msgactive');
+                    $(container).find('li').each(function (idx,el) {
+                        idx=idx+1;
+                        $(el).on('click', function () {
+                            $(this).addClass('msgactive').siblings().removeClass('msgactive');
+                            initData('./json/history0'+idx+'.json', '#tpl-itemlist', '#js-itemlist');
+                        })
+                    })
+                    $('#js-ulist-count').text(data.object.length);
                 }
             },
             error: function (req) {
-                swal('网络不给力，请检查网络后刷新重试');
+                // swal('网络不给力，请检查网络后刷新重试');
+                swal('暂时只有前两个数据');
             }
         })
 
@@ -173,6 +186,6 @@ jQuery(function ($) {
     searchEvt($('#js-searchbtn'), 'click');
     searchEvt($('#js-searchinput'), 'keydown');
     // 执行初始化数据
-    initPage('./json/userlist.json', '#tpl-userlist', '#js-userlist');
-    initPage('./json/history.json', '#tpl-itemlist', '#js-itemlist');
+    initData('./json/userlist.json', '#tpl-userlist', '#js-userlist');
+    initData('./json/history01.json', '#tpl-itemlist', '#js-itemlist');
 })

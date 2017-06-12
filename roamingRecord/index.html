@@ -29,9 +29,9 @@
 			<div class="css-select2-container fl-l">
 				<select name="" class="css-select2" id="js-select2-person">
 					<option value="0">联系人</option>
-					<option value="1">一一</option>
-					<option value="2">二二</option>
-					<option value="3">三三</option>
+					<option value="1">第一位</option>
+					<option value="2">第二位</option>
+					<option value="3">第三位</option>
 				</select>
 			</div>
 			<div class="css-select2-container mgl23 fl-l">
@@ -51,12 +51,12 @@
 		</div>
 	</div>
 
-	<div class="wrapper">
+	<div class="wrapper" id="js-tohighlight">
 		<div class="main-container clearfix">
 			<div class="aside-container fl-l">
-				<span class="aside-datacontainer">数据：20条</span>
+				<span class="aside-datacontainer">数据：<b id="js-ulist-count"></b>条</span>
 				<ul class="aside" id="js-userlist">
-					<li class="clearfix msgactive">
+					<!--<li class="clearfix msgactive">
 						<div class="avatar-container fl-l">
 							<div class="avatar">
 								<img src="./images/avatar.jpg" alt="">
@@ -220,14 +220,14 @@
 							<p class="msg-info-nametime">欧思路<span class="datetime fl-r">12:00</span></p>
 							<p class="msg-info-personalsign">个你的撒旦按时大阿萨德撒旦按时1111111111112</p>
 						</div>
-					</li>
+					</li>-->
 				</ul>
 			</div>
 			<div class="msg-content fl-r">
 				<div class="msg-item-container">
 					<div class="css-noresult ds-n"><img src="./images/noresult.png" alt=""></div>
 					<div id="js-itemlist">
-						<div class="msg-item">
+						<!--<div class="msg-item">
 							<p class="item-nametime">我（xxxx）<span class="datetime">08:11</span></p>
 							<p class="item-content">饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe</p>
 						</div>
@@ -286,7 +286,7 @@
 						<div class="msg-item">
 							<p class="item-nametime">我（xxxx）<span class="datetime">08:11</span></p>
 							<p class="item-content">饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe</p>
-						</div>
+						</div>-->
 					</div>
 				</div>
 				<div class="pagenum-container">
@@ -344,6 +344,7 @@
 	<script src="./lib/js/jquery.placeholder.min.js"></script>
 	<script src="./lib/js/datepicker.min.js"></script>
 	<script src="./lib/js/sweet-alert.min.js"></script>
+	<script src="./lib/js/jquery.highlight.js"></script>
 	<script src="./js/main.js"></script>
 </body>
 
