@@ -5,6 +5,14 @@
  */
 
 jQuery(function ($) {
+    //左侧dom 右侧dom 右侧内部dom
+    var leftdom = $('#js-userlist');
+    var rightdom = $('.msg-item-container');
+    var rightinsidedom = $('#js-itemlist');
+    //左侧计算区dom 右侧计算区dom 返回按钮dom
+    var leftcountdom = $('.aside-datacontainer');
+    var rightcountdom = $('.msg-item-datacontainer');
+    var backbtn = $('#js-backbtn');
     //mask摸态框显示隐藏
     var hideMask = function (method) {
         $pageMask.addClass('ds-n');
@@ -47,28 +55,8 @@ jQuery(function ($) {
         }
     });
 
-
-    //wrapper高度减上下外边
-    $('.msg-item-container').height($('.wrapper').height() - 120);
-    //wrapper高度减30上边30下边
-    $('.aside').height($('.wrapper').height() - 30 - 30);
-    $(window).resize(function () {
-        $('.msg-item-container').height($('.wrapper').height() - 120);
-        $('.aside').height($('.wrapper').height() - 30 - 30);
-    })
-    //左侧滚动条优化
-    $('.aside').niceScroll({
-        cursorwidth: '14px',
-        cursorcolor: '#e2f5ff'
-    });
-    //右侧滚动条优化
-    $('.msg-item-container').niceScroll({
-        cursorwidth: '14px',
-        cursorcolor: '#e2f5ff'
-    });
     //兼容ie placeholder
     $('.search-input').placeholder();
-
 
     //时间配置初始化
     $('[data-toggle="datepicker"]').datepicker({
@@ -123,14 +111,24 @@ jQuery(function ($) {
         })
     }
 
-    //搜索事件
+    /**
+     * 发送搜索请求
+     * @param {string 搜索关键字} data 
+     */
     var sendajax = function (data) {
         // alert('发送查询');
-        //搜索结果高亮
-        $('.wrapper').unhighlight();
-        $('.wrapper').highlight(data);
-        //$.ajax({data})
+        //搜索结果调整dom
+        leftcountdom.removeClass('ds-n');
+        rightcountdom.removeClass('ds-n');
+        backbtn.addClass('ds-n');
+        initHeight(110, 160, 70, data);
+        //可能有-----ajax------
     }
+    /**
+     * 搜索事件
+     * @param {string 触发事件的dom input或放大镜图} dom 
+     * @param {string 事件类型 回车或点击放大镜图} evt 
+     */
     var searchEvt = function (dom, evt) {
         var data = '';
         if (evt === 'keydown') {
@@ -146,10 +144,16 @@ jQuery(function ($) {
                 sendajax(data);
             })
         }
-    }
 
-    // 初始化数据
-    var initData = function (url, tpldom, container) {
+    }
+    /**
+     * 初始化数据
+     * @param {string 异步url} url 
+     * @param {string 模板引擎script dom} tpldom 
+     * @param {string 模板引擎dom} container 
+     * @param {string 搜索的关键字} hasmsearchdata 
+     */
+    var initData = function (url, tpldom, container, hasmsearchdata) {
         $.ajax({
             url: url,
             type: 'get',
@@ -160,17 +164,55 @@ jQuery(function ($) {
                 var template = Handlebars.compile(tpl);
                 var html = template(data);
                 $(container).html(html);
+                //左侧
                 if (container === '#js-userlist') {
                     $(container).find('li').eq(0).addClass('msgactive');
-                    $(container).find('li').each(function (idx,el) {
-                        idx=idx+1;
+                    $(container).find('li').each(function (idx, el) {
+                        idx = idx + 1;
                         $(el).on('click', function () {
                             $(this).addClass('msgactive').siblings().removeClass('msgactive');
-                            initData('./json/history0'+idx+'.json', '#tpl-itemlist', '#js-itemlist');
+                            initData('./json/history0' + idx + '.json', '#tpl-itemlist', '#js-itemlist');
                         })
                     })
+                    //左侧总条数
                     $('#js-ulist-count').text(data.object.length);
                 }
+                //右侧
+                if (container === '#js-itemlist') {
+                    // $(container).find('.msg-item').eq(0).addClass('itemactive');
+                    $(container).find('.msg-item').each(function (idx, el) {
+                        idx = idx + 1;
+                        if (hasmsearchdata) {
+                            //右侧item鼠标移上背景与查看前后记录显示
+                            $(el).on('mouseover', function () {
+                                $(this).addClass('itemactive').siblings().removeClass('itemactive');
+                                $(this).find('.css-seehistory').removeClass('ds-n');
+                                $(this).siblings().find('.css-seehistory').addClass('ds-n');
+                                //查看前后记录事件
+                                $(this).find('.css-seehistory').on('click', function () {
+                                    backbtn.removeClass('ds-n');
+                                    rightcountdom.addClass('ds-n');
+                                    //可能有-----ajax-----
+                                    //返回按钮事件
+                                    backbtn.on('click', function () {
+                                        backbtn.addClass('ds-n');
+                                        rightcountdom.removeClass('ds-n');
+                                        //可能有-----ajax------
+                                    })
+                                })
+                            })
+                            //搜索结果高亮
+                            $('.wrapper').unhighlight();
+                            $('.wrapper').highlight(hasmsearchdata);
+                            //右侧关键字
+                            $('#js-item-keyword').text(hasmsearchdata);
+                        }
+                    })
+                }
+                //右侧总条数
+                $('#js-itemlist-count').text(data.object.length);
+                //关键字
+                // $('#js-itemlist-count').text(data.object.length);
             },
             error: function (req) {
                 // swal('网络不给力，请检查网络后刷新重试');
@@ -179,13 +221,61 @@ jQuery(function ($) {
         })
 
     }
+    /**
+     * 初始化容器高度 重新计算容器高度
+     * @param {num 左侧容器减去高度} left 
+     * @param {num 右侧容器减去高度} right 
+     * @param {num 左右侧变动的margin-top} marginT 
+     * @param {string 搜索关键字} searchdata 
+     */
+    var initHeight = function (left, right, marginT, searchdata) {
+        //是否搜索
+        if (searchdata) {
+            //搜索后重新渲染dom
+            initData('./json/userlist.json', '#tpl-userlist', '#js-userlist', searchdata);
+            initData('./json/history01.json', '#tpl-itemlist', '#js-itemlist', searchdata);
+        } else {
+            // 执行初始化数据
+            initData('./json/userlist.json', '#tpl-userlist', '#js-userlist');
+            initData('./json/history01.json', '#tpl-itemlist', '#js-itemlist');
+        }
+
+
+        //wrap高度
+        var wrapheight = $('#js-tohighlight').height();
+        if (marginT) {
+            leftdom.css('margin-top', marginT);
+            rightdom.css('margin-top', marginT);
+        }
+        //左侧高度计算 wrapper高度减上下外边
+        leftdom.height(wrapheight - left);
+        //右侧高度计算 wrapper高度减上下外边
+        rightdom.height(wrapheight - right);
+
+        //窗口变化事件
+        $(window).resize(function () {
+            //左侧
+            leftdom.height(wrapheight - left);
+            //右侧
+            rightdom.height(wrapheight - right);
+        })
+        //左侧滚动条优化
+        leftdom.niceScroll({
+            cursorwidth: '12px',
+            cursorcolor: '#e2f5ff'
+        });
+        //右侧滚动条优化
+        rightdom.niceScroll({
+            cursorwidth: '12px',
+            cursorcolor: '#e2f5ff'
+        });
+    }
 
     //执行时间选择处理函数
     pickTime();
     //搜索事件
     searchEvt($('#js-searchbtn'), 'click');
     searchEvt($('#js-searchinput'), 'keydown');
-    // 执行初始化数据
-    initData('./json/userlist.json', '#tpl-userlist', '#js-userlist');
-    initData('./json/history01.json', '#tpl-itemlist', '#js-itemlist');
+    //初始化数据 左右容器高度
+    initHeight(70, 120);
 })

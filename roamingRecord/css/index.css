@@ -50,20 +50,23 @@ li {
   clear: both; }
 
 .ds-n {
-  display: none; }
+  display: none !important; }
 
 .mgl23 {
   margin-left: 23px; }
 
-.highlight {
-  color: #c00; }
+.aside .highlight {
+  color: #1aa2f5; }
+
+.css-itemlist .highlight {
+  background-color: #fff60d; }
 
 .select2-container--default .select2-selection--single {
   border-radius: 20px;
   height: 40px;
   padding: 5px 23px;
   border: 1px solid #fff;
-  background-color: #50b4f8;
+  background-color: #3fa2fb;
   color: #fff; }
 
 .select2-container--default .select2-selection--single:focus {
@@ -86,7 +89,7 @@ li {
   background-color: #fff; }
 
 .select2-container--default.select2-container--open.select2-container--below .select2-selection--single .select2-selection__rendered {
-  color: #50b4f8 !important; }
+  color: #3fa2fb !important; }
 
 .select2-container--open .select2-dropdown--below {
   box-shadow: 0 5px 31px -11px #30acf3;
@@ -98,17 +101,17 @@ li {
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
   overflow: hidden;
-  color: #50b4f8; }
+  color: #3fa2fb; }
 
 .select2-results__option[aria-selected] {
   padding: 10px 24px; }
 
 .select2-container--default.select2-container--open .select2-selection--single .select2-selection__arrow b {
-  border-color: transparent transparent #50b4f8 transparent;
+  border-color: transparent transparent #3fa2fb transparent;
   border-width: 0 8px 7px 8px; }
 
 .select2-container--default .select2-results__option--highlighted[aria-selected] {
-  background-color: #50b4f8; }
+  background-color: #3fa2fb; }
 
 .select2-container--default .select2-results > .select2-results__options {
   max-height: 300px; }
@@ -120,20 +123,22 @@ li {
   padding-top: 20px; }
   .header .logo {
     width: 30%;
+    margin-left: 30px;
     color: #fff; }
     .header .logo .page-title {
       margin: 0;
       font-size: 32px; }
     .header .logo .page-subtitle {
       margin-top: 7px;
-      font-size: 16px; }
+      font-size: 16px;
+      opacity: .7; }
   .header .search-container .search-input-box {
     position: relative; }
     .header .search-container .search-input-box .search-input {
       width: 132px;
       border-radius: 25px;
       padding: 10px 23px;
-      background-color: #50b4f8;
+      background-color: #3fa2fb;
       border: 1px solid #fff;
       color: #fff; }
     .header .search-container .search-input-box .search-input:focus {
@@ -171,15 +176,19 @@ li {
     -o-box-shadow: -22px 0 60px 0px #30acf3;
     border-right: 1px solid #e7f6ff; }
     .wrapper .aside-container .aside-datacontainer {
+      color: #9b9b9b;
       position: absolute;
       left: 23px;
-      top: 5px; }
+      top: 5px;
+      font-size: 16px;
+      margin-top: 30px; }
     .wrapper .aside-container .aside {
       margin-top: 30px;
-      margin-bottom: 30px; }
+      margin-bottom: 40px; }
       .wrapper .aside-container .aside li {
-        padding: 9px 7%;
+        padding: 10px 7%;
         margin-right: 4px;
+        margin-bottom: 6px;
         cursor: pointer; }
       .wrapper .aside-container .aside li.msgactive {
         background-color: #f0faff;
@@ -209,31 +218,67 @@ li {
   .wrapper .msg-content {
     width: 73%;
     position: relative; }
+    .wrapper .msg-content .css-backbtn {
+      position: absolute;
+      top: 30px;
+      left: 23px;
+      display: block;
+      background-color: #dbf3ff;
+      color: #1aa2f5;
+      padding: 5px 20px;
+      border-radius: 15px;
+      cursor: pointer; }
+      .wrapper .msg-content .css-backbtn .css-backarrow {
+        width: 8px;
+        margin-top: 2px;
+        margin-right: 10px; }
+        .wrapper .msg-content .css-backbtn .css-backarrow img {
+          width: 100%; }
+    .wrapper .msg-content .msg-item-datacontainer {
+      color: #9b9b9b;
+      position: absolute;
+      left: 23px;
+      top: 5px;
+      font-size: 16px;
+      margin-top: 30px; }
+      .wrapper .msg-content .msg-item-datacontainer .css-item-keyword {
+        color: #1aa2f5; }
     .wrapper .msg-content .msg-item-container {
-      margin-top: 40px;
-      margin-bottom: 33px;
-      margin-right: 3%;
-      padding: 0 4%;
+      position: relative;
+      margin: 30px 36px 33px 10px;
+      padding-right: 42px;
       overflow-y: scroll; }
       .wrapper .msg-content .msg-item-container .css-noresult {
         width: 60%;
         margin: 20% auto; }
         .wrapper .msg-content .msg-item-container .css-noresult img {
           width: 100%; }
-      .wrapper .msg-content .msg-item-container .msg-item .item-nametime .datetime {
-        color: #9b9b9b; }
-      .wrapper .msg-content .msg-item-container .msg-item .item-content {
-        font-size: 14px;
-        color: #9b9b9b;
-        line-height: 20px;
-        margin-top: 5px;
-        margin-bottom: 10px; }
+      .wrapper .msg-content .msg-item-container .css-itemlist .msg-item {
+        padding: 10px 20px; }
+        .wrapper .msg-content .msg-item-container .css-itemlist .msg-item .item-nametime {
+          font-size: 18px; }
+          .wrapper .msg-content .msg-item-container .css-itemlist .msg-item .item-nametime .msg-name {
+            color: #0092ec; }
+          .wrapper .msg-content .msg-item-container .css-itemlist .msg-item .item-nametime .datetime {
+            font-size: 16px;
+            color: #9b9b9b; }
+          .wrapper .msg-content .msg-item-container .css-itemlist .msg-item .item-nametime .css-seehistory {
+            font-size: 16px;
+            color: #1aa2f5;
+            cursor: pointer; }
+        .wrapper .msg-content .msg-item-container .css-itemlist .msg-item .item-content {
+          font-size: 16px;
+          color: #333;
+          line-height: 20px;
+          margin-top: 7px; }
+      .wrapper .msg-content .msg-item-container .css-itemlist .msg-item.itemactive {
+        background-color: #f0faff; }
     .wrapper .msg-content .pagenum-container {
       width: 97%;
       text-align: center;
-      color: #50b4f8;
+      color: #54c2ff;
       position: absolute;
-      bottom: -11px; }
+      bottom: -18px; }
       .wrapper .msg-content .pagenum-container .pagenum {
         display: inline-block;
         margin: 0 7px;
@@ -275,7 +320,7 @@ li {
       right: 20px;
       cursor: pointer; }
     .custom-search .css-content .input-container {
-      color: #9b9b9b;
+      color: #333;
       padding-top: 25px;
       padding-bottom: 20px;
       text-align: center;

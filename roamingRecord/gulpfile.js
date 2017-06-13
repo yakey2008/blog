@@ -90,7 +90,8 @@ gulp.task('del', function (cb) {
 //启动服务，编辑scss
 gulp.task('serve', ['sass'], () => {
     browserSync.init({
-        server: "./"
+        server: "./",
+        port:3000
     });
     gulp.watch("scss/*.scss", ['sass']);
     gulp.watch("*.html").on('change', reload);

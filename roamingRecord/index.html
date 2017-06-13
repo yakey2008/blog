@@ -12,6 +12,7 @@
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="black">
 	<meta name="format-detection" content="telephone=no">
+	<link rel="shortcut icon" href="./images/favicon.ico" type="image/x-icon" />
 	<link rel="stylesheet" href="./lib/css/normalize.min.css">
 	<link rel="stylesheet" href="./lib/css/select2.min.css">
 	<link rel="stylesheet" href="./lib/css/datepicker.min.css">
@@ -54,240 +55,15 @@
 	<div class="wrapper" id="js-tohighlight">
 		<div class="main-container clearfix">
 			<div class="aside-container fl-l">
-				<span class="aside-datacontainer">数据：<b id="js-ulist-count"></b>条</span>
-				<ul class="aside" id="js-userlist">
-					<!--<li class="clearfix msgactive">
-						<div class="avatar-container fl-l">
-							<div class="avatar">
-								<img src="./images/avatar.jpg" alt="">
-							</div>
-						</div>
-						<div class="msg-info fl-r">
-							<p class="msg-info-nametime">欧思路<span class="datetime fl-r">12:00</span></p>
-							<p class="msg-info-personalsign">个你的撒旦按时大阿萨德撒旦按时</p>
-						</div>
-					</li>
-					<li class="clearfix">
-						<div class="avatar-container fl-l">
-							<div class="avatar">
-								<img src="./images/avatar.jpg" alt="">
-							</div>
-						</div>
-						<div class="msg-info fl-r">
-							<p class="msg-info-nametime">欧思路<span class="datetime fl-r">12:00</span></p>
-							<p class="msg-info-personalsign">个你的撒旦按时大阿萨德撒旦按时</p>
-						</div>
-					</li>
-					<li class="clearfix">
-						<div class="avatar-container fl-l">
-							<div class="avatar">
-								<img src="./images/avatar.jpg" alt="">
-							</div>
-						</div>
-						<div class="msg-info fl-r">
-							<p class="msg-info-nametime">欧思路<span class="datetime fl-r">12:00</span></p>
-							<p class="msg-info-personalsign">个你的撒旦按时大阿萨德撒旦按时</p>
-						</div>
-					</li>
-					<li class="clearfix">
-						<div class="avatar-container fl-l">
-							<div class="avatar">
-								<img src="./images/avatar.jpg" alt="">
-							</div>
-						</div>
-						<div class="msg-info fl-r">
-							<p class="msg-info-nametime">欧思路<span class="datetime fl-r">12:00</span></p>
-							<p class="msg-info-personalsign">个你的撒旦按时大阿萨德撒旦按时</p>
-						</div>
-					</li>
-					<li class="clearfix">
-						<div class="avatar-container fl-l">
-							<div class="avatar">
-								<img src="./images/avatar.jpg" alt="">
-							</div>
-						</div>
-						<div class="msg-info fl-r">
-							<p class="msg-info-nametime">欧思路<span class="datetime fl-r">12:00</span></p>
-							<p class="msg-info-personalsign">个你的撒旦按时大阿萨德撒旦按时</p>
-						</div>
-					</li>
-					<li class="clearfix">
-						<div class="avatar-container fl-l">
-							<div class="avatar">
-								<img src="./images/avatar.jpg" alt="">
-							</div>
-						</div>
-						<div class="msg-info fl-r">
-							<p class="msg-info-nametime">欧思路<span class="datetime fl-r">12:00</span></p>
-							<p class="msg-info-personalsign">个你的撒旦按时大阿萨德撒旦按时</p>
-						</div>
-					</li>
-					<li class="clearfix">
-						<div class="avatar-container fl-l">
-							<div class="avatar">
-								<img src="./images/avatar.jpg" alt="">
-							</div>
-						</div>
-						<div class="msg-info fl-r">
-							<p class="msg-info-nametime">欧思路<span class="datetime fl-r">12:00</span></p>
-							<p class="msg-info-personalsign">个你的撒旦按时大阿萨德撒旦按时</p>
-						</div>
-					</li>
-					<li class="clearfix">
-						<div class="avatar-container fl-l">
-							<div class="avatar">
-								<img src="./images/avatar.jpg" alt="">
-							</div>
-						</div>
-						<div class="msg-info fl-r">
-							<p class="msg-info-nametime">欧思路<span class="datetime fl-r">12:00</span></p>
-							<p class="msg-info-personalsign">个你的撒旦按时大阿萨德撒旦按时1111111111112</p>
-						</div>
-					</li>
-					<li class="clearfix">
-						<div class="avatar-container fl-l">
-							<div class="avatar">
-								<img src="./images/avatar.jpg" alt="">
-							</div>
-						</div>
-						<div class="msg-info fl-r">
-							<p class="msg-info-nametime">欧思路<span class="datetime fl-r">12:00</span></p>
-							<p class="msg-info-personalsign">个你的撒旦按时大阿萨德撒旦按时1111111111112</p>
-						</div>
-					</li>
-					<li class="clearfix">
-						<div class="avatar-container fl-l">
-							<div class="avatar">
-								<img src="./images/avatar.jpg" alt="">
-							</div>
-						</div>
-						<div class="msg-info fl-r">
-							<p class="msg-info-nametime">欧思路<span class="datetime fl-r">12:00</span></p>
-							<p class="msg-info-personalsign">个你的撒旦按时大阿萨德撒旦按时1111111111112</p>
-						</div>
-					</li>
-					<li class="clearfix">
-						<div class="avatar-container fl-l">
-							<div class="avatar">
-								<img src="./images/avatar.jpg" alt="">
-							</div>
-						</div>
-						<div class="msg-info fl-r">
-							<p class="msg-info-nametime">欧思路<span class="datetime fl-r">12:00</span></p>
-							<p class="msg-info-personalsign">个你的撒旦按时大阿萨德撒旦按时1111111111112</p>
-						</div>
-					</li>
-					<li class="clearfix">
-						<div class="avatar-container fl-l">
-							<div class="avatar">
-								<img src="./images/avatar.jpg" alt="">
-							</div>
-						</div>
-						<div class="msg-info fl-r">
-							<p class="msg-info-nametime">欧思路<span class="datetime fl-r">12:00</span></p>
-							<p class="msg-info-personalsign">个你的撒旦按时大阿萨德撒旦按时1111111111112</p>
-						</div>
-					</li>
-					<li class="clearfix">
-						<div class="avatar-container fl-l">
-							<div class="avatar">
-								<img src="./images/avatar.jpg" alt="">
-							</div>
-						</div>
-						<div class="msg-info fl-r">
-							<p class="msg-info-nametime">欧思路<span class="datetime fl-r">12:00</span></p>
-							<p class="msg-info-personalsign">个你的撒旦按时大阿萨德撒旦按时1111111111112</p>
-						</div>
-					</li>
-					<li class="clearfix">
-						<div class="avatar-container fl-l">
-							<div class="avatar">
-								<img src="./images/avatar.jpg" alt="">
-							</div>
-						</div>
-						<div class="msg-info fl-r">
-							<p class="msg-info-nametime">欧思路<span class="datetime fl-r">12:00</span></p>
-							<p class="msg-info-personalsign">个你的撒旦按时大阿萨德撒旦按时1111111111112</p>
-						</div>
-					</li>
-					<li class="clearfix">
-						<div class="avatar-container fl-l">
-							<div class="avatar">
-								<img src="./images/avatar.jpg" alt="">
-							</div>
-						</div>
-						<div class="msg-info fl-r">
-							<p class="msg-info-nametime">欧思路<span class="datetime fl-r">12:00</span></p>
-							<p class="msg-info-personalsign">个你的撒旦按时大阿萨德撒旦按时1111111111112</p>
-						</div>
-					</li>-->
-				</ul>
+				<span class="aside-datacontainer ds-n">共<span id="js-ulist-count"></span>条相关记录</span>
+				<ul class="aside" id="js-userlist"></ul>
 			</div>
 			<div class="msg-content fl-r">
+				<span class="msg-item-datacontainer ds-n">共<span id="js-itemlist-count"></span>条与“<span class="css-item-keyword" id="js-item-keyword"></span>”相关的聊天记录</span>
+				<span class="css-backbtn ds-n" id="js-backbtn"><i class="css-backarrow fl-l"><img src="./images/backbtn-arrow.png"></i>返回</span>
 				<div class="msg-item-container">
-					<div class="css-noresult ds-n"><img src="./images/noresult.png" alt=""></div>
-					<div id="js-itemlist">
-						<!--<div class="msg-item">
-							<p class="item-nametime">我（xxxx）<span class="datetime">08:11</span></p>
-							<p class="item-content">饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe</p>
-						</div>
-						<div class="msg-item">
-							<p class="item-nametime">我（xxxx）<span class="datetime">08:11</span></p>
-							<p class="item-content">饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe</p>
-						</div>
-						<div class="msg-item">
-							<p class="item-nametime">我（xxxx）<span class="datetime">08:11</span></p>
-							<p class="item-content">饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe</p>
-						</div>
-						<div class="msg-item">
-							<p class="item-nametime">我（xxxx）<span class="datetime">08:11</span></p>
-							<p class="item-content">饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe</p>
-						</div>
-						<div class="msg-item">
-							<p class="item-nametime">我（xxxx）<span class="datetime">08:11</span></p>
-							<p class="item-content">饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe</p>
-						</div>
-						<div class="msg-item">
-							<p class="item-nametime">我（xxxx）<span class="datetime">08:11</span></p>
-							<p class="item-content">饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe</p>
-						</div>
-						<div class="msg-item">
-							<p class="item-nametime">我（xxxx）<span class="datetime">08:11</span></p>
-							<p class="item-content">饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe</p>
-						</div>
-						<div class="msg-item">
-							<p class="item-nametime">我（xxxx）<span class="datetime">08:11</span></p>
-							<p class="item-content">饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe</p>
-						</div>
-						<div class="msg-item">
-							<p class="item-nametime">我（xxxx）<span class="datetime">08:11</span></p>
-							<p class="item-content">饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe</p>
-						</div>
-						<div class="msg-item">
-							<p class="item-nametime">我（xxxx）<span class="datetime">08:11</span></p>
-							<p class="item-content">饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe</p>
-						</div>
-						<div class="msg-item">
-							<p class="item-nametime">我（xxxx）<span class="datetime">08:11</span></p>
-							<p class="item-content">饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe</p>
-						</div>
-						<div class="msg-item">
-							<p class="item-nametime">我（xxxx）<span class="datetime">08:11</span></p>
-							<p class="item-content">饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe</p>
-						</div>
-						<div class="msg-item">
-							<p class="item-nametime">我（xxxx）<span class="datetime">08:11</span></p>
-							<p class="item-content">饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe</p>
-						</div>
-						<div class="msg-item">
-							<p class="item-nametime">我（xxxx）<span class="datetime">08:11</span></p>
-							<p class="item-content">饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe</p>
-						</div>
-						<div class="msg-item">
-							<p class="item-nametime">我（xxxx）<span class="datetime">08:11</span></p>
-							<p class="item-content">饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe饿哦IQ我跟uenqwewqojeoiwqn我去恩请问噢诶我去年诶我去年玩日期为你eiqwoe</p>
-						</div>-->
-					</div>
+					<div class="css-noresult ds-n"><img src="./images/noresult.png"></div>
+					<div class="css-itemlist" id="js-itemlist"></div>
 				</div>
 				<div class="pagenum-container">
 					<div class="pagenum">首页</div>
@@ -321,7 +97,8 @@
 				</div>
 			</div>
 			<div class="msg-info fl-r">
-				<p class="msg-info-nametime">{{name}}<span class="datetime fl-r">12:00</span></p>
+				<p class="msg-info-nametime">
+					{{name}}<span class="datetime fl-r">12:00</span></p>
 				<p class="msg-info-personalsign">{{content}}</p>
 			</div>
 		</li>
@@ -331,7 +108,13 @@
 	<script id="tpl-itemlist" type="text/x-handlebars-template">
 		{{#each object}}
 		<div class="msg-item">
-			<p class="item-nametime">我（{{name}}）<span class="datetime">{{time}}</span></p>
+			<p class="item-nametime">
+				<span class="msg-name">我（{{name}}）</span>
+				<span class="datetime">{{time}}</span>
+				{{#if true}}
+				<span class="css-seehistory fl-r ds-n">查看前后聊天记录</span>
+				{{/if}}
+			</p>
 			<p class="item-content">{{content}}</p>
 		</div>
 		{{/each}}
