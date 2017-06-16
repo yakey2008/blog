@@ -41,12 +41,21 @@ function playPcm(samples) {
     src.buffer = buffer;
     src.connect(ctx.destination);
     // src.start(0);
+    // 创建一个gain node
+    var gainNode = ctx.createGainNode();
+    // 将实例与gain node相连
+    src.connect(gainNode);
+    // 将gain node与播放设备连接
+    gainNode.connect(ctx.destination);
+    //一旦设定完成之后， 你就可以通过改变值之后来控制音量了。
+    //减少音量
 
     if (startBtn.getAttribute('data-statu') === 'stop') {
         src.start(0);
         startBtn.setAttribute('data-statu', 'start');
     } else {
-        src.stop(ctx.currentTime);
+        gainNode.gain.value = 0.5;
+        // src.stop(ctx.currentTime);
         // ctx.currentTime = 0;
         startBtn.setAttribute('data-statu', 'stop');
     }
@@ -71,7 +80,7 @@ var gAudioContext = new AudioContext();
 startBtn.addEventListener('click', function () {
     //amr url
     // fetch(amr.getAttribute('href'))
-    fetch('http://10.100.69.100:3000/src/female.amr').then(function (res) {
+    fetch('http://10.100.69.100:3200/src/female.amr').then(function (res) {
         // Response stream
         return res.blob();
     }).then(function (myBlob) {

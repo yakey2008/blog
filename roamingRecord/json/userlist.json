@@ -1,24 +1,42 @@
 {
-    "success":true,
-    "message":"okokok",
-    "object":[
-        {"name":"记事本","time":"2017-06-01","content":"1如果你是有经验的前端开发者，想知道 Vue.js 与其它库/框架的区别","avatar":""},
-        {"name":"奔跑的小盒子","time":"2017-06-01","content":"2如果你是有经验的前端开发者，想知道 Vue.js 与其它库/框架的区别"},
-        {"name":"空调开冷气","time":"2017-06-01","content":"3    如果你是有经验的前端开发者，想知道 Vue.js 与其它库/框架的区别"},
-        {"name":"空调开冷气","time":"2017-06-01","content":"3    如果你是有经验的前端开发者，想知道 Vue.js 与其它库/框架的区别"},
-        {"name":"空调开冷气","time":"2017-06-01","content":"3    如果你是有经验的前端开发者，想知道 Vue.js 与其它库/框架的区别"},
-        {"name":"空调开冷气","time":"2017-06-01","content":"3    如果你是有经验的前端开发者，想知道 Vue.js 与其它库/框架的区别"},
-        {"name":"空调开冷气","time":"2017-06-01","content":"3    如果你是有经验的前端开发者，想知道 Vue.js 与其它库/框架的区别"},
-        {"name":"空调开冷气","time":"2017-06-01","content":"3    如果你是有经验的前端开发者，想知道 Vue.js 与其它库/框架的区别"},
-        {"name":"空调开冷气","time":"2017-06-01","content":"3    如果你是有经验的前端开发者，想知道 Vue.js 与其它库/框架的区别"},
-        {"name":"空调开冷气","time":"2017-06-01","content":"3    如果你是有经验的前端开发者，想知道 Vue.js 与其它库/框架的区别"},
-        {"name":"空调开冷气","time":"2017-06-01","content":"3    如果你是有经验的前端开发者，想知道 Vue.js 与其它库/框架的区别"},
-        {"name":"空调开冷气","time":"2017-06-01","content":"3    如果你是有经验的前端开发者，想知道 Vue.js 与其它库/框架的区别"},
-        {"name":"空调开冷气","time":"2017-06-01","content":"3    如果你是有经验的前端开发者，想知道 Vue.js 与其它库/框架的区别"},
-        {"name":"空调开冷气","time":"2017-06-01","content":"3    如果你是有经验的前端开发者，想知道 Vue.js 与其它库/框架的区别"},
-        {"name":"空调开冷气","time":"2017-06-01","content":"3    如果你是有经验的前端开发者，想知道 Vue.js 与其它库/框架的区别"},
-        {"name":"空调开冷气","time":"2017-06-01","content":"3    如果你是有经验的前端开发者，想知道 Vue.js 与其它库/框架的区别"},
-        {"name":"空调开冷气","time":"2017-06-01","content":"3    如果你是有经验的前端开发者，想知道 Vue.js 与其它库/框架的区别"}
-    ]
-
+    "__isset": {
+        "responseHeader": true,
+        "chatSessionDatas": true,
+        "targetInfoDatas": true
+    },
+    "responseHeader": {
+        "__isset": {
+            "status": true,
+            "message": true,
+            "requestID": true
+        },
+        "status": 1,
+        "message": "ok",
+        "requestID": "17cf0e91-a286-4daa-bc1b-749bdb613d26"
+    },
+    "chatSessionDatas": [{
+        "__isset": {
+            "targetInfo": true,
+            "lastChatCnt": true,
+            "locatorID": true
+        },
+        "targetInfo": {
+            "__isset": {
+                "targetID": true,
+                "targetName": true
+            },
+            "targetID": "92a6a18b-3c9d-437c-9a26-5d38f0d062b6",
+            "targetName": "庞标兵"
+        },
+        "lastChatCnt": "aaaa",
+        "locatorID": "593fba94a354645af06f872e"
+    }],
+    "targetInfoDatas": [{
+        "__isset": {
+            "targetID": true,
+            "targetName": true
+        },
+        "targetID": "92a6a18b-3c9d-437c-9a26-5d38f0d062b6",
+        "targetName": "庞标兵"
+    }]
 }

@@ -15,7 +15,8 @@ gulp.task('es6',()=>{
 //启动服务，编辑scss
 gulp.task('serve',['es6'], () => {
     browserSync.init({
-        server: "./"
+        server: "./",
+        port:3200
     });
     gulp.watch("*.html").on('change', reload);
     gulp.watch("es6/*.js",['es6']);

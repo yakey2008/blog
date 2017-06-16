@@ -1,17 +1,80 @@
 {
-    "success":true,
-    "message":"okokok",
-    "object":[
-        {"name":"维他奶","time":"2017-06-01","content":"ajax 官方指南假设你已有 HTML、CSS 和 JavaScript 中级前端知识。如果你刚开始学习前端开发"},
-        {"name":"维他奶","time":"2017-06-01","content":"官方指南假设你已有 HTML、CSS 和 JavaScript 中级前端知识。如果你刚开始学习前端开发，将框架作为你的第一步可能不是最好的主意——掌握好基础知识再来！之前有其他框架的使用经验对于学习 Vue.js 是有帮助的，但这不是必需的。"},
-        {"name":"维他奶","time":"2017-06-01","content":"官方指南假设你已有 HTML、CSS 和 JavaScript 中级前端知识。如果你刚开始学习前端开发，将框架作为你的第一步可能不是最好的主意——掌握好基础知识再来！之前有其他框架的使用经验对于学习 Vue.js 是有帮助的，但这不是必需的。"},
-        {"name":"维他奶","time":"2017-06-01","content":"官方指南假设你已有 HTML、CSS 和 JavaScript 中级前端知识。如果你刚开始学习前端开发，将框架作为你的第一步可能不是最好的主意——掌握好基础知识再来！之前有其他框架的使用经验对于学习 Vue.js 是有帮助的，但这不是必需的。"},
-        {"name":"维他奶","time":"2017-06-01","content":"官方指南假设你已有 HTML、CSS 和 JavaScript 中级前端知识。如果你刚开始学习前端开发，将框架作为你的第一步可能不是最好的主意——掌握好基础知识再来！之前有其他框架的使用经验对于学习 Vue.js 是有帮助的，但这不是必需的。"},
-        {"name":"维他奶","time":"2017-06-01","content":"官方指南假设你已有 HTML、CSS 和 JavaScript 中级前端知识。如果你刚开始学习前端开发，将框架作为你的第一步可能不是最好的主意——掌握好基础知识再来！之前有其他框架的使用经验对于学习 Vue.js 是有帮助的，但这不是必需的。"},
-        {"name":"维他奶","time":"2017-06-01","content":"官方指南假设你已有 HTML、CSS 和 JavaScript 中级前端知识。如果你刚开始学习前端开发，将框架作为你的第一步可能不是最好的主意——掌握好基础知识再来！之前有其他框架的使用经验对于学习 Vue.js 是有帮助的，但这不是必需的。"},
-        {"name":"维他奶","time":"2017-06-01","content":"官方指南假设你已有 HTML、CSS 和 JavaScript 中级前端知识。如果你刚开始学习前端开发，将框架作为你的第一步可能不是最好的主意——掌握好基础知识再来！之前有其他框架的使用经验对于学习 Vue.js 是有帮助的，但这不是必需的。"},
-        {"name":"维他奶","time":"2017-06-01","content":"官方指南假设你已有 HTML、CSS 和 JavaScript 中级前端知识。如果你刚开始学习前端开发，将框架作为你的第一步可能不是最好的主意——掌握好基础知识再来！之前有其他框架的使用经验对于学习 Vue.js 是有帮助的，但这不是必需的。"},
-        {"name":"维他奶","time":"2017-06-01","content":"官方指南假设你已有 HTML、CSS 和 JavaScript 中级前端知识。如果你刚开始学习前端开发，将框架作为你的第一步可能不是最好的主意——掌握好基础知识再来！之前有其他框架的使用经验对于学习 Vue.js 是有帮助的，但这不是必需的。"}
+    "__isset": {
+        "responseHeader": true,
+        "chatRecordDatas": true
+    },
+    "responseHeader": {
+        "__isset": {
+            "status": true,
+            "message": true,
+            "requestID": true
+        },
+        "status": 1,
+        "message": "ok",
+        "requestID": "a8efb80d-4913-4837-9005-7ae4552c1888"
+    },
+    "chatRecordDatas": [{
+            "__isset": {
+                "targetInfo": true,
+                "sendTime": true,
+                "chatCnt": true,
+                "chatType": true,
+                "locatorID": true
+            },
+            "targetInfo": {
+                "__isset": {
+                    "targetID": true,
+                    "targetName": true
+                },
+                "targetID": "92a6a18b-3c9d-437c-9a26-5d38f0d062b6",
+                "targetName": "庞标兵"
+            },
+            "sendTime": 1497348657469,
+            "chatCnt": "aaaa",
+            "chatType": 1,
+            "locatorID": "593fba3226152b000a476a80"
+        },
+        {
+            "__isset": {
+                "targetInfo": true,
+                "sendTime": true,
+                "chatCnt": true,
+                "chatType": true,
+                "locatorID": true
+            },
+            "targetInfo": {
+                "__isset": {
+                    "targetID": true,
+                    "targetName": true
+                },
+                "targetID": "92a6a18b-3c9d-437c-9a26-5d38f0d062b6",
+                "targetName": "庞标兵"
+            },
+            "sendTime": 1497348657469,
+            "chatCnt": "aaaa",
+            "chatType": 1,
+            "locatorID": "593fba3289b2ae000af30d92"
+        },
+        {
+            "__isset": {
+                "targetInfo": true,
+                "sendTime": true,
+                "chatCnt": true,
+                "chatType": true,
+                "locatorID": true
+            },
+            "targetInfo": {
+                "__isset": {
+                    "targetID": true,
+                    "targetName": true
+                },
+                "targetID": "92a6a18b-3c9d-437c-9a26-5d38f0d062b6",
+                "targetName": "庞标兵"
+            },
+            "sendTime": 1497348657469,
+            "chatCnt": "aaaa",
+            "chatType": 1,
+            "locatorID": "593fba94a354645af06f872e"
+        }
     ]
-
 }

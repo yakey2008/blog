@@ -198,9 +198,9 @@ li {
         .search-input-box {
             position: relative;
             .search-input {
-                @include elwidth(132px);
+                @include elwidth(112px);
                 @include bdradius(25px);
-                padding: 10px 23px;
+                padding: 10px 43px 10px 23px;
                 background-color: #3fa2fb;
                 border: 1px solid #fff;
                 color: #fff;
@@ -299,6 +299,13 @@ li {
             }
         }
     }
+    .msg-content.css-noresult {
+        @include elwidth(34%);
+        margin: 20%;
+        img {
+            @include elwidth(100%);
+        }
+    }
     .msg-content {
         @include elwidth(73%);
         position: relative;
@@ -337,13 +344,6 @@ li {
             margin: 30px 36px 33px 10px;
             padding-right: 42px;
             overflow-y: scroll;
-            .css-noresult {
-                @include elwidth(60%);
-                margin: 20% auto;
-                img {
-                    @include elwidth(100%);
-                }
-            }
             .css-itemlist {
                 .msg-item {
                     padding: 10px 20px;

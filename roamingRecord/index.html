@@ -28,20 +28,16 @@
 		</div>
 		<div class="search-container fl-r">
 			<div class="css-select2-container fl-l">
-				<select name="" class="css-select2" id="js-select2-person">
-					<option value="0">联系人</option>
-					<option value="1">第一位</option>
-					<option value="2">第二位</option>
-					<option value="3">第三位</option>
+				<select class="css-select2" id="js-select2-person">
+					<option value="-1" selected="selected">选择联系人</option>
 				</select>
 			</div>
 			<div class="css-select2-container mgl23 fl-l">
-				<select name="" class="css-select2" id="js-select2-date">
-					<option value="0">选择日期</option>
-					<option value="1">本周</option>
-					<option value="2">上周</option>
-					<option value="3">本月</option>
-					<option value="4">上月</option>
+				<select class="css-select2" id="js-select2-date">
+					<option value="0">本周</option>
+					<option value="1">上周</option>
+					<option value="2">本月</option>
+					<option value="3">上月</option>
 					<option value="costom">自定义</option>
 				</select>
 			</div>
@@ -58,11 +54,12 @@
 				<span class="aside-datacontainer ds-n">共<span id="js-ulist-count"></span>条相关记录</span>
 				<ul class="aside" id="js-userlist"></ul>
 			</div>
-			<div class="msg-content fl-r">
+			<div class="msg-content fl-r css-noresult ds-n"><img src="./images/noresult.png"></div>
+			<div class="msg-content fl-r css-hasresult">
 				<span class="msg-item-datacontainer ds-n">共<span id="js-itemlist-count"></span>条与“<span class="css-item-keyword" id="js-item-keyword"></span>”相关的聊天记录</span>
 				<span class="css-backbtn ds-n" id="js-backbtn"><i class="css-backarrow fl-l"><img src="./images/backbtn-arrow.png"></i>返回</span>
 				<div class="msg-item-container">
-					<div class="css-noresult ds-n"><img src="./images/noresult.png"></div>
+					
 					<div class="css-itemlist" id="js-itemlist"></div>
 				</div>
 				<div class="pagenum-container">
@@ -89,7 +86,7 @@
 	</div>
 
 	<script id="tpl-userlist" type="text/x-handlebars-template">
-		{{#each object}}
+		{{#each ChatSessionDatas}}
 		<li class="clearfix">
 			<div class="avatar-container fl-l">
 				<div class="avatar">
@@ -98,27 +95,54 @@
 			</div>
 			<div class="msg-info fl-r">
 				<p class="msg-info-nametime">
-					{{name}}<span class="datetime fl-r">12:00</span></p>
-				<p class="msg-info-personalsign">{{content}}</p>
+					{{TargetInfo.TargetName}}<span class="datetime fl-r">{{dateuser SendTime}}</span></p>
+				<p class="msg-info-personalsign">{{LastChatCnt}}</p>
 			</div>
 		</li>
 		{{/each}}
 	</script>
 
-	<script id="tpl-itemlist" type="text/x-handlebars-template">
-		{{#each object}}
+	<script id="tpl-itemlist-init" type="text/x-handlebars-template">
+		{{#each ChatRecordDatas}}
 		<div class="msg-item">
 			<p class="item-nametime">
-				<span class="msg-name">我（{{name}}）</span>
-				<span class="datetime">{{time}}</span>
+				{{#isshowme userid TargetInfo.TargetID}}
+				<span class="msg-name">我（{{TargetInfo.TargetName}}）</span>
+				{{else}}
+				<span class="msg-name">{{TargetInfo.TargetName}}</span>
+				{{/isshowme}}
+
+				<span class="datetime">{{dateitem SendTime}}</span>
 				{{#if true}}
 				<span class="css-seehistory fl-r ds-n">查看前后聊天记录</span>
 				{{/if}}
 			</p>
-			<p class="item-content">{{content}}</p>
+			<p class="item-content">{{ChatCnt}}</p>
 		</div>
 		{{/each}}
 	</script>
+
+	<script id="tpl-itemlist" type="text/x-handlebars-template">
+		{{#each Details}}
+		<div class="msg-item msg-search-item" data-targetid="{{../TargetInfo.TargetID}}" data-locatorid="{{LocatorID}}">
+			<p class="item-nametime">
+				{{#isshowme userid TargetInfo.TargetID}}
+				<span class="msg-name">我（{{../TargetInfo.TargetName}}）</span>
+				{{else}}
+				<span class="msg-name">{{../TargetInfo.TargetName}}</span>
+				{{/isshowme}}
+
+				<span class="datetime">{{dateitem SendTime}}</span>
+				{{#if true}}
+				<span class="css-seehistory fl-r ds-n">查看前后聊天记录</span>
+				{{/if}}
+			</p>
+			<p class="item-content">{{ChatCnt}}</p>
+		</div>
+		{{/each}}
+	</script>
+
+
 
 	<script src="./lib/js/jquery.min.js"></script>
 	<script src="./lib/js/handlebars.min.js"></script>
@@ -128,6 +152,8 @@
 	<script src="./lib/js/datepicker.min.js"></script>
 	<script src="./lib/js/sweet-alert.min.js"></script>
 	<script src="./lib/js/jquery.highlight.js"></script>
+	<script src="./lib/js/date.fun.js"></script>
+	<script src="./lib/js/moment.min.js"></script>
 	<script src="./js/main.js"></script>
 </body>
 

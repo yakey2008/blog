@@ -1,7 +1,7 @@
 {
-  "name": "roaming record",
-  "version": "0.1.0",
-  "description": "cart history , ontacts",
+  "name": "roamingrecord",
+  "version": "0.2.0",
+  "description": "chat history",
   "main": "index.js",
   "dependencies": {},
   "devDependencies": {
@@ -22,5 +22,5 @@
     "build": "gulp build"
   },
   "author": "Ceaser.Zou",
-  "license": "MIT"
+  "license": "GPL"
 }

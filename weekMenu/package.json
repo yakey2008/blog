@@ -30,9 +30,9 @@
     "weui": "^1.1.2"
   },
   "scripts": {
-    "dev": "webpack-dev-server --inline --hot --quiet --host 10.100.69.100",
+    "dev": "webpack-dev-server --inline --hot --quiet --host 10.100.69.100 --port 3100",
     "build": "webpack --progress --hide-modules --config webpack.config.js"
   },
   "author": "Ceasar.zou",
-  "license": "MIT"
+  "license": "GPL"
 }
