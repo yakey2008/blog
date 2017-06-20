@@ -31,19 +31,21 @@
 				<select class="css-select2" id="js-select2-person">
 					<option value="-1" selected="selected">选择联系人</option>
 				</select>
+				<i class="page-icon"><img src="./images/contact.png" id="js-contact-icon"></i>
 			</div>
-			<div class="css-select2-container mgl23 fl-l">
+			<div class="css-select2-container mgl10 fl-l">
 				<select class="css-select2" id="js-select2-date">
-					<option value="0">本周</option>
-					<option value="1">上周</option>
-					<option value="2">本月</option>
-					<option value="3">上月</option>
+					<option value="1">近30天</option>
+					<option value="0">近7天</option>
 					<option value="costom">自定义</option>
 				</select>
+				<i class="page-icon"><img src="./images/datetime.png" id="js-datetime-icon"></i>
 			</div>
-			<div class="search-input-box mgl23 fl-l">
-				<input type="text" class="search-input" placeholder="请输入关键词" id="js-searchinput">
-				<i class="search-icon" id="js-searchbtn"><img src="./images/search-icon.png" alt=""></i>
+			<div class="css-select2-container search-input-box mgl10 fl-l">
+				<input type="text" class="search-input" placeholder="请输入关键词" id="js-searchinput"><i class="page-icon"><img src="./images/keyword.png"></i>
+			</div>
+			<div class="search-btn-box mgl10 fl-l">
+				<input type="button" class="search-btn" value="开始搜索" id="js-searchbtn">
 			</div>
 		</div>
 	</div>
@@ -59,13 +61,12 @@
 				<span class="msg-item-datacontainer ds-n">共<span id="js-itemlist-count"></span>条与“<span class="css-item-keyword" id="js-item-keyword"></span>”相关的聊天记录</span>
 				<span class="css-backbtn ds-n" id="js-backbtn"><i class="css-backarrow fl-l"><img src="./images/backbtn-arrow.png"></i>返回</span>
 				<div class="msg-item-container">
-					
 					<div class="css-itemlist" id="js-itemlist"></div>
 				</div>
 				<div class="pagenum-container">
 					<div class="pagenum">首页</div>
 					<div class="pagenum">上一页</div>
-					<div class="pagenum">下一个</div>
+					<div class="pagenum">下一页</div>
 					<div class="pagenum">尾页</div>
 				</div>
 			</div>
@@ -81,16 +82,20 @@
 				<div class="el-input"><label for="js-start-time">开始时间</label><input type="text" data-toggle="datepicker" id="js-start-time"></div>
 				<div class="el-input"><label for="js-end-time">结束时间</label><input type="text" data-toggle="datepicker" id="js-end-time"></div>
 			</div>
-			<div class="picktime-btn" id="js-picktimebtn">开始查询</div>
+			<div class="picktime-btn" id="js-picktimebtn">确认</div>
 		</div>
 	</div>
 
 	<script id="tpl-userlist" type="text/x-handlebars-template">
 		{{#each ChatSessionDatas}}
-		<li class="clearfix">
+		<li class="clearfix" data-targetid="{{TargetInfo.TargetID}}">
 			<div class="avatar-container fl-l">
 				<div class="avatar">
-					<img src="./images/avatar.jpg" alt="">
+					{{#if TargetInfo.AvatarUrl}}
+					<img src="{{TargetInfo.AvatarUrl}}">
+					{{else}}
+					<img src="./images/noavatar.png">
+					{{/if}}
 				</div>
 			</div>
 			<div class="msg-info fl-r">
@@ -106,16 +111,12 @@
 		{{#each ChatRecordDatas}}
 		<div class="msg-item">
 			<p class="item-nametime">
-				{{#isshowme userid TargetInfo.TargetID}}
+				{{#isshowme ../userid TargetInfo.TargetID}}
 				<span class="msg-name">我（{{TargetInfo.TargetName}}）</span>
 				{{else}}
 				<span class="msg-name">{{TargetInfo.TargetName}}</span>
 				{{/isshowme}}
-
 				<span class="datetime">{{dateitem SendTime}}</span>
-				{{#if true}}
-				<span class="css-seehistory fl-r ds-n">查看前后聊天记录</span>
-				{{/if}}
 			</p>
 			<p class="item-content">{{ChatCnt}}</p>
 		</div>
@@ -126,23 +127,18 @@
 		{{#each Details}}
 		<div class="msg-item msg-search-item" data-targetid="{{../TargetInfo.TargetID}}" data-locatorid="{{LocatorID}}">
 			<p class="item-nametime">
-				{{#isshowme userid TargetInfo.TargetID}}
+				{{#isshowme ../userid TargetInfo.TargetID}}
 				<span class="msg-name">我（{{../TargetInfo.TargetName}}）</span>
 				{{else}}
 				<span class="msg-name">{{../TargetInfo.TargetName}}</span>
 				{{/isshowme}}
-
 				<span class="datetime">{{dateitem SendTime}}</span>
-				{{#if true}}
 				<span class="css-seehistory fl-r ds-n">查看前后聊天记录</span>
-				{{/if}}
 			</p>
 			<p class="item-content">{{ChatCnt}}</p>
 		</div>
 		{{/each}}
 	</script>
-
-
 
 	<script src="./lib/js/jquery.min.js"></script>
 	<script src="./lib/js/handlebars.min.js"></script>
@@ -152,7 +148,6 @@
 	<script src="./lib/js/datepicker.min.js"></script>
 	<script src="./lib/js/sweet-alert.min.js"></script>
 	<script src="./lib/js/jquery.highlight.js"></script>
-	<script src="./lib/js/date.fun.js"></script>
 	<script src="./lib/js/moment.min.js"></script>
 	<script src="./js/main.js"></script>
 </body>

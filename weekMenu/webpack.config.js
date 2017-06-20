@@ -6,7 +6,23 @@ module.exports = {
     entry: "./src/main.js",
     devServer: {
         port: 3000,
-        compress: false
+        compress: false,
+        proxy: {
+            '/Region': {
+                target:'http://t00005255.corp.vipshop.com:8045',
+                pathRewrite: {
+                    '^/Region': '/Menu/Region'
+                },
+                changeOrigin: true
+            },
+            '/Menu': {
+                target:'http://t00005255.corp.vipshop.com:8045',
+                pathRewrite: {
+                    '^/Menu': '/Menu'
+                },
+                changeOrigin: true
+            }
+        }
     },
     output: {
         path: path.resolve(__dirname, "dist"),

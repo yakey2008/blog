@@ -15,8 +15,7 @@
             transform: rotate(135deg);
             margin-bottom: -2px;
         }
-    }
-    // .select-container {
+    } // .select-container {
     //     position: absolute;
     //     width: 100%;
     //     left: 0;
@@ -107,21 +106,21 @@
                     <i class="css-arrow" :class="{drop:isShowtime}"></i>
                 </div>
                 <!--<section class="select-container" v-show="isShowregion">
-                            <ul>
-                                <li>广新餐厅</li>
-                                <li>信义餐厅</li>
-                                <li>总部餐厅</li>
-                            </ul>
-                        </section>-->
+                                <ul>
+                                    <li>广新餐厅</li>
+                                    <li>信义餐厅</li>
+                                    <li>总部餐厅</li>
+                                </ul>
+                            </section>-->
                 <!--<section class="select-container" v-show="isShowtime">
-                                    <li>2017-6-1</li>
-                                    <li>2017-6-2</li>
-                                    <li>2017-6-3</li>
-                                    <li>2017-6-4</li>
-                                    <li>2017-6-5</li>
-                                    <li>2017-6-6</li>
-                                    <li>2017-6-7</li>
-                                </section>-->
+                                        <li>2017-6-1</li>
+                                        <li>2017-6-2</li>
+                                        <li>2017-6-3</li>
+                                        <li>2017-6-4</li>
+                                        <li>2017-6-5</li>
+                                        <li>2017-6-6</li>
+                                        <li>2017-6-7</li>
+                                    </section>-->
             </div>
             <div class="weui-tab__panel css-main-container" id="js-mainheight">
                 <aside class="aside-container">
@@ -153,7 +152,7 @@
                     <p class="weui-actionsheet__title-text">当前区域：广新餐厅</p>
                 </div>
                 <div class="weui-actionsheet__menu">
-                    <div class="weui-actionsheet__cell" v-for="(region,index) in regionVal" v-on:click="selectregion(index)">{{region}}</div>
+                    <div class="weui-actionsheet__cell" v-for="(region,index) in regionVal" v-on:click="selectregion(index)">{{region.Name}}</div>
                 </div>
                 <div class="weui-actionsheet__action">
                     <div class="weui-actionsheet__cell" v-on:click="cancelguide()" id="iosActionsheetCancel">取消</div>
@@ -191,6 +190,26 @@ export default {
         var curMonth = (new Date().getMonth()) + 1;
         var curday = new Date().getDate();
         this.curtime = curyear + '-' + curMonth + '-' + curday;
+        //初始化区域
+        this.$http.get('/Region').then(response => {
+            if(response.body.Success){
+                this.regionVal = response.body.Object;
+            }
+        }, response => {
+            // error callback
+        });
+
+        //初始化区域菜单
+        this.$http.get('/Menu?regionId={regionId}&date={date}&mealTime={mealTime}').then(response => {
+            if(response.body.Success){
+                this.regionVal = response.body.Object;
+            }
+        }, response => {
+            // error callback
+        });
+
+
+
     },
     data() {
         return {
@@ -201,10 +220,9 @@ export default {
             isOverlay: false,
             noticeguide: false,
             curregion: "广新餐厅",
+            curregionId :"",
             curtime: "",
-            regionVal: [
-                "广新餐厅", "总部餐厅", "信义餐厅"
-            ],
+            regionVal: [],
             tabVal: [
                 {
                     name: "早餐", object: [
@@ -273,7 +291,7 @@ export default {
                         console.log(result)
                     },
                     onConfirm: function (result) {
-                        _this.$data.curregion =result[0].label;
+                        _this.$data.curregion = result[0].label;
                     },
                     id: 'pickregion'
                 });
@@ -345,7 +363,7 @@ export default {
         },
         selectregion: function (index) {
             this.noticeguide = true;
-            this.curregion = this.regionVal[index];
+            this.curregion = this.regionVal[index].Name;
         },
         clearlocal: function () {
             window.localStorage.clear();
