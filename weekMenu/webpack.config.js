@@ -9,16 +9,30 @@ module.exports = {
         compress: false,
         proxy: {
             '/Region': {
-                target:'http://t00005255.corp.vipshop.com:8045',
+                target: 'http://t00005255.corp.vipshop.com:8045',
                 pathRewrite: {
                     '^/Region': '/Menu/Region'
                 },
                 changeOrigin: true
             },
             '/Menu': {
-                target:'http://t00005255.corp.vipshop.com:8045',
+                target: 'http://t00005255.corp.vipshop.com:8045',
                 pathRewrite: {
                     '^/Menu': '/Menu'
+                },
+                changeOrigin: true
+            },
+            '/picUpload': {
+                target: 'http://t00005255.corp.vipshop.com:8045',
+                pathRewrite: {
+                    '^/picUpload': '/Menu/UploadImage'
+                },
+                changeOrigin: true
+            },
+            '/Feedback':{
+                target: 'http://t00005255.corp.vipshop.com:8045',
+                pathRewrite: {
+                    '^/Feedback': '/Menu/Feedback'
                 },
                 changeOrigin: true
             }
