@@ -90,26 +90,27 @@
             <div class="weui-tab__panel css-main-container" id="js-mainheight">
                 <aside class="aside-container">
                     <div class="aside">
-                        <div class="c-lefttab" v-for="(val,index) in mealtime" v-on:click="switchpanel(index)" :class="{tabactive:val.ishow}">{{val.name}}</div>
-                        <div class="c-lefttab" v-on:click="clearlocal();">（重置指引）</div>
+                        <div class="c-lefttab" v-for="(val,index) in mealtime" v-on:click="switchpanel(index)" :class="{tabactive:val.ishow}" :key="val.Id">{{val.name}}</div>
+                        <div class="c-lefttab" v-on:click="clearlocal()">（重置指引）</div>
                     </div>
                 </aside>
                 <section class="c-item-container" id="js-setheight">
                     <div class="c-item-panel">
-                        <div class="weui-panel__bd">
-                            <a href="javascript:void(0);" class="weui-media-box weui-media-box_appmsg" v-for="(val,index) in tabVal">
+                        <div class="weui-panel__bd" v-show="isShowtab">
+                            <a href="javascript:void(0);" class="weui-media-box weui-media-box_appmsg" v-for="(val,index) in tabVal" :key="val.Id">
                                 <div class="weui-media-box__hd">
                                     <img class="weui-media-box__thumb" v-bind:src="val.imgsrc" v-if="val.IconId">
                                     <img class="weui-media-box__thumb" src="/src/images/avatar.jpg" v-if="!val.IconId">
                                 </div>
                                 <div class="weui-media-box__bd">
-                                    <h4 class="weui-media-box__title" v-for="(initme,index) in val.Items">
+                                    <h4 class="weui-media-box__title" v-for="(initme,index) in val.Items" :key="initme.Id">
                                         <span v-if="index">{{index}}：</span>
                                         <span v-if="initme.toString()">{{initme.toString()}}</span>
                                     </h4>
                                 </div>
                             </a>
                         </div>
+                        <div class="weui-panel__bd" v-show="!isShowtab">暂无数据</div>
                     </div>
                 </section>
             </div>
@@ -119,7 +120,7 @@
                     <p class="weui-actionsheet__title-text">当前区域：广新餐厅</p>
                 </div>
                 <div class="weui-actionsheet__menu">
-                    <div class="weui-actionsheet__cell" v-for="(region,index) in regionVal" v-on:click="selectregion(index)">{{region.Name}}</div>
+                    <div class="weui-actionsheet__cell" v-for="(region,index) in regionVal" v-on:click="selectregion(index)" :key="region.Id">{{region.Name}}</div>
                 </div>
                 <div class="weui-actionsheet__action">
                     <div class="weui-actionsheet__cell" v-on:click="cancelguide()" id="iosActionsheetCancel">取消</div>
@@ -139,18 +140,7 @@
             <!--指引结构弹出 End-->
         </div>
         <!--提示窗Start-->
-        <div v-show="isShowerr">
-            <div class="weui-mask"></div>
-            <div class="weui-dialog">
-                <div class="weui-dialog__hd">
-                    <strong class="weui-dialog__title">提醒</strong>
-                </div>
-                <div class="weui-dialog__bd">获取数据失败，请稍后刷新重试</div>
-                <div class="weui-dialog__ft">
-                    <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary" v-on:click="closeShowerr()">确定</a>
-                </div>
-            </div>
-        </div>
+        <notice v-show="isShowerr" v-bind:title="errtitle" v-bind:errinfo="errinfo" v-on:closenotice="closeShowerr()"></notice>
         <!--提示窗End-->
     </div>
 </template>
@@ -158,9 +148,11 @@
 <script>
 import weui from '../../../../lib/js/weui.min.js';
 import moment from 'moment';
+import urldata from '../../../config/urldata.js';
+import notice from '../../popnotice/notice.vue';
 export default {
     mounted: function () {
-        var localdata = this.getlocaldata('isShowguide');
+        let localdata = this.getlocaldata('isShowguide');
         if (localdata) {
             this.isShowguide = false;
             this.curregion = localdata;
@@ -181,7 +173,8 @@ export default {
         // var curday = new Date().getDate();
         // this.curtime = curyear + '-' + curMonth + '-' + curday;
         //初始化区域
-        this.$http.get('/Region').then(response => {
+        // this.$http.get('/Region').then(response => {
+        this.$http.get(urldata.basePath + urldata.Region).then(response => {
             if (response.body.Success) {
                 this.regionVal = response.body.Object;
             }
@@ -197,6 +190,8 @@ export default {
             weekend: '',//本周结束时间
             // todaytime: moment().format('YYYY-MM-DD'),//今天时间
             todaytime: '2016-8-30',//临时测试可删
+            errtitle: "提示",
+            errinfo: "获取数据失败，请稍后刷新重试",
             isShowguide: true,//是否显示指引页
             noticeguide: false,//指引页是否设置默认区域弹窗
             isShowerr: false,//是否显示失败提醒
@@ -206,30 +201,34 @@ export default {
             curregionId: "",//当前选中区域的id
             regionVal: [],//区域数据
             mealtime: [{ name: "早餐", value: 0, ishow: true }, { name: "午餐", value: 1, ishow: false }, { name: "晚餐", value: 2, ishow: false }],//用餐时间数据
+            isShowtab: true,//无数据处理
             tabVal: []//菜品数据
         }
     },
+    components: {
+        notice
+    },
     methods: {
         //设置本地存储
-        setlocaldata: function (item, val) {
+        setlocaldata(item, val) {
             return window.localStorage.setItem(item, val);
         },
         //读取本地存储
-        getlocaldata: function (item) {
+        getlocaldata(item) {
             return window.localStorage.getItem(item);
         },
         //关闭错误提示
-        closeShowerr: function () {
+        closeShowerr() {
             this.isShowerr = false;
         },
         //处理指引页选中区域
-        selectregion: function (index) {
+        selectregion(index) {
             this.noticeguide = true;
             this.curregion = this.regionVal[index].Name;
             this.curregionId = this.regionVal[index].Id;
         },
         //处理指引页区域弹窗确认
-        showguide: function () {
+        showguide() {
             if (this.isShowguide) {
                 this.isShowguide = false;
                 this.setlocaldata('isShowguide', this.curregion);
@@ -241,7 +240,7 @@ export default {
             }
         },
         //处理指引页取消
-        cancelguide: function () {
+        cancelguide() {
             if (this.isShowguide) {
                 this.isShowguide = false;
                 this.curregion = this.regionVal[0].Name;
@@ -255,7 +254,7 @@ export default {
             }
         },
         //处理区域显示及选择
-        showregion: function () {
+        showregion() {
             var _this = this;
             this.isShowtime = false;
             if (this.isShowregion) {
@@ -298,7 +297,7 @@ export default {
             })
         },
         //时间下拉并处理
-        showtime: function () {
+        showtime() {
             var curyear = new Date().getFullYear();
             var curMonth = (new Date().getMonth()) + 1;
             var curday = new Date().getDate();
@@ -337,7 +336,7 @@ export default {
             });
         },
         //处理切换早午晚餐
-        switchpanel: function (index) {
+        switchpanel(index) {
             for (var i = 0, len = this.mealtime.length; i < len; i++) {
                 if (i === index) {
                     this.mealtime[i].ishow = true;
@@ -348,10 +347,17 @@ export default {
             this.ajaxregionmenu(this.curregionId, this.todaytime, this.mealtime[index].value);
         },
         //获取菜品数据并合并处理
-        ajaxregionmenu: function (curid, time, meal) {
-            this.$http.get('/Menu?regionId=' + curid + '&date=' + time + '&mealTime=' + meal).then(response => {
+        ajaxregionmenu(curid, time, meal) {
+            // this.$http.get('/Menu?regionId=' + curid + '&date=' + time + '&mealTime=' + meal).then(response => {
+            this.$http.get(urldata.basePath + urldata.Menu + '?regionId=' + curid + '&date=' + time + '&mealTime=' + meal).then(response => {
                 if (response.body.Success) {
                     var obj = response.body.Object;
+                    if (obj.length === 0) {
+                        this.isShowtab = false;
+                        return false;
+                    } else {
+                        this.isShowtab = true;
+                    }
                     //处理相同SmallClassName合并
                     obj.forEach(function (el) {
                         var tempobj = {};
@@ -363,7 +369,8 @@ export default {
                                     tempobj[itemel.SmallClassName] = [itemel.Name];
                                 }
                             })
-                            el.imgsrc = "http://t00005255.corp.vipshop.com:8045/File/Image/"+el.IconId;
+                            // el.imgsrc = "http://t00005255.corp.vipshop.com:8045" + urldata.picurl + el.IconId;
+                            el.imgsrc = urldata.basePath + urldata.picurl + el.IconId;
                             el.Items = tempobj;
                         }
 
@@ -375,7 +382,7 @@ export default {
             });
         },
         //清除本地存储 可删
-        clearlocal: function () {
+        clearlocal() {
             window.localStorage.clear();
             window.location.reload();
         }

@@ -1,7 +1,7 @@
 <template>
     <div class="weui-tab">
-        <Cmain></Cmain>
-        <Cbottomnav :showtab="true"></Cbottomnav>
+        <Mmain></Mmain>
+        <Bottomnav :showtab="true"></Bottomnav>
     </div>
 </template>
 <script>
@@ -12,10 +12,8 @@ export default {
         return { showtab: true }
     },
     components: {
-        'Cmain': Mmain,
-        'Cbottomnav': Bottomnav
-    },
-    mounted: function () {
+        Mmain,
+        Bottomnav
     }
 } 
 </script>
