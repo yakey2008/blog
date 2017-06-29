@@ -1,0 +1,96 @@
+﻿<ion-content>
+	<form ng-cloak name="uniteform" class="trouble-box" novalidate>
+		<div>
+			<div class="btn unite-systype-row">
+				<a ng-repeat="sysType in troubleSysTypes" ng-click="selectSysType(sysType)" class="button  {{sysType.btnStyle}} unite-systype-a">{{sysType.systypename}}</a>
+			</div>
+		</div>
+
+		<div class="text-center hr"></div>
+		<div class="list list-inset item-box" ng-if="isnotLandesk">
+			<div>
+				<label ng-if="isShowChildren" class="item item-input list-item-input">
+					<span class="list-input-label">分类</span>
+					<input type="text" class="c-input" ng-model="selectedTroubleChildType.systypename" ng-readonly="true" ng-click="openTroubleChildType(sysType)" placeholder="请选择分类" onfocus="this.blur();" required><i class="icon ion-ios-arrow-right"></i>
+				</label>
+				<label class="item item-input list-item-input">
+					<span class="list-input-label">问题类型</span>
+					<input type="text" class="c-input" ng-model="selectedTroubleType.troubletypename" ng-readonly="true" ng-click="openTroubleType(selectedTroubleType)" placeholder="请选择问题类型" onfocus="this.blur();" required><i class="icon ion-ios-arrow-right"></i>
+				</label>
+				<label class="item item-input list-item-input">
+					<span class="list-input-label">具体问题</span>
+					<input type="text" class="c-input" ng-model="selectedTypeProperty.propertyname" ng-readonly="true" ng-click="openTypeProperty(selectedTypeProperty)" placeholder="请选择具体问题" onfocus="this.blur();" required><i class="icon ion-ios-arrow-right"></i>
+				</label>
+				<label class="item item-input list-item-input">
+					<span class="list-input-label">区域</span>
+					<input type="text" class="c-input" ng-model="selectedFirstArea.areaname" ng-readonly="true" ng-click="openFirstArea(selectedFirstArea)" placeholder="请选择区域" onfocus="this.blur();" required><i class="icon ion-ios-arrow-right"></i>
+				</label>
+				<label ng-if="isShowNoSecondArea" class="item item-input list-item-input">
+					<span class="list-input-label">二级区域</span>
+					<input type="text" class="c-input" ng-model="selectedSecondArea.areaname" ng-readonly="true" ng-click="openSecondArea(selectedSecondArea)" placeholder="请选择二级区域" onfocus="this.blur();"><i class="icon ion-ios-arrow-right"></i>
+				</label>
+				<label class="item item-input list-item-input">
+					<span class="list-input-label">影响范围</span>
+					<input type="text" class="c-input" ng-model="selectedEffectArea.AreaName" ng-readonly="true" ng-click="openEffectArea(selectedEffectArea)" placeholder="请选择影响范围" onfocus="this.blur();" required><i class="icon ion-ios-arrow-right"></i>
+				</label>
+
+			</div>
+		</div>
+		<div class="c-tbl-detail">
+			<div class="c-descbox">
+				<div class="text-center hr"></div>
+				<label class="item item-input list-item-input unite-label-textarea">
+
+					<textarea  name="{{formData.troubleDescription}}" ng-model="formData.TroubleDescription"  rows="3" placeholder="请填写故障/咨询描述（200字以内）" maxlength="200" required  ng-if="isnotLandesk"></textarea>
+
+					<textarea  name="{{landeskData.troubleDescription}}" ng-model="landeskData.TroubleDescription"  rows="3" placeholder="请填写故障/咨询描述（200字以内）" maxlength="200" required  ng-if="!isnotLandesk"></textarea>
+					
+				</label>
+				<div class="s-countword"><span ng-bind="landeskData.TroubleDescription.length"></span>&#47;200</div>
+			</div>
+		</div>
+
+		<div class="text-center hr"></div>
+		</div>
+
+		<div class="text-left">
+			<div flow-init="{singleFile:true}" flow-files-submitted="$flow.upload()" class="ng-scope div-upload div-upload-borderbottom">
+				<div class="drop">
+					<span class="c-upload-btn">图片上传</span>
+					<span class="label label-info ng-binding">最多上传一张图片</span>
+				</div>
+				<div class="c-upload-zone drop" flow-drop="" ng-class="dropClass">
+					<span class="c-upload-btn" flow-btn><input type="file" multiple="multiple" style="visibility: hidden; position: absolute;">
+					<div class="c-img-show" ng-if="!$flow.files[0]"></div>
+					<div class="c-img-show" ng-if="$flow.files[0]" flow-stylebg="$flow.files[0]" ></div>
+					</span>
+				</div>
+				<div>
+					<div ng-repeat="file in $flow.files" class="transfer-box"> <span name="uploadFile" style="display:none;">{{file.fileGuid}}|{{file.nativeName}}</span>{{file.nativeName}} ({{file.sizeWithUnit}})
+						<div class="progress progress-striped" ng-class="{active: file.isUploading()}" ng-show="!file.isComplete()">
+							<div class="progress-bar" role="progressbar" aria-valuenow="{{file.progress() * 100}}" aria-valuemin="0
+			" aria-valuemax="100" ng-style="{width: (file.progress() * 100) + '%'}">
+								<span class="sr-only">{{file.progress()}}% Complete</span> </div>
+						</div>
+						<div class="btn-group">
+							<a class="ion-checkmark-circled upload-success" ng-show="!file.error&&file.isComplete()"></a>
+							<a class="ion-close-circled upload-fail" ng-show="file.error"></a>
+							<a class="badge badge-balanced" ng-click="file.pause()" ng-show="!file.paused && file.isUploading()"> 暂停 </a>
+							<a class="badge badge-calm" ng-click="file.resume()" ng-show="file.paused"> 继续 </a>
+							<a class="badge badge-assertive" id="j-cancelimg" ng-click="file.cancel()"> 取消 </a>
+							<a class="badge badge-positive" ng-click="file.retry()" ng-show="file.error"> 重试 </a>
+						</div>
+
+						<div class="padding-left item-divider ot-item-divider" ng-show="file.sizeExceeded">
+							<div>【上传失败】图片大小不能超过10MB</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="text-center hr"></div>
+		<div class="list small-padding">
+			<button type="submit" class="button button-block icon-center button-vipshop submit" ng-disabled="!uniteform.$valid" ng-click="sendTrouble()">确认提交</button>
+		</div>
+	</form>
+</ion-content>

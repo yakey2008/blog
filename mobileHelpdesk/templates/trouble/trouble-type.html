@@ -1,0 +1,21 @@
+﻿<ion-modal-view>
+	<ion-header-bar class="bar-vipshop item-input-inset" >
+		<h1 class="title">选择问题类型</h1>
+		<button class="button button-vipshop" ng-click="modal.hide()">取消</button>
+	</ion-header-bar>
+	<ion-content>
+		<ion-radio ng-repeat="type in troubleTypes" ng-value="type" ng-model="param.type" ng-click="returnType(param)">
+			{{ type.troubletypename }}
+		</ion-radio>
+		<label class="item item-text-wrap" ng-show="isShowNoType">
+				<div class="item-content">
+					<span>{{typemessage}}</span>
+				</div>
+			</label>
+				<!--<div class="padding">
+			<button class="button button-block button-positive" ng-click="returnTo(param)">
+				确定
+			</button>
+		</div>-->
+	</ion-content>
+</ion-modal-view>

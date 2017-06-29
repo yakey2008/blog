@@ -1,0 +1,25 @@
+{
+  "name": "install-grunt",
+  "description": "mobile helpdesk light app v1.3 grunt plugin dist code",
+  "version": "0.1.0",
+  "private": true,
+  "author": {
+    "name": "ray01.yang , v1.3:T00005162",
+    "email": "ray01.yang@vipshop.com , v1.3:T00005162@vipshop.com"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-clean": "^1.0.0",
+    "grunt-contrib-concat": "^1.0.0",
+    "grunt-contrib-connect": "^0.7.1",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-cssmin": "^0.5.0",
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-contrib-qunit": "^0.4.0",
+    "grunt-contrib-uglify": "^1.0.1",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-rev": "^0.1.0",
+    "grunt-usemin": "^3.1.1"
+  },
+  "license": "MIT"
+}

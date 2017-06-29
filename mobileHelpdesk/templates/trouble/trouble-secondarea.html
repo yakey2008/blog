@@ -1,0 +1,21 @@
+﻿<ion-modal-view>
+	<ion-header-bar class="bar-vipshop item-input-inset" >
+		<h1 class="title">选择二级区域</h1>
+		<button class="button button-vipshop" ng-click="secondareamodal.hide()">取消</button>
+	</ion-header-bar>
+	<ion-content>
+		<ion-radio ng-repeat="secondarea in secondAreas" ng-value="secondarea" ng-model="param.secondarea" ng-click="returnSecondArea(param)">
+			{{ secondarea.areaname }}
+		</ion-radio>
+	<!-- 	<label class="item item-text-wrap" ng-show="isShowNoSecondArea">
+				<div class="item-content">
+					<span>{{secondareamessage}}</span>
+				</div>
+			</label> -->
+				<!--<div class="padding">
+			<button class="button button-block button-positive" ng-click="returnTo(param)">
+				确定
+			</button>
+		</div>-->
+	</ion-content>
+</ion-modal-view>

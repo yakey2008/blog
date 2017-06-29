@@ -1,0 +1,103 @@
+﻿<style type="text/css">
+    .backdrop{
+    	opacity: 1;
+    }
+</style>
+<ion-view>
+	<ion-content >
+		<div class="top-bar text-right bar-vipshop">
+           <!--<a class="tips" ui-sref="overtimetips" >Tips</a>-->
+		</div>
+		<form name="reclockCardFlowForm">
+			
+			        <div class="list list-inset" id="div{{content.divIndex}}" ng-repeat="content in reclockCardContents">
+
+				        <div class="item item-input">
+					        <span class="input-label">补卡日期</span>
+					        <div class="item-div-date">
+						        <ionic-datepicker input-obj="content.startDatePart" ng-readonly="true">
+							        <button name="txtBeginDate" class="button button-clear" style="color:black">{{content.startDatePart.inputDate | date:content.startDatePart.dateFormat}}</button>
+						        </ionic-datepicker>
+					        </div>
+
+					
+				        </div>
+
+                        <div class="item item-input">
+                        <span class="input-label">补卡时间</span>
+					        <div class="item-div-time">
+						        <ionic-timepicker input-obj="content.startTimePart" ng-readonly="true">
+							        <button class="button button-clear" style="color:black">
+								        <standard-time-no-meridian etime='content.startTimePart.inputEpochTime'></standard-time-meridian>
+							        </button>
+						        </ionic-timepicker>
+					        </div>
+                            </div>
+
+                        <div class="item item-input">
+                            <div class="input-label">
+                              补卡原因
+                            </div>
+                            <input id="{{content.reasonId}}" type="text" ng-readonly="true" ng-model="content.reason"  ng-click="show(content.reasonId)" placeholder="请选择补卡原因" required>
+                            <!--<select id="{{content.reasonId}}" ng-model="currentSelected"  ng-options="act.reason for act  in reason" ng-change="change(content.reasonId,currentSelected)" ></select>-->
+                        </div>
+
+				        <div>
+					        <label class="item item-input">
+						        <div class="input-label">
+                              备注说明
+                            </div>
+						        <input type="text" id="{{content.remarkId}}" ng-model="content.comment" placeholder="请填写备注说明（20字以内）" >
+					        </label>
+				        </div>
+
+				        <div ng-show="content.divIndex>0" style="text-align:right;">
+					        <a class="button button-clear ion-ios-trash-outline " ng-click="delReclockCardContent('{{content.divIndex}}')"> 删除补卡信息</a>
+				        </div>
+			        </div>
+<!--			<div class="item item-divider hr">
+			</div>-->
+
+		</form>
+        <div class="text-left padding-left" ng-show="reclockCardContents.length<5">
+				<a class="button button-clear ion-person-add ot-content-add" ng-click="addReclockCardContent()"> 添加更多补卡信息</a>
+			</div>
+
+         <div class="text-left ">
+				<!-- ng-flow  -->
+				<div flow-init flow-files-submitted="$flow.upload()" class="ng-scope div-upload div-upload-border">
+					<div class="drop" flow-drop="" ng-class="dropClass">
+						<span class="btn btn-default" flow-btn="">附件上传<input type="file" multiple="multiple" style="visibility: hidden; position: absolute;"></span>
+						<!--<span class="label label-info ng-binding">文件总大小 : {{$flow.getSize()}} KB</span>-->
+						<span class="label label-info ng-binding">文件总大小 : {{$flow.getSizeWithUnit()}}</span>
+					</div>
+                    
+					<div>
+						<!--<div ng-repeat="file in $flow.files" class="transfer-box"> <span name="uploadFiles">{{file.relativePath}}</span> ({{file.size}} KB)-->
+						<div ng-repeat="file in $flow.files" class="transfer-box"> <span name="uploadFile" style="display:none;">{{file.fileGuid}}|{{file.nativeName}}</span>{{file.nativeName}} ({{file.sizeWithUnit}})
+							<div class="progress progress-striped" ng-class="{active: file.isUploading()}" ng-show="!file.isComplete()">
+								<div class="progress-bar" role="progressbar" aria-valuenow="{{file.progress() * 100}}" aria-valuemin="0" aria-valuemax="100" ng-style="{width: (file.progress() * 100) + '%'}">
+									<span class="sr-only">{{file.progress()}}% Complete</span> </div>
+							</div>
+							<div class="btn-group">
+								<a class="ion-checkmark-circled upload-success" ng-show="!file.error&&file.isComplete()"></a>
+								<a class="ion-close-circled upload-fail" ng-show="file.error"></a>
+								<a class="badge badge-balanced" ng-click="file.pause()" ng-show="!file.paused && file.isUploading()"> 暂停 </a>
+								<a class="badge badge-calm" ng-click="file.resume()" ng-show="file.paused"> 继续 </a>
+								<a class="badge badge-assertive" ng-click="file.cancel()"> 取消 </a>
+								<a class="badge badge-positive" ng-click="file.retry()" ng-show="file.error"> 重试 </a>
+							</div>
+                            
+			                <div class="padding-left  item-divider ot-item-divider"  ng-show="file.sizeExceeded">
+				                <div>【上传失败】附件大小不能超过10MB</div>
+			                </div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		<div class="list padding">
+			<button id="btnSubmit" class="button button-block icon-center ion-android-checkmark-circle button-vipshop submit" ng-click="startReclockCardFlow();" ng-disabled="!reclockCardFlowForm.$valid">提交</button>
+		</div>
+	</ion-content>
+</ion-view>

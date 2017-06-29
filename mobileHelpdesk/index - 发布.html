@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<!-- HTML 5 应用程序缓存  -->
+<html manifest="workflow.appcache">
+<!--<html>-->
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title></title>
+    <link href="lib/ionic/release/css/ionic.css" rel="stylesheet">
+    <link href="lib/ionic-datepicker/src/ionic-datepicker.styles.css" rel="stylesheet">
+    <link href="lib/ionic-timepicker/src/ionic-timepicker.styles.css" rel="stylesheet" />
+    <link href="lib/ng-dialog/css/ngDialog.min.css" rel="stylesheet" />
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/ionicActionSheet.css" rel="stylesheet" />
+    <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
+    <link href="css/ionic.app.css" rel="stylesheet">
+    -->
+
+
+</head>
+
+<body ng-app="starter">
+    <!--
+      The nav bar that will be updated as we navigate between views.
+    -->
+    <!--<ion-nav-bar class="bar-vipshop" align-title="center"></ion-nav-bar>-->
+    <!--
+      The views will be rendered in the <ion-nav-view> directive below
+      Templates are in the /templates folder (but you could also
+      have templates inline in this html file if you'd like).
+    -->
+    <ion-nav-view></ion-nav-view>
+
+
+    <!-- 通过uglifyjs将项目引用的js压缩成一个js  -->
+    <script src="js/MobileAppAll.min.js"></script>
+
+</body>
+
+</html>

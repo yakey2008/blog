@@ -1,0 +1,28 @@
+<ion-content>
+    <ion-refresher pulling-text="下拉刷新" on-refresh="doRefresh()">
+    </ion-refresher>
+    <ion-list class="list c-tb-historybox">
+        <ion-item class="item c-tb-historyList" collection-repeat="item in historyListData.object">
+            <div ng-click="godetail(item.troubleid,item.SourceType)" ng-if="item.SourceType === 0">
+                <p class="row"><strong class="col col-80 c-title" ng-bind="item.troubletitle"></strong><span class="col c-time" ng-bind="item.reporttime| jsonDate:'MM-dd'"></span></p>
+                <p class="row solve-box">
+                    <span class="col col-25" ng-if="item.troublestatus===0">已登记</span>
+                    <span class="col col-25" ng-if="item.troublestatus===1">处理中</span>
+                    <span class="col col-25" ng-if="item.troublestatus===80">已解决</span>
+                    <span class="col col-25" ng-if="item.troublestatus===90">已关闭</span>
+                </p>
+                <div class="line-1px"></div>
+            </div>
+            <div ng-click="golandeskdetail(item.troubleid,item.SourceType)" ng-if="item.SourceType === 1">
+                <p class="row"><strong class="col col-80 c-title" ng-bind="item.troubletitle"></strong><span class="col c-time" ng-bind="item.reporttime| jsonDate:'MM-dd'"></span></p>
+                <p class="row solve-box">
+                    <span class="col col-25">{{item.landDeskStatus}}</span>
+                </p>
+                <div class="line-1px"></div>
+            </div>
+        </ion-item>
+    </ion-list>
+    <ion-infinite-scroll ng-if="historyListData.hasmore" on-infinite="loadMore()" immediate-check="false" distance="1%">
+    </ion-infinite-scroll>
+    <div class="nomore" ng-if="!historyListData.hasmore">没有更多了</div>
+</ion-content>

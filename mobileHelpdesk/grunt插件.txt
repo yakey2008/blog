@@ -1,0 +1,32 @@
+﻿压缩目录：
+dist 目录
+1 ：css 样式文件
+2 ：font 样式中用到的字体 图标等
+3 ：js 脚本文件
+
+.min结尾的文件为压缩好的文件。
+
+安装grunt :
+一 ： 前提
+ 是安装了node.js
+
+ 二 ： 安装命令
+ 在DOS窗口输入：npm install grunt-cli -g
+
+ 三 ： 装好后，即可打包操作
+  
+  cd 到当前项目下 例如 ： 
+  本地目前是这样的 ： E:\Git\mobile-app\mobile-server\Mobile-Server\Mobile-Server\www
+  
+  在DOS窗口输入： cd  E:\Git\mobile-app\mobile-server\Mobile-Server\Mobile-Server\www
+
+  在DOS窗口输入： npm install
+
+  会自动安装，加载 package.json 文件中配置的grunt插件
+
+
+
+  安装完毕后
+  在DOS窗口输入 : grunt watch (会监控www/js目录下的所有文件，如果有更改，也会同步更新 dist 目录下的压缩文件。实时同步)
+
+  输入Ctrl + c 停止命令

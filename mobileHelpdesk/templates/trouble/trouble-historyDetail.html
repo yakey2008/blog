@@ -1,0 +1,107 @@
+<ion-content>
+    <ul class="list trouble-history" ng-if="historyDetail.sourcetype === '0'">
+        <li class="item c-tb-historyListDetail pd-top">
+            <p class="row c-tb-historyListDetail-item"><span class="col col-25 c-title">标题</span><span class="col c-content" ng-bind="historyDetail.troubletitle"></span></p>
+        </li>
+        <li class="item c-tb-historyListDetail pd-bottom">
+            <p class="row c-tb-historyListDetail-item"><span class="col col-25 c-title">编号</span><span class="col c-content" ng-bind="historyDetail.troubleCode"></span></p>
+        </li>
+        <div class="text-center hr"></div>
+        <li class="item c-tb-historyListDetail pd-top">
+            <p class="row c-tb-historyListDetail-item"><span class="col col-25 c-title">登记人</span><span class="col c-content" ng-bind="historyDetail.reportperson"></span></p>
+        </li>
+        <li class="item c-tb-historyListDetail">
+            <p class="row c-tb-historyListDetail-item"><span class="col col-25 c-title">登记时间</span><span class="col c-content" ng-bind="historyDetail.reporttime| jsonDate:'yyyy-MM-dd'"></span></p>
+        </li>
+        <li class="item c-tb-historyListDetail">
+            <p class="row c-tb-historyListDetail-item"><span class="col col-25 c-title">状态</span>
+                <span class="col c-content" ng-if="historyDetail.troublestatus===0">已登记</span>
+                <span class="col c-content" ng-if="historyDetail.troublestatus===1">处理中</span>
+                <span class="col c-content" ng-if="historyDetail.troublestatus===80">已解决</span>
+                <span class="col c-content" ng-if="historyDetail.troublestatus===90">已关闭</span>
+            </p>
+        </li>
+        <div class="text-center hr"></div>
+        <!--有子级 parenttroublesystype是父级 -->
+        <li class="item c-tb-historyListDetail pd-top" ng-if="historyDetail.parenttroublesystype">
+            <p class="row c-tb-historyListDetail-item"><span class="col col-25 c-title">类别</span><span class="col c-content" ng-bind="historyDetail.parenttroublesystype"></span></p>
+        </li>
+        <!--无子级 troublesystype是父级-->
+        <li class="item c-tb-historyListDetail pd-top" ng-if="!historyDetail.parenttroublesystype">
+            <p class="row c-tb-historyListDetail-item"><span class="col col-25 c-title">类别</span><span class="col c-content" ng-bind="historyDetail.troublesystype"></span></p>
+        </li>
+        <!-- 有子级 troublesystype是子级 -->
+        <li class="item c-tb-historyListDetail" ng-if="historyDetail.parenttroublesystype">
+            <p class="row c-tb-historyListDetail-item"><span class="col col-25 c-title">分类</span><span class="col c-content" ng-bind="historyDetail.troublesystype"></span></p>
+        </li>
+        <li class="item c-tb-historyListDetail">
+            <p class="row c-tb-historyListDetail-item"><span class="col col-25 c-title">问题类型</span><span class="col c-content" ng-bind="historyDetail.troubletype"></span></p>
+        </li>
+        <li class="item c-tb-historyListDetail">
+            <p class="row c-tb-historyListDetail-item"><span class="col col-25 c-title">具体问题</span><span class="col c-content" ng-bind="historyDetail.typeproperty"></span></p>
+        </li>
+        <li class="item c-tb-historyListDetail" ng-if="historyDetail.parentarea">
+            <p class="row c-tb-historyListDetail-item"><span class="col col-25 c-title">区域</span><span class="col c-content" ng-bind="historyDetail.parentarea+'-'+historyDetail.area"></span></p>
+        </li>
+        <li class="item c-tb-historyListDetail" ng-if="!historyDetail.parentarea">
+            <p class="row c-tb-historyListDetail-item"><span class="col col-25 c-title">区域</span><span class="col c-content" ng-bind="historyDetail.area"></span></p>
+        </li>
+        <li class="item c-tb-historyListDetail pd-bottom">
+            <p class="row c-tb-historyListDetail-item"><span class="col col-25 c-title">影响范围</span><span class="col c-content" ng-bind="historyDetail.effectarea"></span></p>
+        </li>
+        <div class="border-top"></div>
+        <li class="item c-tb-historyListDetail pd-top pd-bottom">
+            <p class="row c-tb-historyListDetail-item"><span class="col col-25 c-title">描述</span></p>
+            <p class="row c-tb-historyListDetail-item">
+                <span class="col c-content c-detail" ng-bind="historyDetail.troubledescription"></span></p>
+        </li>
+        <div class="text-center hr" ng-if="historyDetail.troubleimg"></div>
+        <li class="item c-tb-historyListDetail pd-top pd-bottom" ng-if="historyDetail.troubleimg">
+            <div class="row c-tb-historyListDetail-item">
+                <div class="col col-33 c-picshow">
+                    <img src="" ng-src="{{historyDetail.troubleimg}}" >
+                </div>
+            </div>
+        </li>
+    </ul>
+    <ul class="list trouble-history" ng-if="historyDetail.sourcetype === '1'">
+        <li class="item c-tb-historyListDetail pd-top">
+            <p class="row c-tb-historyListDetail-item"><span class="col col-25 c-title">编号</span><span class="col c-content" ng-bind="historyDetail.CaseID"></span></p>
+        </li>
+        <li class="item c-tb-historyListDetail">
+            <p class="row c-tb-historyListDetail-item"><span class="col col-25 c-title">登记人</span><span class="col c-content" ng-bind="historyDetail.UserID"></span></p>
+        </li>
+        <li class="item c-tb-historyListDetail">
+            <p class="row c-tb-historyListDetail-item"><span class="col col-25 c-title">登记时间</span><span class="col c-content" ng-bind="historyDetail.RaiseDate| jsonDate:'yyyy-MM-dd'"></span></p>
+        </li>
+        <li class="item c-tb-historyListDetail pd-bottom">
+            <p class="row c-tb-historyListDetail-item"><span class="col col-25 c-title">状态</span>
+                <span class="col c-content" ng-bind="historyDetail.Status"></span>
+            </p>
+        </li>
+        <div class="text-center hr"></div>
+        <li class="item c-tb-historyListDetail pd-top pd-bottom">
+            <p class="row c-tb-historyListDetail-item"><span class="col col-25 c-title">描述</span></p>
+            <p class="row c-tb-historyListDetail-item">
+                <span class="col c-content c-detail" ng-bind="historyDetail.Description"></span></p>
+        </li>
+        <div class="text-center hr" ng-if="historyDetail.troubleimg"></div>
+        <li class="item c-tb-historyListDetail pd-bottom" ng-if="historyDetail.troubleimg">
+            <div class="row c-tb-historyListDetail-item">
+                <div class="col col-33 c-picshow">
+                    <img src="" ng-src="{{historyDetail.troubleimg}}" >
+                </div>
+            </div>
+        </li>
+        <div class="border-top" ng-if="historyDetail.Attachments.length>0"></div>
+        <li class="item c-tb-historyListDetail" ng-if="historyDetail.Attachments.length>0">
+            <p class="row c-tb-historyListDetail-item"><span class="col col-25 c-title">附件</span></p>
+            <div class="row c-tb-historyListDetail-item">
+                <div class="col col-33 c-picshow" ng-repeat="attach in historyDetail.Attachments">
+                    <img src="" ng-src="{{attach.Url}}" ng-if="true">
+                    <span class="col c-content c-detail" ng-bind="attach.ID" ng-if="false"></span></p>
+                </div>
+            </div>
+        </li>
+    </ul>
+</ion-content>

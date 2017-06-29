@@ -1,0 +1,16 @@
+﻿<ion-modal-view>
+	<ion-header-bar class="bar-vipshop item-input-inset">
+		<h1 class="title">选择子类</h1>
+		<button class="button button-vipshop" ng-click="childtypemodal.hide()">取消</button>
+	</ion-header-bar>
+	<ion-content>
+		<ion-radio ng-repeat="sysType in sysTypeChildren"  ng-value="sysType" ng-model="param.sysType" ng-click="returnChildType(param)">
+			{{sysType.systypename}}
+		</ion-radio>
+		<label class="item item-text-wrap" ng-show="isShowNoChildType">
+			<div class="item-content">
+				<span>{{childtypemessage}}</span>
+			</div>
+		</label>
+	</ion-content>
+</ion-modal-view>

@@ -1,0 +1,12 @@
+CACHE MANIFEST
+# 2016-03-25 v1.0.0
+lib/ionic/release/css/ionic.css
+lib/ionic-datepicker/src/ionic-datepicker.styles.css
+lib/ionic-timepicker/src/ionic-timepicker.styles.css
+lib/ng-dialog/css/ngDialog.min.css
+css/style.css
+css/ionicActionSheet.css
+js/MobileAppAll.min.js
+
+NETWORK:
+*

@@ -1,0 +1,21 @@
+﻿<ion-modal-view>
+	<ion-header-bar class="bar-vipshop item-input-inset" >
+		<h1 class="title">选择报障区域</h1>
+		<button class="button button-vipshop" ng-click="firstareamodal.hide()">取消</button>
+	</ion-header-bar>
+	<ion-content>
+		<ion-radio ng-repeat="firstarea in firstAreas" ng-value="firstarea" ng-model="param.firstarea" ng-click="returnFirstArea(param)">
+			{{ firstarea.areaname }}
+		</ion-radio>
+		<label class="item item-text-wrap" ng-show="isShowNoFirstArea">
+				<div class="item-content">
+					<span>{{firstareamessage}}</span>
+				</div>
+			</label>
+				<!--<div class="padding">
+			<button class="button button-block button-positive" ng-click="returnTo(param)">
+				确定
+			</button>
+		</div>-->
+	</ion-content>
+</ion-modal-view>

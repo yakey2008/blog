@@ -1,0 +1,21 @@
+﻿<ion-modal-view>
+	<ion-header-bar class="bar-vipshop item-input-inset" >
+		<h1 class="title">选择具体问题</h1>
+		<button class="button button-vipshop" ng-click="typepropertymodal.hide()">取消</button>
+	</ion-header-bar>
+	<ion-content>
+		<ion-radio ng-repeat="typeproperty in typePropertys" ng-value="typeproperty" ng-model="param.typeproperty" ng-click="returnTypeProperty(param)">
+			{{ typeproperty.propertyname }}
+		</ion-radio>
+		<label class="item item-text-wrap" ng-show="isShowNoTypeProperty">
+				<div class="item-content">
+					<span>{{typepropertymessage}}</span>
+				</div>
+			</label>
+				<!--<div class="padding">
+			<button class="button button-block button-positive" ng-click="returnTo(param)">
+				确定
+			</button>
+		</div>-->
+	</ion-content>
+</ion-modal-view>

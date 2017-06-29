@@ -1,0 +1,31 @@
+﻿<ion-modal-view>
+	<ion-header-bar class="bar-vipshop item-input-inset" >
+		<label class="item-input-wrapper" >
+			<i class="icon ion-ios-search placeholder-icon"></i>
+			<input type="search" name="txtsearch" placeholder="查询员工（请至少输入两个字）"   autofocus
+ ng-model="search.keyword" >
+		</label>
+		<button class="button button-vipshop" ng-click="closeUserInfo($parent.ngDialogData.item)">
+			取消
+		</button>
+	</ion-header-bar>
+	<ion-content>
+		<div class="list">
+			<label class="item item-radio item-text-wrap" ng-repeat="user in userinfo">
+				<input type="radio" name="group" ng-value="user" ng-model="userdata.selectUser" checked="user.Checked" ng-click="closeUserInfo($parent.ngDialogData.item)">
+				<div class="item-content">
+					<span>{{ user.Name }} {{user.Account}}</span>
+					<p>部门 ：{{ user.Department }} [ {{ user.Position }} ]</p>
+				</div>
+				<i class="radio-icon ion-ios-checkmark-outline"></i>
+			</label>
+			<label class="item item-text-wrap" ng-show="isShowNoPeople">
+				<div class="item-content">
+					<span>{{usermessage}}</span>
+				</div>
+			</label>
+		</div>
+
+	</ion-content>
+
+</ion-modal-view>

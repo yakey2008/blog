@@ -1,0 +1,42 @@
+html {
+    width: 100%;
+    height: 100%;
+    font-family: "Microsoft YaHei";
+}
+
+body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    color: #333333;
+}
+
+textarea{font-family: "Microsoft YaHei";}
+ul,
+p {
+    padding: 0;
+    margin: 0;
+}
+
+li {
+    list-style-type: none;
+}
+
+.fl-l {
+    float: left;
+}
+
+.fl-r {
+    float: right;
+}
+
+.clearfix:after {
+    display: block;
+    content: "";
+    clear: both;
+}
+
+.ds-n {
+    display: none;
+}

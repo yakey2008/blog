@@ -1,0 +1,60 @@
+﻿<style>
+    span, p
+    {
+        font-family: 'Microsoft YaHei';
+    }
+
+    .item
+    {
+        border-color: #fc78be;
+    }
+
+    .item-input p
+    {
+        padding-right: 56px;
+        line-height: 22px;
+        background-color: #fff !important;
+        white-space: normal;
+    }
+
+    .bold
+    {
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .title
+    {
+        background-color: #fc78be;
+        color: #fff;
+        font-weight: 600;
+        text-align: center;
+        border-color: #fc78be;
+    }
+</style>
+
+<ion-view view-title="开票信息" hide-nav-bar="true">
+	<ion-content class="content-bg">
+		<div class="list form">
+            <div class="item item-divider title">
+				员工开具发票信息
+			</div>
+            <div class="item item-input">
+				<span class="input-label bold">公司名称</span>
+				<p ng-bind="::entity.CompanyName"></p>
+			</div>
+            <div class="item item-input">
+				<span class="input-label bold">纳税人识别号</span>
+				<p ng-bind="::entity.CompanyTaxpayerId"></p>
+			</div>
+            <div class="item item-input">
+				<span class="input-label bold">地址及电话</span>
+				<p ng-bind="::entity.CompanyAddrAndTel"></p>
+			</div>
+            <div class="item item-input">
+				<span class="input-label bold">开户银行及账号</span>
+				<p ng-bind="::entity.CompanyBankAccount"></p>
+			</div>
+		</div>
+	</ion-content>
+</ion-view>
