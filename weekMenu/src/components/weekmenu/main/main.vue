@@ -69,7 +69,6 @@
 
 <template>
     <div class="weui-tab__panel">
-        <img class="weui-media-box__thumb" v-bind:src="defaultimg" >
         <div class="weui-tab">
             <!--指引结构头部 Start-->
             <div class="weui-navbar css-nav-container" v-if="isShowguide">
