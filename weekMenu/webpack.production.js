@@ -24,8 +24,12 @@ module.exports = {
                 loader: 'babel-loader'
             },
             {
-                test: /\.(png|jpg)$/,
-                loader: "file-loader"
+                test: /\.(png)|(jpg)$/,
+                loader: 'url-loader?limit=1&name=images/[hash:8].[name].[ext]'
+            },
+            {
+                test: /\.(png)|(jpg)$/,
+                loader: "file-loader?name=images/[hash:8].[name].[ext]"
             }
         ]
     },
@@ -36,10 +40,10 @@ module.exports = {
     },
     plugins: [
         new es3ifyPlugin(),
-        new webpack.optimize.UglifyJsPlugin({
-            compress: {
-                warnings: false
-            }
-        })
+        // new webpack.optimize.UglifyJsPlugin({
+        //     compress: {
+        //         warnings: false
+        //     }
+        // })
     ]
 }

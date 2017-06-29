@@ -69,6 +69,7 @@
 
 <template>
     <div class="weui-tab__panel">
+        <img class="weui-media-box__thumb" v-bind:src="defaultimg" >
         <div class="weui-tab">
             <!--指引结构头部 Start-->
             <div class="weui-navbar css-nav-container" v-if="isShowguide">
@@ -91,7 +92,7 @@
                 <aside class="aside-container">
                     <div class="aside">
                         <div class="c-lefttab" v-for="(val,index) in mealtime" v-on:click="switchpanel(index)" :class="{tabactive:val.ishow}" :key="val.Id">{{val.name}}</div>
-                        <div class="c-lefttab" v-on:click="clearlocal()">（重置指引）</div>
+                        <!--<div class="c-lefttab" v-on:click="clearlocal()">（重置指引）</div>-->
                     </div>
                 </aside>
                 <section class="c-item-container" id="js-setheight">
@@ -100,7 +101,7 @@
                             <a href="javascript:void(0);" class="weui-media-box weui-media-box_appmsg" v-for="(val,index) in tabVal" :key="val.Id">
                                 <div class="weui-media-box__hd">
                                     <img class="weui-media-box__thumb" v-bind:src="val.imgsrc" v-if="val.IconId">
-                                    <img class="weui-media-box__thumb" src="/src/images/avatar.jpg" v-if="!val.IconId">
+                                    <img class="weui-media-box__thumb" v-bind:src="defaultimg" v-if="!val.IconId">
                                 </div>
                                 <div class="weui-media-box__bd">
                                     <h4 class="weui-media-box__title" v-for="(initme,index) in val.Items" :key="initme.Id">
@@ -150,6 +151,7 @@ import weui from '../../../../lib/js/weui.min.js';
 import moment from 'moment';
 import urldata from '../../../config/urldata.js';
 import notice from '../../popnotice/notice.vue';
+import defaultImg from '../../../images/defaultimg.jpg';
 export default {
     mounted: function () {
         let localdata = this.getlocaldata('isShowguide');
@@ -186,6 +188,7 @@ export default {
     data() {
         return {
             //是否显示引导页
+            defaultimg:defaultImg,
             weekstart: '',//本周开始时间
             weekend: '',//本周结束时间
             // todaytime: moment().format('YYYY-MM-DD'),//今天时间
@@ -346,8 +349,21 @@ export default {
             }
             this.ajaxregionmenu(this.curregionId, this.todaytime, this.mealtime[index].value);
         },
+        //重置餐次
+        settobreakfast(){
+            this.mealtime.forEach(function(el){
+                if(el.value === 0){
+                    el.ishow = true;
+                }else{
+                    el.ishow = false;
+                }
+            })
+        },
         //获取菜品数据并合并处理
         ajaxregionmenu(curid, time, meal) {
+            if(meal === 0){
+                this.settobreakfast();
+            }
             // this.$http.get('/Menu?regionId=' + curid + '&date=' + time + '&mealTime=' + meal).then(response => {
             this.$http.get(urldata.basePath + urldata.Menu + '?regionId=' + curid + '&date=' + time + '&mealTime=' + meal).then(response => {
                 if (response.body.Success) {
@@ -382,10 +398,10 @@ export default {
             });
         },
         //清除本地存储 可删
-        clearlocal() {
-            window.localStorage.clear();
-            window.location.reload();
-        }
+        // clearlocal() {
+        //     window.localStorage.clear();
+        //     window.location.reload();
+        // }
     }
 } 
 </script>

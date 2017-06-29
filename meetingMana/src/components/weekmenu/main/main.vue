@@ -91,7 +91,7 @@
                 <aside class="aside-container">
                     <div class="aside">
                         <div class="c-lefttab" v-for="(val,index) in mealtime" v-on:click="switchpanel(index)" :class="{tabactive:val.ishow}" :key="val.Id">{{val.name}}</div>
-                        <div class="c-lefttab" v-on:click="clearlocal()">（重置指引）</div>
+                        <!--<div class="c-lefttab" v-on:click="clearlocal()">（重置指引）</div>-->
                     </div>
                 </aside>
                 <section class="c-item-container" id="js-setheight">
@@ -382,10 +382,10 @@ export default {
             });
         },
         //清除本地存储 可删
-        clearlocal() {
-            window.localStorage.clear();
-            window.location.reload();
-        }
+        // clearlocal() {
+        //     window.localStorage.clear();
+        //     window.location.reload();
+        // }
     }
 } 
 </script>
