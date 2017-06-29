@@ -190,8 +190,8 @@ export default {
             defaultimg:defaultImg,
             weekstart: '',//本周开始时间
             weekend: '',//本周结束时间
-            // todaytime: moment().format('YYYY-MM-DD'),//今天时间
-            todaytime: '2016-8-30',//临时测试可删
+            todaytime: moment().format('YYYY-MM-DD'),//今天时间
+            // todaytime: '2016-8-30',//临时测试可删
             errtitle: "提示",
             errinfo: "获取数据失败，请稍后刷新重试",
             isShowguide: true,//是否显示指引页
