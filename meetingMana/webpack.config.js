@@ -1,6 +1,5 @@
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const es3ifyPlugin = require('es3ify-webpack-plugin');
 const path = require('path');
 module.exports = {
     entry: "./src/main.js",
@@ -29,7 +28,7 @@ module.exports = {
                 },
                 changeOrigin: true
             },
-            '/Feedback':{
+            '/Feedback': {
                 target: 'http://t00005255.corp.vipshop.com:8045',
                 pathRewrite: {
                     '^/Feedback': '/Menu/Feedback'
@@ -59,7 +58,10 @@ module.exports = {
             },
             {
                 test: /\.(png|jpg)$/,
-                loader: "file-loader"
+                loader: "file-loader",
+                options: {
+                    name: '[name].[ext]?[hash]'
+                }
             }
         ]
     },
@@ -68,8 +70,20 @@ module.exports = {
             'vue': 'vue/dist/vue.js'
         }
     },
-    plugins: [
-        new es3ifyPlugin()
-    ],
-    devtool: 'source-map'
+    devtool: '#eval-source-map'
+}
+
+if (process.env.NODE_ENV === 'production') {
+    module.exports.devtool = '#source-map';
+    module.exports.plugins = (module.exports.plugins || []).concat([
+        new webpack.DefinePlugin({
+            'process.env': {
+                NODE_ENV: '"production"'
+            }
+        }),
+        new webpack.LoaderOptionsPlugin({
+            minimize: true
+        }),
+        new ExtractTextPlugin("style.css")
+    ])
 }

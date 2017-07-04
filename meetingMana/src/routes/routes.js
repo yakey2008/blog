@@ -1,5 +1,5 @@
 import App from '../app.vue';
-import Weekmenu from '../components/weekmenu/weekmenu.vue';
+import Indexpage from '../components/index/index.vue';
 import Feedback from '../components/feedback/feedback.vue'
 export default[
     {
@@ -9,7 +9,7 @@ export default[
             {
                 path:'/',
                 meta:'false',
-                component:Weekmenu,
+                component:Indexpage,
             },
             {
                 path:'/feedback',

@@ -6,11 +6,9 @@ import routes from './routes/routes.js';
 import VueResource from 'vue-resource';
 
 import './scss/main.scss';
-import 'vue-event-calendar/dist/style.css'; 
 
-import vueEventCalendar from 'vue-event-calendar';
+import vueEventCalendar from './js';
 Vue.use(vueEventCalendar, {locale: 'zh'}) //可以设置语言，支持中文和英文
-
 
 Vue.use(VueRouter)
 Vue.use(VueResource)
