@@ -1,6 +1,6 @@
 'use strict'
 
-import vueEventCalendar from '../components/index/calendar/vue-event-calendar.vue'
+import vueEventCalendar from '../components/home/calendar/vue-event-calendar.vue'
 
 function install (Vue, options = {}) {
   const isVueNext = Vue.version.split('.')[0] === '2'

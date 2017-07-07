@@ -1,6 +1,6 @@
 import App from '../app.vue';
-import Indexpage from '../components/index/index.vue';
-import Feedback from '../components/feedback/feedback.vue'
+import Homepage from '../components/home/home.vue';
+import Mtlocationselect from '../components/mtlocationselect/mtlocationselect.vue'
 export default[
     {
         path:'/',
@@ -9,12 +9,12 @@ export default[
             {
                 path:'/',
                 meta:'false',
-                component:Indexpage,
+                component:Homepage,
             },
             {
-                path:'/feedback',
+                path:'/mtlocationselect',
                 meta:'false',
-                component:Feedback
+                component:Mtlocationselect
             },
             // {
             //     path:'/signin',

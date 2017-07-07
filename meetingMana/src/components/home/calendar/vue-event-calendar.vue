@@ -145,7 +145,6 @@ $icon-border-size: 1px;
     }
     .events-wrapper {
       width: 50%;
-      background-color: $base-orange;
       color: $white;
       padding: 40px 50px;
       position: absolute;
@@ -194,7 +193,7 @@ $icon-border-size: 1px;
       .css-todaybtn {
         position: absolute;
         width: 32px;
-        top: 12px;
+        top: 9px;
         left: 4%;
         padding: 0;
         img {
@@ -203,7 +202,7 @@ $icon-border-size: 1px;
       }
       .css-searchbtn {
         position: absolute;
-        top: 14px;
+        top: 10px;
         right: 13%;
         padding: 0;
         width: 22px;
@@ -217,7 +216,7 @@ $icon-border-size: 1px;
         width: 18px;
         height: 18px;
         right: 3%;
-        top: 15px;
+        top: 12px;
         overflow: hidden;
         padding: 0;
         &::before {
@@ -257,6 +256,8 @@ $icon-border-size: 1px;
         cursor: pointer;
         user-select: none;
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        position: relative;
+        left: 22%;
       }
       .r {
         text-align: right;
@@ -264,6 +265,8 @@ $icon-border-size: 1px;
         cursor: pointer;
         user-select: none;
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        position: relative;
+        right: 23%;
       }
     }
     .cal-body {
@@ -395,7 +398,6 @@ $icon-border-size: 1px;
     position: absolute;
     left: 6%;
     margin-top: 9px;
-    margin-left: 80px;
   }
   .arrow-left.icon:before {
     content: '';
@@ -414,7 +416,6 @@ $icon-border-size: 1px;
     position: absolute;
     right: 6%;
     margin-top: 9px;
-    margin-right: 80px;
   }
   .arrow-right.icon:before {
     content: '';
