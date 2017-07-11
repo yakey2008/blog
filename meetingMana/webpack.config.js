@@ -7,10 +7,10 @@ module.exports = {
         port: 3000,
         compress: false,
         proxy: {
-            '/Region': {
-                target: 'http://t00005255.corp.vipshop.com:8045',
+            '/MyCalendar': {
+                target: 'http://10.100.68.57:40000',
                 pathRewrite: {
-                    '^/Region': '/Menu/Region'
+                    '^/MyCalendar': '/api/Meeting/MyCalendar'
                 },
                 changeOrigin: true
             },

@@ -31,9 +31,7 @@ $col9b:#9b9b9b;
 @include placeholder(#ccc);
 .css-mtlocation-page {
     background-color: #f6f7f8;
-    .hr-div {
-        min-height: 10px;
-    } //主体
+    //主体
     .weui-media-box__title {
         white-space: normal;
     }
@@ -65,7 +63,7 @@ $col9b:#9b9b9b;
             }
             .css-status {
                 padding: 5px 4%;
-                    margin-left: 1%;
+                margin-left: 1%;
                 .css-yellow-point {
                     display: inline-block;
                     width: 12px;
@@ -203,33 +201,35 @@ $col9b:#9b9b9b;
                     <section>
                         <div class="css-locationdatetime-container">
                             <div class="hr-div"></div>
-                            <div class="css-meetingroom-item clearfix" v-for="meetingromm in ordered" :key="meetingromm">
-                                <div class="css-meetingroom-name fl-l">{{meetingromm.name}}</div>
-                                <div class="css-meetingroom-timeline fl-l">
-                                    <div class="css-meetingroom-timeline-box fl-l" v-for="(ordered,index) in meetingromm.order" :key="ordered" :class="[ordered?'room-ordered':'',index===0?'border-l2':'',index===17?'border-r2':'']"></div>
+                            <router-link :to="'/mttimeselect'" tag="div">
+                                <div class="css-meetingroom-item clearfix" v-for="meetingromm in ordered" :key="meetingromm">
+                                    <div class="css-meetingroom-name fl-l">{{meetingromm.name}}</div>
+                                    <div class="css-meetingroom-timeline fl-l">
+                                        <div class="css-meetingroom-timeline-box fl-l" v-for="(ordered,index) in meetingromm.order" :key="ordered" :class="[ordered?'room-ordered':'',index===0?'border-l2':'',index===17?'border-r2':'']"></div>
+                                    </div>
                                 </div>
-                            </div>
+                            </router-link>
                         </div>
                     </section>
                     <!--<section class="c-item-container" id="js-setheight">
-                                                                                <div class="c-item-panel">
-                                                                                    <div class="weui-panel__bd" v-show="isShowtab">
-                                                                                        <a href="javascript:void(0);" class="weui-media-box weui-media-box_appmsg" v-for="(val,index) in tabVal" :key="val.Id">
-                                                                                            <div class="weui-media-box__hd">
-                                                                                                <img class="weui-media-box__thumb" v-bind:src="val.imgsrc" v-if="val.IconId">
-                                                                                                <img class="weui-media-box__thumb" v-bind:src="defaultimg" v-if="!val.IconId">
-                                                                                            </div>
-                                                                                            <div class="weui-media-box__bd">
-                                                                                                <h4 class="weui-media-box__title" v-for="(initme,index) in val.Items" :key="initme.Id">
-                                                                                                    <span v-if="index">{{index}}：</span>
-                                                                                                    <span v-if="initme.toString()">{{initme.toString()}}</span>
-                                                                                                </h4>
-                                                                                            </div>
-                                                                                        </a>
+                                                                                    <div class="c-item-panel">
+                                                                                        <div class="weui-panel__bd" v-show="isShowtab">
+                                                                                            <a href="javascript:void(0);" class="weui-media-box weui-media-box_appmsg" v-for="(val,index) in tabVal" :key="val.Id">
+                                                                                                <div class="weui-media-box__hd">
+                                                                                                    <img class="weui-media-box__thumb" v-bind:src="val.imgsrc" v-if="val.IconId">
+                                                                                                    <img class="weui-media-box__thumb" v-bind:src="defaultimg" v-if="!val.IconId">
+                                                                                                </div>
+                                                                                                <div class="weui-media-box__bd">
+                                                                                                    <h4 class="weui-media-box__title" v-for="(initme,index) in val.Items" :key="initme.Id">
+                                                                                                        <span v-if="index">{{index}}：</span>
+                                                                                                        <span v-if="initme.toString()">{{initme.toString()}}</span>
+                                                                                                    </h4>
+                                                                                                </div>
+                                                                                            </a>
+                                                                                        </div>
+                                                                                        <div class="weui-panel__bd" v-show="isNodata">暂无数据</div>
                                                                                     </div>
-                                                                                    <div class="weui-panel__bd" v-show="isNodata">暂无数据</div>
-                                                                                </div>
-                                                                            </section>-->
+                                                                                </section>-->
                 </div>
             </div>
         </div>
@@ -246,6 +246,12 @@ $col9b:#9b9b9b;
 <script>
 import weui from '../../lib/js/weui.min.js';
 import moment from 'moment';
+import VueRouter from 'vue-router';
+import routes from '../../routes/routes.js';
+
+const router = new VueRouter({
+    routes
+})
 
 export default {
     mounted() {
@@ -348,6 +354,9 @@ export default {
             document.querySelector('.custom-classname').addEventListener('click', function () {
                 this.isShowregion = false;
             })
+        },
+        totimeselect() {
+            router.push({ path: '/mttimeselect' });
         }
     }
     // components: {

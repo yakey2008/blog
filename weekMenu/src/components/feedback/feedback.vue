@@ -84,7 +84,7 @@ import notice from '../popnotice/notice.vue';
 export default {
     mounted: function () {
         this.showtab = false;
-        var useragent = window.navigator.userAgent.toLowerCase();
+        let useragent = window.navigator.userAgent.toLowerCase();
         if (useragent.indexOf('android') !== -1) {
             this.sendData.OperateSystem = 'android';
         }

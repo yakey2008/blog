@@ -1,6 +1,7 @@
 import App from '../app.vue';
 import Homepage from '../components/home/home.vue';
-import Mtlocationselect from '../components/mtlocationselect/mtlocationselect.vue'
+import Mtlocationselect from '../components/mtlocationselect/mtlocationselect.vue';
+import Mttimeselect from '../components/mttimeselect/mttimeselect.vue';
 export default[
     {
         path:'/',
@@ -15,6 +16,11 @@ export default[
                 path:'/mtlocationselect',
                 meta:'false',
                 component:Mtlocationselect
+            },
+            {
+                path:'/mttimeselect',
+                meta:'false',
+                component:Mttimeselect
             },
             // {
             //     path:'/signin',

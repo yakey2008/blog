@@ -1,7 +1,8 @@
 <template>
   <div class="wrapper">
     <h3 class="title">{{event.title}}</h3>
-    <p class="time">{{dateTimeFormatter(Date.parse(new Date(event.date)),i18n[locale].fullFormat)}}</p>
+    <!--<p class="time">{{dateTimeFormatter(Date.parse(new Date(event.date)),i18n[locale].fullFormat)}}</p>-->
+    <p class="time">{{event.datetime}}</p>
     <p class="desc"><i class="css-locaticon"><img v-bind:src="locaticon"></i>{{event.desc}}</p>
   </div>
 </template>

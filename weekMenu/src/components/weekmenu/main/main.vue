@@ -150,7 +150,7 @@ import weui from '../../../../lib/js/weui.min.js';
 import moment from 'moment';
 import urldata from '../../../config/urldata.js';
 import notice from '../../popnotice/notice.vue';
-import defaultImg from '../../../images/defaultimg.jpg';
+import defaultImg from '../../../images/defaultimg.png';
 export default {
     mounted: function () {
         let localdata = this.getlocaldata('isShowguide');
@@ -166,12 +166,12 @@ export default {
             document.querySelector('.css-bottombar').style.zIndex = -1;
         }
 
-        var curweekday = moment().format('d');
+        let curweekday = moment().format('d');
         this.weekstart = moment().add('days', -curweekday + 1).format('YYYY/MM/DD');
         this.weekend = moment().add('days', 7 - curweekday).format('YYYY/MM/DD');
-        // var curyear = new Date().getFullYear();
-        // var curMonth = (new Date().getMonth()) + 1;
-        // var curday = new Date().getDate();
+        // let curyear = new Date().getFullYear();
+        // let curMonth = (new Date().getMonth()) + 1;
+        // let curday = new Date().getDate();
         // this.curtime = curyear + '-' + curMonth + '-' + curday;
         //初始化区域
         // this.$http.get('/Region').then(response => {
@@ -257,7 +257,7 @@ export default {
         },
         //处理区域显示及选择
         showregion() {
-            var _this = this;
+            let _this = this;
             this.isShowtime = false;
             if (this.isShowregion) {
                 this.isShowregion = false;
@@ -265,9 +265,9 @@ export default {
                 this.isShowregion = true;
             }
             //拼接picker配置项
-            var temparr = [];
+            let temparr = [];
             function setopt(el) {
-                var obj = {
+                let obj = {
                     label: el.Name,
                     value: el.Id
                 }
@@ -300,10 +300,10 @@ export default {
         },
         //时间下拉并处理
         showtime() {
-            var curyear = new Date().getFullYear();
-            var curMonth = (new Date().getMonth()) + 1;
-            var curday = new Date().getDate();
-            var _this = this;
+            let curyear = new Date().getFullYear();
+            let curMonth = (new Date().getMonth()) + 1;
+            let curday = new Date().getDate();
+            let _this = this;
             this.isShowregion = false;
             if (this.isShowtime) {
                 this.isShowtime = false;
@@ -319,8 +319,8 @@ export default {
                     //选中后的处理
                 },
                 onConfirm: function (result) {
-                    var settime = '';
-                    for (var i = 0, len = result.length; i < len; i++) {
+                    let settime = '';
+                    for (let i = 0, len = result.length; i < len; i++) {
                         if (i === 0) {
                             settime = result[i].label.substr(0, result[i].label.length - 1);
                         } else {
@@ -339,7 +339,7 @@ export default {
         },
         //处理切换早午晚餐
         switchpanel(index) {
-            for (var i = 0, len = this.mealtime.length; i < len; i++) {
+            for (let i = 0, len = this.mealtime.length; i < len; i++) {
                 if (i === index) {
                     this.mealtime[i].ishow = true;
                 } else {
@@ -366,7 +366,7 @@ export default {
             // this.$http.get('/Menu?regionId=' + curid + '&date=' + time + '&mealTime=' + meal).then(response => {
             this.$http.get(urldata.basePath + urldata.Menu + '?regionId=' + curid + '&date=' + time + '&mealTime=' + meal).then(response => {
                 if (response.body.Success) {
-                    var obj = response.body.Object;
+                    let obj = response.body.Object;
                     if (obj.length === 0) {
                         this.isShowtab = false;
                         return false;
@@ -375,7 +375,7 @@ export default {
                     }
                     //处理相同SmallClassName合并
                     obj.forEach(function (el) {
-                        var tempobj = {};
+                        let tempobj = {};
                         if (el.Items.length > 0) {
                             el.Items.forEach(function (itemel) {
                                 if (tempobj.hasOwnProperty([itemel.SmallClassName])) {

@@ -1,8 +1,8 @@
 <template>
   <div class="events-wrapper">
     <!--<h2 class="date">
-      {{dayEventsTitle}}
-    </h2>-->
+        {{dayEventsTitle}}
+      </h2>-->
     <p class="css-datetitle">{{dayEventsTitle}}</p>
     <div class="cal-events">
       <slot>
@@ -20,7 +20,7 @@ import { dateTimeFormatter } from '../../../../js/tools.js'
 import calEventItem from './cal-event-item.vue'
 export default {
   name: 'cal-events',
-  data () {
+  data() {
     return {
       i18n
     }
@@ -43,7 +43,7 @@ export default {
     }
   },
   computed: {
-    dayEventsTitle () {
+    dayEventsTitle() {
       if (this.dayEvents.date !== 'all') {
         let tempDate
         if (this.dayEvents.events.length !== 0) {
@@ -57,11 +57,11 @@ export default {
         return i18n[this.locale].dayEventsTitle
       }
     },
-    events () {
+    events() {
       return this.dayEvents.events
     },
-    bgColor () {
-      return {backgroundColor: this.color}
+    bgColor() {
+      return { backgroundColor: this.color }
     }
   },
   methods: {

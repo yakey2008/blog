@@ -273,6 +273,15 @@ li {
       overflow-y: scroll; }
       .wrapper .msg-content .msg-item-container .css-itemlist .msg-item {
         padding: 10px 20px; }
+        .wrapper .msg-content .msg-item-container .css-itemlist .msg-item .css-amrplay {
+          border: none;
+          background-color: #98e165;
+          width: 70px;
+          border-radius: 5px;
+          margin-top: 10px;
+          cursor: pointer; }
+          .wrapper .msg-content .msg-item-container .css-itemlist .msg-item .css-amrplay img {
+            margin-right: -4px; }
         .wrapper .msg-content .msg-item-container .css-itemlist .msg-item .item-nametime {
           font-size: 18px; }
           .wrapper .msg-content .msg-item-container .css-itemlist .msg-item .item-nametime .msg-name {
@@ -288,7 +297,12 @@ li {
           font-size: 16px;
           color: #333;
           line-height: 20px;
-          margin-top: 7px; }
+          margin-top: 7px;
+          word-wrap: break-word; }
+        .wrapper .msg-content .msg-item-container .css-itemlist .msg-item .item-img-zone {
+          width: 150px; }
+          .wrapper .msg-content .msg-item-container .css-itemlist .msg-item .item-img-zone img {
+            width: 100%; }
       .wrapper .msg-content .msg-item-container .css-itemlist .msg-item.itemactive {
         background-color: #f0faff; }
     .wrapper .msg-content .pagenum-container {

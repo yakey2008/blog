@@ -17,6 +17,7 @@
 	<link rel="stylesheet" href="./lib/css/select2.min.css">
 	<link rel="stylesheet" href="./lib/css/datepicker.min.css">
 	<link rel="stylesheet" href="./lib/css/sweet-alert.min.css">
+	<link rel="stylesheet" href="./css/emoji.min.css">
 	<link rel="stylesheet" href="./css/index.css">
 </head>
 
@@ -35,8 +36,8 @@
 			</div>
 			<div class="css-select2-container mgl10 fl-l">
 				<select class="css-select2" id="js-select2-date">
-					<option value="1">近30天</option>
 					<option value="0">近7天</option>
+					<option value="1" selected>近30天</option>
 					<option value="costom">自定义</option>
 				</select>
 				<i class="page-icon"><img src="./images/datetime.png" id="js-datetime-icon"></i>
@@ -118,7 +119,15 @@
 				{{/isshowme}}
 				<span class="datetime">{{dateitem SendTime}}</span>
 			</p>
-			<p class="item-content">{{ChatCnt}}</p>
+			{{#if Body.txt}}
+			<p class="item-content">{{matchemoji Body.content}}</p>
+			{{/if}}
+			{{#if Body.sound}}
+			<button class="css-amrplay js-playvoice" data-url="{{Body.params.url}}" data-statu="stop"><img src="./images/voice.png" class="fl-l"></button>
+			{{/if}}
+			{{#if Body.pic}}
+			<p class="item-img-zone"><a href="{{Body.params.url}}" target="_blank"><img class="item-img" src="{{Body.params.url}}"></a></p>
+			{{/if}}
 		</div>
 		{{/each}}
 	</script>
@@ -132,10 +141,11 @@
 				{{else}}
 				<span class="msg-name">{{../TargetInfo.TargetName}}</span>
 				{{/isshowme}}
+
 				<span class="datetime">{{dateitem SendTime}}</span>
 				<span class="css-seehistory fl-r ds-n">查看前后聊天记录</span>
 			</p>
-			<p class="item-content">{{ChatCnt}}</p>
+			<p class="item-content">{{matchemoji ChatCnt}}</p>
 		</div>
 		{{/each}}
 	</script>
@@ -149,6 +159,8 @@
 	<script src="./lib/js/sweet-alert.min.js"></script>
 	<script src="./lib/js/jquery.highlight.js"></script>
 	<script src="./lib/js/moment.min.js"></script>
+	<script src="./lib/js/amrnb.js"></script>
+	<script src="./js/playamr.js"></script>
 	<script src="./js/main.js"></script>
 </body>
 

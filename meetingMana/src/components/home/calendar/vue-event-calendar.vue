@@ -1,130 +1,3 @@
-<template>
-  <div class="__vev_calendar-wrapper">
-    <cal-panel :events="events" :calendar="calendarOptions" :selectedDay='selectedDayEvents.date' @cur-day-changed="handleChangeCurDay" @month-changed="handleMonthChanged">
-    </cal-panel>
-    <div class="hr-div"></div>
-    <cal-events :dayEvents="selectedDayEvents" :locale="calendarOptions.options.locale" :color="calendarOptions.options.color">
-      <slot :showEvents="selectedDayEvents.events"></slot>
-    </cal-events>
-  </div>
-</template>
-<script>
-import { isEqualDateStr } from '../../../js/tools.js'
-
-import calEvents from './cal-compents/cal-events.vue'
-import calPanel from './cal-compents/cal-panel.vue'
-
-const inBrowser = typeof window !== 'undefined'
-export default {
-  name: 'vue-event-calendar',
-  components: {
-    'cal-events': calEvents,
-    'cal-panel': calPanel
-  },
-  data() {
-    return {
-      selectedDayEvents: {
-        date: 'all',
-        events: []  //default show all event
-      }
-    }
-  },
-  props: {
-    events: {
-      type: Array,
-      required: true,
-      default: [],
-      validator(events) {
-        let validate = true
-        events.forEach((event, index) => {
-          if (!event.date) {
-            console.error('Vue-Event-Calendar-Error:' + 'Prop events Wrong at index ' + index)
-            validate = false
-          }
-        })
-        return validate
-      }
-    }
-  },
-  computed: {
-    calendarOptions() {
-      let dateObj = new Date()
-      if (inBrowser) {
-        return window.VueCalendarBarEventBus.CALENDAR_EVENTS_DATA
-      } else {
-        return {
-          options: {
-            locale: 'en', //zh
-            color: ' #88b1ff'
-          },
-          params: {
-            curYear: dateObj.getFullYear(),
-            curMonth: dateObj.getMonth(),
-            curDate: dateObj.getDate(),
-            curEventsDate: 'all'
-          }
-        }
-      }
-    },
-    calendarParams() {
-      let dateObj = new Date()
-      if (inBrowser) {
-        return window.VueCalendarBarEventBus.CALENDAR_EVENTS_DATA.params
-      } else {
-        return {
-          curYear: dateObj.getFullYear(),
-          curMonth: dateObj.getMonth(),
-          curDate: dateObj.getDate(),
-          curEventsDate: dateString
-        }
-      }
-    }
-  },
-  created() {
-    if (this.calendarParams.curEventsDate !== 'all') {
-      this.handleChangeCurDay(this.calendarParams.curEventsDate)
-    }
-  },
-  methods: {
-    handleChangeCurDay(date) {
-      let events = this.events.filter(function (event) {
-        return isEqualDateStr(event.date, date)
-      })
-      if (events.length > 0) {
-        this.selectedDayEvents = {
-          date: date,
-          events: events
-        }
-      }
-      this.$emit('day-changed', {
-        date: date,
-        events: events
-      })
-    },
-    handleMonthChanged(yearMonth) {
-      this.$emit('month-changed', yearMonth)
-    }
-  },
-  watch: {
-    calendarParams() {
-      if (this.calendarParams.curEventsDate !== 'all') {
-        this.handleChangeCurDay(this.calendarParams.curEventsDate)
-      } else {
-        this.selectedDayEvents = {
-          date: 'all',
-          events: this.events
-        }
-      }
-    },
-    events() {
-      this.selectedDayEvents = {
-        date: 'all',
-        events: this.events || []
-      }
-    }
-  }
-}
-</script>
 <style lang="scss">
 $base-orange: #88b1ff;
 $white: #ffffff;
@@ -180,6 +53,7 @@ $icon-border-size: 1px;
   position: relative;
   overflow: hidden;
   width: 100%;
+  background-color: #fff;
   * {
     box-sizing: border-box;
   }
@@ -364,6 +238,10 @@ $icon-border-size: 1px;
       color: #333;
       position: relative;
       .title {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        width: 60%;
         height: 40px;
         line-height: 40px;
         color: #333;
@@ -382,10 +260,11 @@ $icon-border-size: 1px;
         padding: 7px 0;
         padding-right: 20px;
         .css-locaticon {
-          width: 13px;
+          width: 10px;
           display: block;
           float: left;
-          margin-right: 10px;
+          margin-right: 5px;
+          margin-top: 2px;
           img {
             width: 100%;
           }
@@ -436,3 +315,129 @@ $icon-border-size: 1px;
   }
 }
 </style>
+<template>
+  <div class="__vev_calendar-wrapper">
+    <cal-panel :events="events" :calendar="calendarOptions" :selectedDay='selectedDayEvents.date' @cur-day-changed="handleChangeCurDay" @month-changed="handleMonthChanged">
+    </cal-panel>
+    <div class="hr-div"></div>
+    <cal-events :dayEvents="selectedDayEvents" :locale="calendarOptions.options.locale" :color="calendarOptions.options.color">
+      <slot :showEvents="selectedDayEvents.events"></slot>
+    </cal-events>
+  </div>
+</template>
+<script>
+import { isEqualDateStr } from '../../../js/tools.js'
+
+import calEvents from './cal-compents/cal-events.vue'
+import calPanel from './cal-compents/cal-panel.vue'
+
+const inBrowser = typeof window !== 'undefined'
+export default {
+  name: 'vue-event-calendar',
+  components: {
+    'cal-events': calEvents,
+    'cal-panel': calPanel
+  },
+  data() {
+    return {
+      curday: `${new Date().getFullYear()}/${new Date().getMonth() + 1}/${new Date().getDate()}`,
+      selectedDayEvents: {
+        date: this.curday,
+        events: this.events || []  //default show all event
+      }
+    }
+  },
+  props: {
+    events: {
+      type: Array,
+      required: true,
+      default: [],
+      validator(events) {
+        let validate = true
+        events.forEach((event, index) => {
+          if (!event.date) {
+            console.error('Vue-Event-Calendar-Error:' + 'Prop events Wrong at index ' + index)
+            validate = false
+          }
+        })
+        return validate
+      }
+    }
+  },
+  computed: {
+    calendarOptions() {
+      let dateObj = new Date()
+      if (inBrowser) {
+        return window.VueCalendarBarEventBus.CALENDAR_EVENTS_DATA
+      } else {
+        return {
+          options: {
+            locale: 'en', //zh
+            color: ' #88b1ff'
+          },
+          params: {
+            curYear: dateObj.getFullYear(),
+            curMonth: dateObj.getMonth(),
+            curDate: dateObj.getDate(),
+            curEventsDate: this.curday
+          }
+        }
+      }
+    },
+    calendarParams() {
+      let dateObj = new Date()
+      if (inBrowser) {
+        return window.VueCalendarBarEventBus.CALENDAR_EVENTS_DATA.params
+      } else {
+        return {
+          curYear: dateObj.getFullYear(),
+          curMonth: dateObj.getMonth(),
+          curDate: dateObj.getDate(),
+          curEventsDate: dateString
+        }
+      }
+    }
+  },
+  created() {
+    if (this.calendarParams.curEventsDate !== this.curday) {
+      this.handleChangeCurDay(this.calendarParams.curEventsDate)
+    }
+  },
+  methods: {
+    handleChangeCurDay(date) {
+      let events = this.events.filter(function (event) {
+        return isEqualDateStr(event.date, date)
+      })
+      this.selectedDayEvents = {
+        date: date,
+        events: events
+      }
+      this.$emit('day-changed', {
+        date: date,
+        events: events
+      })
+    },
+    handleMonthChanged(yearMonth) {
+      this.$emit('month-changed', yearMonth)
+    }
+  },
+  watch: {
+    calendarParams() {
+      if (this.calendarParams.curEventsDate !== this.curday) {
+        this.handleChangeCurDay(this.calendarParams.curEventsDate)
+      } else {
+        this.selectedDayEvents = {
+          date: this.curday,
+          events: this.events
+        }
+      }
+    },
+    events() {
+      this.selectedDayEvents = {
+        date: this.curday,
+        events: this.events || []
+      }
+    }
+  }
+}
+</script>

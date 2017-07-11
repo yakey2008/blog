@@ -232,7 +232,9 @@ li {
                 color: #3fa2fb;
                 cursor: pointer;
             }
-            .search-btn.w80{@include elwidth(80px);}
+            .search-btn.w80 {
+                @include elwidth(80px);
+            }
             .search-btn:active {
                 background-color: #3fa2fb;
                 color: #fff;
@@ -369,6 +371,17 @@ li {
             .css-itemlist {
                 .msg-item {
                     padding: 10px 20px;
+                    .css-amrplay {
+                        border: none;
+                        background-color: #98e165;
+                        width: 70px;
+                        border-radius: 5px;
+                        margin-top: 10px;
+                        cursor: pointer;
+                        img {
+                            margin-right: -4px;
+                        }
+                    }
                     .item-nametime {
                         font-size: 18px;
                         .msg-name {
@@ -389,6 +402,13 @@ li {
                         color: $col33;
                         line-height: 20px;
                         margin-top: 7px;
+                        word-wrap: break-word;
+                    }
+                    .item-img-zone {
+                        width: 150px;
+                        img {
+                            width: 100%;
+                        }
                     }
                 }
                 .msg-item.itemactive {
