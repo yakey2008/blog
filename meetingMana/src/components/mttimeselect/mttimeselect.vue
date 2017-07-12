@@ -70,6 +70,26 @@
                 -webkit-box-flex: 1;
                 -webkit-flex: 1;
                 flex: 1;
+                .css-timeline-hours {
+                    position: relative;
+                    height: 103px;
+                    border-top: 2px solid #e7e7e7;
+                    z-index: -1;
+                    &.margint26 {
+                        margin-top: 26px;
+                    }
+                    &.height26 {
+                        height: 26px;
+                    }
+                    .css-timeline-hours-text {
+                        position: absolute;
+                        top: -14px;
+                        display: block;
+                        background-color: #f6f7f8;
+                        width: 90%;
+                        text-align: center;
+                    }
+                }
             }
             .css-timeline-ordered {
                 -webkit-box-flex: 3;
@@ -82,6 +102,9 @@
                     .selected-box {
                         height: 25px;
                         border-top: 1px solid #e7e7e7;
+                        &.bordertw2 {
+                            border-top-width: 2px;
+                        }
                     }
 
                     .selected {
@@ -139,8 +162,7 @@
                                 <span class="css-onday-text">前一天</span>
                             </div>
                             <div class="weui-flex__item css-align-center">
-                                <span>2017-06-15</span>&nbsp;
-                                <span>星期四</span>
+                                <span>2017-06-15</span>&nbsp;<span>星期四</span>
                             </div>
                             <div class="css-take-oneday css-align-left">
                                 <span class="css-onday-text">后一天</span>
@@ -150,12 +172,15 @@
                     </section>
                     <div class="css-timeline">
                         <aside class="css-timeline-datetime">
-                            <div>08:00</div>
-                            <div>09:00</div>
+                            <div class="css-timeline-hours" v-for="(time,index) in initDatetime" :key="time" :class="[index===0?'margint26':'',index===initDatetime.length-1?'height26':'']">
+                                <span class="css-timeline-hours-text">{{time}}</span>
+                            </div>
                         </aside>
                         <section class="css-timeline-ordered">
                             <div class="css-pageinfo">
-                                <div class="selected-box" v-for="(item,index) in selectedBox" :key="item" v-on:click="selectedevent(index)" :class="item.selected?'selected':''">{{item.value}}</div>
+                                <div class="selected-box"></div>
+                                <div class="selected-box" v-for="(item,index) in selectedBox" :key="item" v-on:click="selectedevent(index)" :class="[item.selected?'selected':'',index%4===0?'bordertw2':'']">{{item.value}}</div>
+                                <div class="selected-box bordertw2"></div>
                             </div>
                         </section>
                     </div>
@@ -166,13 +191,12 @@
             <div class="weui-cell css-maxwidth">
                 <div class="weui-cell__bd">
                     <p class="css-col9b">请点击条格选择（每格为15分钟）</p>
-                    <p>开始时间&nbsp;
-                        <span class="css-col4c8"><span>09</span>:<span>00</span></span>&nbsp;&nbsp;结束时间&nbsp;
-                        <span class="css-col4c8"><span>10</span>:<span>00</span></span>
-                    </p>
+                    <p>开始时间&nbsp;<span class="css-col4c8"><span>09</span>:<span>00</span></span>&nbsp;&nbsp;结束时间&nbsp;<span class="css-col4c8"><span>10</span>:<span>00</span></span></p>
                 </div>
                 <div class="weui-cell__ft">
-                    <button class="weui-btn css-next-step">下一步</button>
+                    <router-link :to="'/mtdetail'" tag="div">
+                        <button class="weui-btn css-next-step">下一步</button>
+                    </router-link>
                 </div>
             </div>
         </div>
@@ -185,7 +209,7 @@ import locaticon from '../../images/locaticon.png';
 
 export default {
     mounted() {
-        for (let i = 0; i < 36; i++) {
+        for (let i = 0; i < this.initTimenum; i++) {
             this.selectedBox.push({ value: i, selected: false })
         }
     },
@@ -198,7 +222,8 @@ export default {
             isShowtime: false,
             isNodata: false,
             isShowtab: true,
-            initTimenum: 18,//预定格数量
+            initTimenum: 96,//预定格数量
+            initDatetime: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00', '24:00'],
             initTimeitem: [],
             curregion: '广州广新大厦',
             tabVal: [

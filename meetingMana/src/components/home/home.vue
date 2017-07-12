@@ -1,3 +1,39 @@
+<style>
+#app {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #2c3e50;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: normal;
+  margin: 0;
+  padding: 0;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  display: inline-block;
+  margin: 0 10px;
+}
+
+a {
+  color: #42b983;
+}
+
+.t-center {
+  text-align: center;
+  margin: 20px;
+}
+</style>
+
 <template>
   <div>
     <vue-event-calendar :events="demoEvents" @day-changed="handleDayChanged" @month-changed="handleMonthChanged"></vue-event-calendar>
@@ -51,11 +87,11 @@ export default {
           obj.date = el.End.substr(0,el.End.length-9).replace(/-/g,'/')
           obj.datetime = strStart2+' - '+strEnd2;
           this.demoEvents.push(obj);
-          this.$EventCalendar.toDate(this.curday)
+          this.$EventCalendar.toDate(this.curday);
         }, this);
       }
     }, response => {
-      this.isShowerr = true;
+      
     });
   },
   methods: {
@@ -66,39 +102,3 @@ export default {
   }
 }
 </script>
-
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
-}
-
-h1,
-h2,
-h3 {
-  font-weight: normal;
-  margin: 0;
-  padding: 0;
-}
-
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-
-a {
-  color: #42b983;
-}
-
-.t-center {
-  text-align: center;
-  margin: 20px;
-}
-</style>

@@ -30,8 +30,7 @@ $col9b:#9b9b9b;
 
 @include placeholder(#ccc);
 .css-mtlocation-page {
-    background-color: #f6f7f8;
-    //主体
+    background-color: #f6f7f8; //主体
     .weui-media-box__title {
         white-space: normal;
     }
@@ -54,81 +53,88 @@ $col9b:#9b9b9b;
         }
     }
     .css-main-container {
-        .css-pageinfo {
-            background-color: #fff;
-            .css-middlescore {
-                border-top: 1px solid #ddd;
-                width: 30px;
-                margin-top: 28px;
-            }
-            .css-status {
-                padding: 5px 4%;
-                margin-left: 1%;
-                .css-yellow-point {
-                    display: inline-block;
-                    width: 12px;
-                    height: 12px;
-                    background-color: #ffba41;
-                    border-radius: 50px;
-                    margin-right: 5px;
+        .css-pageinfo-container {
+            position: absolute;
+            width: 100%;
+            .css-pageinfo {
+                background-color: #fff;
+                .css-middlescore {
+                    border-top: 1px solid #ddd;
+                    width: 30px;
+                    margin-top: 28px;
                 }
-                .css-explantime {
-                    font-size: 0.5rem;
+                .css-status {
+                    padding: 5px 4%;
+                    margin-left: 1%;
+                    .css-yellow-point {
+                        display: inline-block;
+                        width: 12px;
+                        height: 12px;
+                        background-color: #ffba41;
+                        border-radius: 50px;
+                        margin-right: 5px;
+                    }
+                    .css-explantime {
+                        font-size: 0.5rem;
+                        color: $col9b;
+                    }
+                }
+
+                .css-datetime {
+                    padding: 15px 1%;
                     color: $col9b;
                 }
-            }
-
-            .css-datetime {
-                padding: 15px 1%;
-                color: $col9b;
-            }
-            @media (min-width: 340px) {
-                .css-datetime {
-                    padding: 15px 2%;
+                @media (min-width: 340px) {
+                    .css-datetime {
+                        padding: 15px 2%;
+                    }
                 }
-            }
-            @media (min-width: 375px) {
-                .css-datetime {
-                    padding: 15px 3%;
+                @media (min-width: 375px) {
+                    .css-datetime {
+                        padding: 15px 3%;
+                    }
                 }
-            }
-            @media (min-width: 400px) {
-                .css-middlescore {
-                    margin-left: 1%;
-                    margin-right: 1%;
-                }
-                .css-datetime {
-                    padding: 15px 3%;
+                @media (min-width: 400px) {
+                    .css-middlescore {
+                        margin-left: 1%;
+                        margin-right: 1%;
+                    }
+                    .css-datetime {
+                        padding: 15px 3%;
+                    }
                 }
             }
         }
         .css-locationdatetime-container {
-            .css-meetingroom-item {
-                background-color: #fff;
-                height: 80px;
-                .css-meetingroom-name {
-                    width: 30%;
-                    height: 60px;
-                    padding: 0 5%;
-                    margin: 10px 0;
-                    line-height: 20px;
-                    overflow: hidden;
-                }
-                .css-meetingroom-timeline {
-                    width: 60%;
-                    height: 100%;
-                    .css-meetingroom-timeline-box {
+            padding-top: 55px;
+            .css-locationdatetime {
+                .css-meetingroom-item {
+                    background-color: #fff;
+                    height: 80px;
+                    .css-meetingroom-name {
+                        width: 30%;
+                        height: 60px;
+                        padding: 0 5%;
+                        margin: 10px 0;
+                        line-height: 20px;
+                        overflow: hidden;
+                    }
+                    .css-meetingroom-timeline {
+                        width: 60%;
                         height: 100%;
-                        border-left: 1px solid #e7e7e7;
-                        width: 4.55555%;
-                        &.room-ordered {
-                            background-color: #ffbb41;
-                        }
-                        &.border-l2 {
-                            border-left: 2px solid #e7e7e7;
-                        }
-                        &.border-r2 {
-                            border-right: 2px solid #e7e7e7;
+                        .css-meetingroom-timeline-box {
+                            height: 100%;
+                            border-left: 1px solid #e7e7e7;
+                            width: 4.55555%;
+                            &.room-ordered {
+                                background-color: #ffbb41;
+                            }
+                            &.border-l2 {
+                                border-left: 2px solid #e7e7e7;
+                            }
+                            &.border-r2 {
+                                border-right: 2px solid #e7e7e7;
+                            }
                         }
                     }
                 }
@@ -174,62 +180,66 @@ $col9b:#9b9b9b;
                         <i class="css-arrow" :class="{drop:isShowregion}"></i>
                     </div>
                 </div>
-                <div class="weui-tab__panel css-main-container" id="js-mainheight">
-                    <div class="hr-div"></div>
+                <div class="weui-tab__panel css-main-container">
                     <section>
-                        <div class="css-pageinfo clearfix">
-                            <div class="css-status fl-l">
-                                <p class="css-notice">
-                                    <i class="css-yellow-point"></i>
-                                    <span>已预订</span>
-                                </p>
-                                <p class="css-explantime">(每格30分钟)</p>
-                            </div>
-                            <div class="css-datetime fl-l">
-                                <span>09:00</span>
-                            </div>
-                            <div class="css-middlescore fl-l"></div>
-                            <div class="css-datetime fl-l">
-                                <span>13:00</span>
-                            </div>
-                            <div class="css-middlescore fl-l"></div>
-                            <div class="css-datetime fl-l">
-                                <span>18:00</span>
+                        <div class="css-pageinfo-container">
+                            <div class="hr-div"></div>
+                            <div class="css-pageinfo clearfix">
+                                <div class="css-status fl-l">
+                                    <p class="css-notice">
+                                        <i class="css-yellow-point"></i>
+                                        <span>已预订</span>
+                                    </p>
+                                    <p class="css-explantime">(每格30分钟)</p>
+                                </div>
+                                <div class="css-datetime fl-l">
+                                    <span>09:00</span>
+                                </div>
+                                <div class="css-middlescore fl-l"></div>
+                                <div class="css-datetime fl-l">
+                                    <span>13:00</span>
+                                </div>
+                                <div class="css-middlescore fl-l"></div>
+                                <div class="css-datetime fl-l">
+                                    <span>18:00</span>
+                                </div>
                             </div>
                         </div>
                     </section>
                     <section>
                         <div class="css-locationdatetime-container">
-                            <div class="hr-div"></div>
-                            <router-link :to="'/mttimeselect'" tag="div">
-                                <div class="css-meetingroom-item clearfix" v-for="meetingromm in ordered" :key="meetingromm">
-                                    <div class="css-meetingroom-name fl-l">{{meetingromm.name}}</div>
-                                    <div class="css-meetingroom-timeline fl-l">
-                                        <div class="css-meetingroom-timeline-box fl-l" v-for="(ordered,index) in meetingromm.order" :key="ordered" :class="[ordered?'room-ordered':'',index===0?'border-l2':'',index===17?'border-r2':'']"></div>
+                            <div class="css-locationdatetime" v-for="meetingromm in ordered" :key="meetingromm">
+                                <div class="hr-div"></div>
+                                <router-link :to="'/mttimeselect'" tag="div">
+                                    <div class="css-meetingroom-item clearfix">
+                                        <div class="css-meetingroom-name fl-l">{{meetingromm.name}}</div>
+                                        <div class="css-meetingroom-timeline fl-l">
+                                            <div class="css-meetingroom-timeline-box fl-l" v-for="(ordered,index) in meetingromm.order" :key="ordered" :class="[ordered?'room-ordered':'',index===0?'border-l2':'',index===17?'border-r2':'']"></div>
+                                        </div>
                                     </div>
-                                </div>
-                            </router-link>
+                                </router-link>
+                            </div>
                         </div>
                     </section>
                     <!--<section class="c-item-container" id="js-setheight">
-                                                                                    <div class="c-item-panel">
-                                                                                        <div class="weui-panel__bd" v-show="isShowtab">
-                                                                                            <a href="javascript:void(0);" class="weui-media-box weui-media-box_appmsg" v-for="(val,index) in tabVal" :key="val.Id">
-                                                                                                <div class="weui-media-box__hd">
-                                                                                                    <img class="weui-media-box__thumb" v-bind:src="val.imgsrc" v-if="val.IconId">
-                                                                                                    <img class="weui-media-box__thumb" v-bind:src="defaultimg" v-if="!val.IconId">
-                                                                                                </div>
-                                                                                                <div class="weui-media-box__bd">
-                                                                                                    <h4 class="weui-media-box__title" v-for="(initme,index) in val.Items" :key="initme.Id">
-                                                                                                        <span v-if="index">{{index}}：</span>
-                                                                                                        <span v-if="initme.toString()">{{initme.toString()}}</span>
-                                                                                                    </h4>
-                                                                                                </div>
-                                                                                            </a>
-                                                                                        </div>
-                                                                                        <div class="weui-panel__bd" v-show="isNodata">暂无数据</div>
-                                                                                    </div>
-                                                                                </section>-->
+                                                                                                    <div class="c-item-panel">
+                                                                                                        <div class="weui-panel__bd" v-show="isShowtab">
+                                                                                                            <a href="javascript:void(0);" class="weui-media-box weui-media-box_appmsg" v-for="(val,index) in tabVal" :key="val.Id">
+                                                                                                                <div class="weui-media-box__hd">
+                                                                                                                    <img class="weui-media-box__thumb" v-bind:src="val.imgsrc" v-if="val.IconId">
+                                                                                                                    <img class="weui-media-box__thumb" v-bind:src="defaultimg" v-if="!val.IconId">
+                                                                                                                </div>
+                                                                                                                <div class="weui-media-box__bd">
+                                                                                                                    <h4 class="weui-media-box__title" v-for="(initme,index) in val.Items" :key="initme.Id">
+                                                                                                                        <span v-if="index">{{index}}：</span>
+                                                                                                                        <span v-if="initme.toString()">{{initme.toString()}}</span>
+                                                                                                                    </h4>
+                                                                                                                </div>
+                                                                                                            </a>
+                                                                                                        </div>
+                                                                                                        <div class="weui-panel__bd" v-show="isNodata">暂无数据</div>
+                                                                                                    </div>
+                                                                                                </section>-->
                 </div>
             </div>
         </div>
@@ -274,6 +284,41 @@ export default {
                 { label: '北京北新科技大厦', value: 2 }
             ],
             ordered: [
+                {
+                    name: '广州-广新2F 巴黎会议室 （18人）', order: [
+                        true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, true, false, false
+                    ]
+                },
+                {
+                    name: '广州-广新2F 巴黎会议室 （18人）', order: [
+                        true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, true, false, false
+                    ]
+                },
+                {
+                    name: '广州-广新2F 巴黎会议室 （18人）', order: [
+                        true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, true, false, false
+                    ]
+                },
+                {
+                    name: '广州-广新2F 巴黎会议室 （18人）', order: [
+                        true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, true, false, false
+                    ]
+                },
+                {
+                    name: '广州-广新2F 巴黎会议室 （18人）', order: [
+                        true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, true, false, false
+                    ]
+                },
+                {
+                    name: '广州-广新2F 巴黎会议室 （18人）', order: [
+                        true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, true, false, false
+                    ]
+                },
+                {
+                    name: '广州-广新2F 巴黎会议室 （18人）', order: [
+                        true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, true, false, false
+                    ]
+                },
                 {
                     name: '广州-广新2F 巴黎会议室 （18人）', order: [
                         true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, true, false, false
