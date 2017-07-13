@@ -1,8 +1,11 @@
 import App from '../app.vue';
 import Homepage from '../components/home/home.vue';
-import Mtlocationselect from '../components/mtlocationselect/mtlocationselect.vue';
-import Mttimeselect from '../components/mttimeselect/mttimeselect.vue';
-import Mtdetail from '../components/mtdetail/mtdetail.vue'
+import Mtlocationselect from '../components/mtLocationSelect/mtLocationSelect.vue';
+import Mttimeselect from '../components/mtTimeSelect/mtTimeSelect.vue';
+import Mtdetail from '../components/mtLaunchMeet/mtLaunchMeet.vue';
+import Mtaddcontarct from '../components/mtAddContarct/mtAddContarct.vue';
+import Mtnoticeset from '../components/mtNoticeSet/mtNoticeSet.vue';
+
 export default[
     {
         path:'/',
@@ -24,9 +27,19 @@ export default[
                 component:Mttimeselect
             },
             {
-                path:'/mtdetail',
+                path:'/mtlaunchmeet',
                 meta:'false',
                 component:Mtdetail
+            },
+            {
+                path:'/mtaddcontarct',
+                meta:'false',
+                component:Mtaddcontarct
+            },
+            {
+                path:'/mtnoticeset',
+                meta:'false',
+                component:Mtnoticeset
             }
         ]
     }
