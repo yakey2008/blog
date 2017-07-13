@@ -1,13 +1,15 @@
 <template>
   <div class="events-wrapper">
     <!--<h2 class="date">
-        {{dayEventsTitle}}
-      </h2>-->
+          {{dayEventsTitle}}
+        </h2>-->
     <p class="css-datetitle">{{dayEventsTitle}}</p>
     <div class="cal-events">
       <slot>
         <div v-for="(event, index) in events" class="event-item" :key="event">
-          <cal-event-item :event="event" :index="index" :locale="locale"></cal-event-item>
+          <router-link :to="'/mtmeetdetailaccept'" tag="div">
+            <cal-event-item :event="event" :index="index" :locale="locale"></cal-event-item>
+          </router-link>
         </div>
       </slot>
     </div>

@@ -5,6 +5,8 @@ import Mttimeselect from '../components/mtTimeSelect/mtTimeSelect.vue';
 import Mtdetail from '../components/mtLaunchMeet/mtLaunchMeet.vue';
 import Mtaddcontarct from '../components/mtAddContarct/mtAddContarct.vue';
 import Mtnoticeset from '../components/mtNoticeSet/mtNoticeSet.vue';
+import Mtmeetdetailaccept from '../components/mtMeetDetailAccept/mtMeetDetailAccept.vue';
+import Mtmeetdetailinvite from '../components/mtMeetDetailInvite/mtMeetDetailInvite.vue';
 
 export default[
     {
@@ -40,6 +42,16 @@ export default[
                 path:'/mtnoticeset',
                 meta:'false',
                 component:Mtnoticeset
+            },
+            {
+                path:'/mtmeetdetailaccept',
+                meta:'false',
+                component:Mtmeetdetailaccept
+            },
+            {
+                path:'/mtmeetdetailinvite',
+                meta:'false',
+                component:Mtmeetdetailinvite
             }
         ]
     }

@@ -1,6 +1,5 @@
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const es3ifyPlugin = require('es3ify-webpack-plugin');
 const path = require('path');
 module.exports = {
     entry: "./src/main.js",
@@ -68,8 +67,26 @@ module.exports = {
             'vue': 'vue/dist/vue.js'
         }
     },
-    plugins: [
-        new es3ifyPlugin()
-    ],
-    devtool: 'source-map'
+    devtool: '#eval-source-map'
+}
+
+
+if (process.env.NODE_ENV === 'production') {
+    module.exports.devtool = '#source-map';
+    module.exports.plugins = (module.exports.plugins || []).concat([
+        new webpack.DefinePlugin({
+            'process.env': {
+                NODE_ENV: '"production"'
+            }
+        }),
+        new webpack.LoaderOptionsPlugin({
+            minimize: true
+        }),
+        new ExtractTextPlugin("style.css"),
+        new webpack.optimize.UglifyJsPlugin({
+            compress: {
+                warnings: false
+            }
+        })
+    ])
 }

@@ -2,7 +2,9 @@
   <div class="cal-wrapper">
     <div class="cal-header">
       <div class="css-todaybtn" v-on:click="backtoday">
+        <router-link :to="'/mtmeetdetailinvite'" tag="div">
         <img v-bind:src="todaybg">
+        </router-link>
       </div>
       <div class="l" @click="preMonth">
         <div class="arrow-left icon">&nbsp</div>
@@ -12,9 +14,15 @@
         <div class="arrow-right icon">&nbsp</div>
       </div>
       <div class="css-searchbtn">
-        <img v-bind:src="searchbtn">
+        <router-link :to="'/mtnoticeset'" tag="div">
+          <img v-bind:src="searchbtn">
+        </router-link>
+  
       </div>
-      <div class="css-viewlocation" v-on:click="tomtlocationselect()"></div>
+      <router-link :to="'/mtlocationselect'" tag="section">
+        <div class="css-viewlocation">
+        </div>
+      </router-link>
     </div>
     <div class="cal-body">
       <div class="weeks">
@@ -22,10 +30,10 @@
       </div>
       <div class="dates">
         <div v-for="date in dayList" class="item" :class="{
-                today: date.status ? (today == date.date) : false,
-                event: date.status ? (date.title != undefined) : false,
-                [calendar.options.className] : (date.date == selectedDay)
-              }" :key="date">
+                    today: date.status ? (today == date.date) : false,
+                    event: date.status ? (date.title != undefined) : false,
+                    [calendar.options.className] : (date.date == selectedDay)
+                  }" :key="date">
           <p class="date-num" @click="handleChangeCurday(date)" :style="{color: date.title != undefined ? ((date.date == selectedDay) ? colfff:'inherit') : 'inherit'}">
             {{date.status ? date.date.split('/')[2] : '&nbsp'}}</p>
           <span v-if="date.status ? (date.title != undefined) : false" class="has-event" :style="{backgroundColor: (date.date == selectedDay) ? colfff : eventsubcolor}"></span>
@@ -124,10 +132,7 @@ export default {
     handleChangeCurday(date) {
       this.$emit('cur-day-changed', date.date)
     },
-    tomtlocationselect() {
-      router.push({ path: '/mtlocationselect' });
-    },
-    backtoday(){
+    backtoday() {
       this.today;
     }
   }

@@ -1,4 +1,8 @@
 <style lang="scss">
+.weui-navbar__item:after {
+    border: none;
+}
+
 .weui-media-box__title {
     white-space: normal;
 }
@@ -24,6 +28,7 @@
 
 .css-nav-container.weui-navbar {
     z-index: 502;
+    background-color: #fff;
 }
 
 .css-main-container {
@@ -44,6 +49,7 @@
                 background-color: #fff;
                 border-right: none;
                 color: #ec4280;
+                width: 101%;
             }
         }
     }
@@ -53,6 +59,27 @@
         margin-left: 21.3333%;
         background-color: #fff;
         border-left: 1px solid #e7e7e7;
+        .css-itembox {
+            position: relative;
+            .css-menu-pic {
+                position: absolute;
+                top: 21px;
+            }
+            .css-menu-info {
+                margin-left: 90px;
+                min-height: 72px;
+                .weui-media-box__title {
+                    line-height: 24px;
+                    font-size: .875rem;
+                    .css-menu-cat {
+                        color: #9b9b9b;
+                    }
+                    &.mgt4 {
+                        margin-top: 4px;
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -94,21 +121,21 @@
                         <!--<div class="c-lefttab" v-on:click="clearlocal()">（重置指引）</div>-->
                     </div>
                 </aside>
-                <section class="c-item-container" id="js-setheight">
+                <section class="c-item-container">
                     <div class="c-item-panel">
                         <div class="weui-panel__bd" v-show="isShowtab">
-                            <a href="javascript:void(0);" class="weui-media-box weui-media-box_appmsg" v-for="(val,index) in tabVal" :key="val.Id">
-                                <div class="weui-media-box__hd">
+                            <div class="weui-media-box weui-media-box_appmsg css-itembox" v-for="(val,index) in tabVal" :key="val.Id">
+                                <div class="weui-media-box__hd css-menu-pic">
                                     <img class="weui-media-box__thumb" v-bind:src="val.imgsrc" v-if="val.IconId">
                                     <img class="weui-media-box__thumb" v-bind:src="defaultimg" v-if="!val.IconId">
                                 </div>
-                                <div class="weui-media-box__bd">
-                                    <h4 class="weui-media-box__title" v-for="(initme,index) in val.Items" :key="initme.Id">
-                                        <span v-if="index">{{index}}：</span>
+                                <div class="weui-media-box__bd css-menu-info">
+                                    <h4 class="weui-media-box__title" v-for="(initme,index) in val.Items" :key="initme.Id" :class="index>0?'mgt4':''">
+                                        <span class="css-menu-cat" v-if="index">{{index}}：</span>
                                         <span v-if="initme.toString()">{{initme.toString()}}</span>
                                     </h4>
                                 </div>
-                            </a>
+                            </div>
                         </div>
                         <div class="weui-panel__bd" v-show="!isShowtab">暂无数据</div>
                     </div>
@@ -117,7 +144,7 @@
             <!--指引结构弹出 Start-->
             <div class="weui-actionsheet" id="iosActionsheet" v-if="isShowguide" :class="{'weui-actionsheet_toggle':!noticeguide}">
                 <div class="weui-actionsheet__title">
-                    <p class="weui-actionsheet__title-text">当前区域：广新餐厅</p>
+                    <p class="weui-actionsheet__title-text">当前区域：{{curregion}}</p>
                 </div>
                 <div class="weui-actionsheet__menu">
                     <div class="weui-actionsheet__cell" v-for="(region,index) in regionVal" v-on:click="selectregion(index)" :key="region.Id">{{region.Name}}</div>
@@ -187,13 +214,13 @@ export default {
     data() {
         return {
             //是否显示引导页
-            defaultimg:defaultImg,
+            defaultimg: defaultImg,
             weekstart: '',//本周开始时间
             weekend: '',//本周结束时间
-            todaytime: moment().format('YYYY-MM-DD'),//今天时间
-            // todaytime: '2016-8-30',//临时测试可删
+            // todaytime: moment().format('YYYY-MM-DD'),//今天时间
+            todaytime: '2016-8-30',//临时测试可删
             errtitle: "提示",
-            errinfo: "获取数据失败，请稍后刷新重试",
+            errinfo: "餐厅尚未上传菜单，请稍后再试",
             isShowguide: true,//是否显示指引页
             noticeguide: false,//指引页是否设置默认区域弹窗
             isShowerr: false,//是否显示失败提醒
@@ -349,18 +376,18 @@ export default {
             this.ajaxregionmenu(this.curregionId, this.todaytime, this.mealtime[index].value);
         },
         //重置餐次
-        settobreakfast(){
-            this.mealtime.forEach(function(el){
-                if(el.value === 0){
+        settobreakfast() {
+            this.mealtime.forEach(function (el) {
+                if (el.value === 0) {
                     el.ishow = true;
-                }else{
+                } else {
                     el.ishow = false;
                 }
             })
         },
         //获取菜品数据并合并处理
         ajaxregionmenu(curid, time, meal) {
-            if(meal === 0){
+            if (meal === 0) {
                 this.settobreakfast();
             }
             // this.$http.get('/Menu?regionId=' + curid + '&date=' + time + '&mealTime=' + meal).then(response => {
