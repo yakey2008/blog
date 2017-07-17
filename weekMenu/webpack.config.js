@@ -34,6 +34,13 @@ module.exports = {
                     '^/Feedback': '/Menu/Feedback'
                 },
                 changeOrigin: true
+            },
+            '/GetUser':{
+                target: 'http://t00005255.corp.vipshop.com:8045',
+                pathRewrite: {
+                    '^/GetUser': '/Menu/GetUser'
+                },
+                changeOrigin: true
             }
         }
     },
@@ -83,10 +90,10 @@ if (process.env.NODE_ENV === 'production') {
             minimize: true
         }),
         new ExtractTextPlugin("style.css"),
-        new webpack.optimize.UglifyJsPlugin({
-            compress: {
-                warnings: false
-            }
-        })
+        // new webpack.optimize.UglifyJsPlugin({
+        //     compress: {
+        //         warnings: false
+        //     }
+        // })
     ])
 }

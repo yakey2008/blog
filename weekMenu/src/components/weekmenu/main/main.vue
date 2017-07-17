@@ -1,4 +1,16 @@
 <style lang="scss">
+@mixin flexbox() {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+}
+
+@mixin flexboxwidth($w) {
+    -webkit-box-flex: $w;
+    -webkit-flex: $w;
+    flex: $w;
+}
+
 .weui-navbar__item:after {
     border: none;
 }
@@ -7,9 +19,17 @@
     white-space: normal;
 }
 
+.weui-actionsheet__menu {
+    height: 145px;
+    overflow-x: scroll;
+}
+
 .css-nav-container {
     .select-btn {
         .css-arrow {
+            position: absolute;
+            top: 18px;
+            right: 14%;
             display: inline-block;
             height: 8px;
             width: 8px;
@@ -22,6 +42,7 @@
         .drop {
             transform: rotate(135deg);
             margin-bottom: -2px;
+            top: 23px;
         }
     }
 }
@@ -29,6 +50,10 @@
 .css-nav-container.weui-navbar {
     z-index: 502;
     background-color: #fff;
+    .css-select-region {
+        padding-left: 8%;
+        padding-right: 20%;
+    }
 }
 
 .css-main-container {
@@ -64,18 +89,46 @@
             .css-menu-pic {
                 position: absolute;
                 top: 21px;
+                border-radius: 4px;
+                overflow: hidden;
+                .css-explain-mask {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: #000;
+                    opacity: 0.3;
+                    z-index: 50;
+                }
+                .css-explain-text {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    color: #fff;
+                    z-index: 51;
+                    font-size: .8rem;
+                    text-align: center;
+                }
             }
             .css-menu-info {
-                margin-left: 90px;
+                margin-left: 75px;
                 min-height: 72px;
                 .weui-media-box__title {
-                    line-height: 24px;
+                    @include flexbox();
+                    line-height: 20px;
                     font-size: .875rem;
+                    margin-bottom: 7px;
+                    margin-top: 2px;
                     .css-menu-cat {
+                        @include flexboxwidth(1);
                         color: #9b9b9b;
                     }
-                    &.mgt4 {
-                        margin-top: 4px;
+                    .css-menu-content {
+                        @include flexboxwidth(1.5);
+                        padding-left: 5px;
                     }
                 }
             }
@@ -106,7 +159,7 @@
             <!--指引结构头部 End-->
             <div class="weui-navbar css-nav-container" v-if="!isShowguide">
                 <div class="weui-navbar__item select-btn" v-on:click="showregion()">
-                    {{curregion}}
+                    <div class="css-select-region">{{curregion}}</div>
                     <i class="css-arrow" :class="{drop:isShowregion}"></i>
                 </div>
                 <div class="weui-navbar__item select-btn" v-on:click="showtime()">
@@ -114,11 +167,11 @@
                     <i class="css-arrow" :class="{drop:isShowtime}"></i>
                 </div>
             </div>
-            <div class="weui-tab__panel css-main-container" id="js-mainheight">
+            <div class="weui-tab__panel css-main-container" v-bind:style="{paddingTop:dompadding+'px'}">
                 <aside class="aside-container">
                     <div class="aside">
                         <div class="c-lefttab" v-for="(val,index) in mealtime" v-on:click="switchpanel(index)" :class="{tabactive:val.ishow}" :key="val.Id">{{val.name}}</div>
-                        <!--<div class="c-lefttab" v-on:click="clearlocal()">（重置指引）</div>-->
+                        <div class="c-lefttab" v-on:click="clearlocal()">（重置指引）</div>
                     </div>
                 </aside>
                 <section class="c-item-container">
@@ -128,16 +181,18 @@
                                 <div class="weui-media-box__hd css-menu-pic">
                                     <img class="weui-media-box__thumb" v-bind:src="val.imgsrc" v-if="val.IconId">
                                     <img class="weui-media-box__thumb" v-bind:src="defaultimg" v-if="!val.IconId">
+                                    <span class="css-explain-mask"></span>
+                                    <span class="css-explain-text">{{val.Name}}</span>
                                 </div>
                                 <div class="weui-media-box__bd css-menu-info">
-                                    <h4 class="weui-media-box__title" v-for="(initme,index) in val.Items" :key="initme.Id" :class="index>0?'mgt4':''">
-                                        <span class="css-menu-cat" v-if="index">{{index}}：</span>
-                                        <span v-if="initme.toString()">{{initme.toString()}}</span>
+                                    <h4 class="weui-media-box__title" v-for="(initme,idx) in val.Items" :key="initme.Id">
+                                        <span class="css-menu-cat" v-if="idx">{{idx}}：</span>
+                                        <span class="css-menu-content" v-if="initme.toString()">{{initme.toString()}}</span>
                                     </h4>
                                 </div>
                             </div>
                         </div>
-                        <div class="weui-panel__bd" v-show="!isShowtab">暂无数据</div>
+                        <div class="weui-panel__bd" v-show="!isShowtab">暂无菜单！</div>
                     </div>
                 </section>
             </div>
@@ -147,6 +202,7 @@
                     <p class="weui-actionsheet__title-text">当前区域：{{curregion}}</p>
                 </div>
                 <div class="weui-actionsheet__menu">
+                    <div class="weui-actionsheet__cell" v-for="(region,index) in regionVal" v-on:click="selectregion(index)" :key="region.Id">{{region.Name}}</div>
                     <div class="weui-actionsheet__cell" v-for="(region,index) in regionVal" v-on:click="selectregion(index)" :key="region.Id">{{region.Name}}</div>
                 </div>
                 <div class="weui-actionsheet__action">
@@ -179,7 +235,24 @@ import urldata from '../../../config/urldata.js';
 import notice from '../../popnotice/notice.vue';
 import defaultImg from '../../../images/defaultimg.png';
 export default {
-    mounted: function () {
+    mounted() {
+        // this.$http.get('/GetUser').then(response => {
+        //     let loginuser = this.getlocaldata('UserAccount');
+        //     let dataUser = response.body.UserAccount;
+        //     let userArr = [];
+        //     if (loginuser) {
+        //         let loginuserstr = JSON.parse(loginuser);
+        //         loginuserstr.forEach((el) => {
+        //             if(el === dataUser){
+        //                 this.curid = '';
+        //             }
+        //         })
+        //     } else {
+        //         userArr.push(dataUser);
+        //         this.setlocaldata('UserAccount', JSON.stringify(userArr));
+        //     }
+        // }).then(()=>{
+        // })
         let localdata = this.getlocaldata('isShowguide');
         if (localdata) {
             this.isShowguide = false;
@@ -204,17 +277,32 @@ export default {
         // this.$http.get('/Region').then(response => {
         this.$http.get(urldata.basePath + urldata.Region).then(response => {
             if (response.body.Success) {
-                this.regionVal = response.body.Object;
+                let obj = response.body.Object;
+                let str = '广新';
+                let _this = this;
+                this.regionVal = obj;
+
+                obj.forEach(function (el) {
+                    if (el.Name.indexOf(str) !== -1) {
+                        _this.defaultRegion = el.Name;
+                        _this.defaultRegionId = el.Id;
+                        _this.curregion = el.Name;
+                        _this.curregionId = el.Id;
+                    }
+                })
             }
         }, response => {
             this.isShowerr = true;
         });
 
     },
+    updated() {
+        this.dompadding = document.querySelector('.css-nav-container').offsetHeight;
+    },
     data() {
         return {
-            //是否显示引导页
-            defaultimg: defaultImg,
+            dompadding: 50,//容器padding计算
+            defaultimg: defaultImg,//默认图片
             weekstart: '',//本周开始时间
             weekend: '',//本周结束时间
             // todaytime: moment().format('YYYY-MM-DD'),//今天时间
@@ -226,6 +314,8 @@ export default {
             isShowerr: false,//是否显示失败提醒
             isShowregion: false,//是否显示区域下拉
             isShowtime: false,//是否显示时间区域下拉
+            defaultRegion: "",//默认广新
+            defaultRegionId: "",//默认广新id
             curregion: "",//当前选中区域
             curregionId: "",//当前选中区域的id
             regionVal: [],//区域数据
@@ -272,8 +362,12 @@ export default {
         cancelguide() {
             if (this.isShowguide) {
                 this.isShowguide = false;
-                this.curregion = this.regionVal[0].Name;
-                this.curregionId = this.regionVal[0].Id;
+                // this.curregion = this.regionVal[0].Name;
+                // this.curregionId = this.regionVal[0].Id;
+                if (this.curregion.indexOf('广新') === -1) {
+                    this.curregion = this.defaultRegion;
+                    this.curregionId = this.defaultRegionId;
+                }
                 this.setlocaldata('isShowguide', this.curregion);
                 this.setlocaldata('curregionId', this.curregionId);
                 document.querySelector('.css-bottombar').style.zIndex = 500;
@@ -341,7 +435,7 @@ export default {
                 // start:_this.weekstart,
                 // end: _this.weekend,
                 defaultValue: [curyear, curMonth, curday],
-                cron: '* * 1-6',  // 每逢周一到周六
+                // cron: '* * 1-6',  // 每逢周一到周六
                 onChange: function (result) {
                     //选中后的处理
                 },
@@ -424,10 +518,10 @@ export default {
             });
         },
         //清除本地存储 可删
-        // clearlocal() {
-        //     window.localStorage.clear();
-        //     window.location.reload();
-        // }
+        clearlocal() {
+            window.localStorage.clear();
+            window.location.reload();
+        }
     }
 } 
 </script>

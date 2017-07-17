@@ -1,15 +1,15 @@
-import App from '../app.vue';
-import Homepage from '../components/home/home.vue';
-import Mtlocationselect from '../components/mtLocationSelect/mtLocationSelect.vue';
-import Mttimeselect from '../components/mtTimeSelect/mtTimeSelect.vue';
-import Mtdetail from '../components/mtLaunchMeet/mtLaunchMeet.vue';
-import Mtaddcontact from '../components/mtAddContact/mtAddContact.vue';
-import Mtnoticeset from '../components/mtNoticeSet/mtNoticeSet.vue';
-import Mtmeetdetailaccept from '../components/mtMeetDetailAccept/mtMeetDetailAccept.vue';
-import Mtmeetdetailinvite from '../components/mtMeetDetailInvite/mtMeetDetailInvite.vue';
-import Mtlocationsearch from '../components/mtlocationSearch/mtLocationSearch.vue';
-import Mtparticipantslist from '../components/MtParticipantsList/mtParticipantsList.vue';
-
+import App from '../app.vue';//入口
+import Homepage from '../components/home/home.vue';//首页
+import Mtlocationselect from '../components/mtLocationSelect/mtLocationSelect.vue';//选择会议室
+import Mttimeselect from '../components/mtTimeSelect/mtTimeSelect.vue';//选择会议时间
+import Mtdetail from '../components/mtLaunchMeet/mtLaunchMeet.vue';//新建会议详情
+import Mtaddcontact from '../components/mtAddContact/mtAddContact.vue';//通过邮箱添加参会人
+import Mtnoticeset from '../components/mtNoticeSet/mtNoticeSet.vue';//会议通知提醒设置
+import Mtmeetdetailaccept from '../components/mtMeetDetailAccept/mtMeetDetailAccept.vue';//会议详情(非发起者)
+import Mtmeetdetailinvite from '../components/mtMeetDetailInvite/mtMeetDetailInvite.vue';//会议详情(发起者)
+import Mtlocationsearch from '../components/mtlocationSearch/mtLocationSearch.vue';//搜索可用会议室
+import Mtparticipantslist from '../components/MtParticipantsList/mtParticipantsList.vue';//参会人员列表其他情况
+import Mtnoticelist from '../components/mtNoticeList/mtNoticeList.vue';//会议通知列表
 
 export default[
     {
@@ -65,6 +65,11 @@ export default[
                 path:'/mtparticipantslist',
                 meta:'false',
                 component:Mtparticipantslist
+            },
+            {
+                path:'/mtnoticelist',
+                meta:'false',
+                component:Mtnoticelist
             }
         ]
     }
