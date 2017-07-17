@@ -7,6 +7,9 @@ import Mtaddcontact from '../components/mtAddContact/mtAddContact.vue';
 import Mtnoticeset from '../components/mtNoticeSet/mtNoticeSet.vue';
 import Mtmeetdetailaccept from '../components/mtMeetDetailAccept/mtMeetDetailAccept.vue';
 import Mtmeetdetailinvite from '../components/mtMeetDetailInvite/mtMeetDetailInvite.vue';
+import Mtlocationsearch from '../components/mtlocationSearch/mtLocationSearch.vue';
+import Mtparticipantslist from '../components/MtParticipantsList/mtParticipantsList.vue';
+
 
 export default[
     {
@@ -52,6 +55,16 @@ export default[
                 path:'/mtmeetdetailinvite',
                 meta:'false',
                 component:Mtmeetdetailinvite
+            },
+            {
+                path:'/mtlocationsearch',
+                meta:'false',
+                component:Mtlocationsearch
+            },
+            {
+                path:'/mtparticipantslist',
+                meta:'false',
+                component:Mtparticipantslist
             }
         ]
     }
