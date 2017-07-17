@@ -58,17 +58,17 @@ $col9b:#9b9b9b;
             &:after {
                 border: none;
             }
-            .css-acceptnotice-text{
+            .css-acceptnotice-text {
                 font-size: .95rem;
             }
         }
         .css-mtlaunchmeet-theme {
             margin: 0;
             font-size: 1rem;
-            padding-top: 24px;
+            padding-top: 14px;
 
             .weui-cell {
-                padding-top: 17px;
+                padding-top: 23px;
                 padding-left: 22px;
                 .weui-textarea {
                     height: 33px;
@@ -140,6 +140,7 @@ $col9b:#9b9b9b;
                 .css-mtlaunchmeet-mtl-location-info {
                     @include flexboxwidth(1);
                     text-align: left;
+                    margin-right: 10px;
                 }
                 .css-mtlaunchmeet-mtl-location-deladdbtn {
                     text-align: right; //添加
@@ -317,8 +318,7 @@ $col9b:#9b9b9b;
                     <div class="css-mtlaunchmeet-meetlocation">
                         <div class="css-mtlaunchmeet-mtl-infoadd-container">
                             <div class="css-mtlaunchmeet-mtl-info">
-                                <p>会议地点（
-                                    <span>{{meetingroom.length}}</span>）</p>
+                                <p>会议地点（{{meetingroom.length}}）</p>
                             </div>
                             <div class="css-mtlaunchmeet-mtl-addbtn">
                                 <span class="css-add-btn" v-on:click="mtrAddone()">添加</span>
@@ -352,8 +352,7 @@ $col9b:#9b9b9b;
                     <div class="css-mtlaunchmeet-participate-container">
                         <div class="css-mtlaunchmeet-mtl-infoadd-container">
                             <div class="css-mtlaunchmeet-mtl-info">
-                                <p>参会人员（
-                                    <span>{{meetingroom.length}}</span>）</p>
+                                <p>参会人员（{{meetingroom.length}}）</p>
                             </div>
                             <div class="css-mtlaunchmeet-mtl-addbtn">
                                 <router-link :to="'/mtaddcontarct'" tag="div">

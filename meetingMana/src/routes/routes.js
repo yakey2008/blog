@@ -3,7 +3,7 @@ import Homepage from '../components/home/home.vue';
 import Mtlocationselect from '../components/mtLocationSelect/mtLocationSelect.vue';
 import Mttimeselect from '../components/mtTimeSelect/mtTimeSelect.vue';
 import Mtdetail from '../components/mtLaunchMeet/mtLaunchMeet.vue';
-import Mtaddcontarct from '../components/mtAddContarct/mtAddContarct.vue';
+import Mtaddcontact from '../components/mtAddContact/mtAddContact.vue';
 import Mtnoticeset from '../components/mtNoticeSet/mtNoticeSet.vue';
 import Mtmeetdetailaccept from '../components/mtMeetDetailAccept/mtMeetDetailAccept.vue';
 import Mtmeetdetailinvite from '../components/mtMeetDetailInvite/mtMeetDetailInvite.vue';
@@ -34,9 +34,9 @@ export default[
                 component:Mtdetail
             },
             {
-                path:'/mtaddcontarct',
+                path:'/mtaddcontact',
                 meta:'false',
-                component:Mtaddcontarct
+                component:Mtaddcontact
             },
             {
                 path:'/mtnoticeset',

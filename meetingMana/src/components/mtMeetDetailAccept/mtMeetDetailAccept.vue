@@ -69,15 +69,7 @@ $col9b:#9b9b9b;
         .css-mtlaunchmeet-theme {
             margin: 0;
             font-size: 1rem;
-            padding-top: 24px;
-            .weui-cell {
-                padding-top: 17px;
-                padding-left: 22px;
-                .weui-textarea {
-                    height: 33px;
-                    resize: vertical;
-                }
-            }
+            padding-top: 14px;
         }
         .css-mtlaunchmeet-meettime {
             .weui-cell__bd {
@@ -94,7 +86,6 @@ $col9b:#9b9b9b;
                 }
                 @media (max-width: 340px) {
                     .weui-cell__ft {
-
                         padding-left: 5px;
                     }
                 }
@@ -119,6 +110,7 @@ $col9b:#9b9b9b;
                 background-image: url('../../images/accept-bg.png');
                 background-size: cover;
                 font-style: normal;
+                font-size: .875rem;
             }
             .css-mtlaunchmeet-mtl-infoadd-container {
                 @include flexbox();
@@ -126,7 +118,7 @@ $col9b:#9b9b9b;
                 font-size: 1rem;
                 overflow: hidden;
                 position: relative;
-                padding: 11px 22px;
+                padding: 21px 22px;
                 color: #9b9b9b;
                 .css-mtlaunchmeet-mtl-info {
                     @include flexboxwidth(1);
@@ -358,8 +350,7 @@ $col9b:#9b9b9b;
                     <div class="css-mtlaunchmeet-meetlocation">
                         <div class="css-mtlaunchmeet-mtl-infoadd-container">
                             <div class="css-mtlaunchmeet-mtl-info">
-                                <p>会议地点（
-                                    <span>{{meetingroom.length}}</span>）</p>
+                                <p>会议地点（{{meetingroom.length}}）</p>
                             </div>
                         </div>
                         <div class="css-mtlaunchmeet-mtl-location-container" v-for="(mtr,index) in meetingroom" :key="mtr">
@@ -385,8 +376,7 @@ $col9b:#9b9b9b;
                     <div class="css-mtlaunchmeet-participate-container">
                         <div class="css-mtlaunchmeet-mtl-infoadd-container weui-cell_access">
                             <div class="css-mtlaunchmeet-mtl-info">
-                                <p>参会人员（
-                                    <span>{{meetingroom.length}}</span>）</p>
+                                <p>参会人员（{{meetingroom.length}}）</p>
                             </div>
                             <div class="css-mtlaunchmeet-mtl-addbtn weui-cell__ft">
                                 <router-link :to="'/mtaddcontarct'" tag="div">

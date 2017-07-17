@@ -18,14 +18,6 @@
     }
 }
 
-@mixin boxshadow($hs, $vs, $blur, $spread, $color:#000) {
-    box-shadow: $hs $vs $blur $spread $color;
-    -ms-box-shadow: $hs $vs $blur $spread $color;
-    -webkit-box-shadow: $hs $vs $blur $spread $color;
-    -moz-box-shadow: $hs $vs $blur $spread $color;
-    -o-box-shadow: $hs $vs $blur $spread $color;
-}
-
 @mixin flexbox() {
     display: -webkit-box;
     display: -webkit-flex;
@@ -41,8 +33,17 @@
 $col9b:#9b9b9b;
 
 @include placeholder(#ccc);
-.css-mtmeetdetailaccept-page {
+.css-mtmeetdetailinvite-page {
     background-color: #f6f7f8;
+    //文本框
+    .css-mtmeetdetailinvite-textarea {
+        .weui-textarea {
+            height: 35px;
+            resize: vertical;
+            color: #333;
+        }
+    }
+    //更换单选区的颜色
     .weui-cells_checkbox .weui-check:checked+.weui-icon-checked:before {
         color: #ec4280;
     }
@@ -58,7 +59,6 @@ $col9b:#9b9b9b;
         .weui-cells {
             margin: 0;
             font-size: 1rem;
-
             &:before {
                 border: none;
             }
@@ -97,7 +97,6 @@ $col9b:#9b9b9b;
                 }
                 @media (max-width: 340px) {
                     .weui-cell__ft {
-
                         padding-left: 5px;
                     }
                 }
@@ -122,6 +121,7 @@ $col9b:#9b9b9b;
                 background-image: url('../../images/invite-bg.png');
                 background-size: cover;
                 font-style: normal;
+                font-size: .875rem;
             }
             .css-mtlaunchmeet-mtl-infoadd-container {
                 @include flexbox();
@@ -129,19 +129,15 @@ $col9b:#9b9b9b;
                 font-size: 1rem;
                 overflow: hidden;
                 position: relative;
-                padding: 11px 22px;
+                padding: 22px 22px 9px 22px;
                 color: #9b9b9b;
-                .css-mtlaunchmeet-mtl-info {
-                    @include flexboxwidth(1);
-                    text-align: left; //会议主题
-                    .css-mt-themetext {
-                        color: #333;
-                        padding-left: 20px;
-                    }
-                    @media (max-width: 340px) {
-                        .css-mt-themetext {
-                            padding-left: 5px;
-                        }
+                .css-mtmeetdetailinvite-textarea {
+                    @include flexboxwidth(2);
+                    margin-left: 20px;
+                }
+                @media (max-width: 340px) {
+                    .css-mtmeetdetailinvite-textarea {
+                        margin-left: 5px;
                     }
                 }
                 .css-mtlaunchmeet-mtl-addbtn {
@@ -166,6 +162,7 @@ $col9b:#9b9b9b;
                 .css-mtlaunchmeet-mtl-location-info {
                     @include flexboxwidth(1);
                     text-align: left;
+                    margin-right: 10px;
                 }
                 .css-mtlaunchmeet-mtl-location-deladdbtn {
                     text-align: right; //添加
@@ -293,6 +290,33 @@ $col9b:#9b9b9b;
                         text-align: center;
                     }
                 }
+            } //会议邀请状态按钮
+            .css-invited-statu {
+                @include flexbox();
+                padding: 10px 22px;
+                .css-invited-statu-btn {
+                    @include flexboxwidth(1);
+                    padding: 5px;
+                    font-size: .875rem;
+                    text-align: center;
+                    background-color: #989ad7;
+                    color: #fff;
+                    margin-right: 11px;
+                    border-radius: 4px;
+                    &.mgr0 {
+                        margin-right: 0;
+                    }
+                }
+                @media (max-width: 400px) {
+                    .css-invited-statu-btn {
+                        font-size: .7rem;
+                    }
+                }
+                @media (max-width: 355px) {
+                    .css-invited-statu-btn {
+                        margin-right: 1px;
+                    }
+                }
             }
         }
     }
@@ -328,7 +352,7 @@ $col9b:#9b9b9b;
 }
 </style>
 <template>
-    <div class="weui-tab css-mtmeetdetailaccept-page">
+    <div class="weui-tab css-mtmeetdetailinvite-page">
         <div class="weui-tab">
             <div class="weui-tab__panel css-main-container">
                 <section>
@@ -336,7 +360,11 @@ $col9b:#9b9b9b;
                         <div class="css-mtlaunchmeet-mtl-infoadd-container">
                             <div class="css-mtlaunchmeet-mtl-info">
                                 <span>会议主题</span>
-                                <span class="css-mt-themetext">部门例会</span>
+                            </div>
+                            <div class="css-mtmeetdetailinvite-textarea weui-cell_access">
+                                <div class="weui-cell__ft">
+                                    <textarea class="weui-textarea" placeholder="请输入文本" rows="3" maxlength="30"></textarea>
+                                </div>
                             </div>
                         </div>
                         <i class="css-meet-statu">会议室待审批</i>
@@ -345,7 +373,7 @@ $col9b:#9b9b9b;
                 <div class="hr-div"></div>
                 <section>
                     <div class="weui-cells css-mtlaunchmeet-meettime">
-                        <div class="weui-cell">
+                        <div class="weui-cell weui-cell_access">
                             <div class="weui-cell__bd">
                                 <p>会议时间</p>
                             </div>
@@ -361,14 +389,22 @@ $col9b:#9b9b9b;
                     <div class="css-mtlaunchmeet-meetlocation">
                         <div class="css-mtlaunchmeet-mtl-infoadd-container">
                             <div class="css-mtlaunchmeet-mtl-info">
-                                <p>会议地点（
-                                    <span>{{meetingroom.length}}</span>）</p>
+                                <p>会议地点（{{meetingroom.length}}）</p>
+                            </div>
+                            <div class="css-mtlaunchmeet-mtl-addbtn">
+                                <span class="css-add-btn" v-on:click="mtrAddone()">添加</span>
                             </div>
                         </div>
                         <div class="css-mtlaunchmeet-mtl-location-container" v-for="(mtr,index) in meetingroom" :key="mtr">
                             <div class="css-mtlaunchmeet-mtl-location-info">
                                 <p>{{mtr.name}}</p>
                             </div>
+                            <div class="css-mtlaunchmeet-mtl-location-deladdbtn">
+                                <i class="css-del-btn" v-on:click="mtrDelone(index)"></i>
+                            </div>
+                        </div>
+                        <div class="css-mtlaunchmeet-mtl-location-container css-shouall-container">
+                            <div class="css-showall-participate">展开查看所有会议地点</div>
                         </div>
                     </div>
                 </section>
@@ -378,7 +414,11 @@ $col9b:#9b9b9b;
                         <div class="css-mtlaunchmeet-mtl-infoadd-container">
                             <div class="css-mtlaunchmeet-mtl-info">
                                 <span>会议内容</span>
-                                <span class="css-mt-themetext">6月份部门例会，圣诞快乐放假啦速度快解放收到了反馈</span>
+                            </div>
+                            <div class="css-mtmeetdetailinvite-textarea weui-cell_access">
+                                <div class="weui-cell__ft">
+                                    <textarea class="weui-textarea" placeholder="请输入会议内容（可选）" rows="3" maxlength="30"></textarea>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -386,16 +426,21 @@ $col9b:#9b9b9b;
                 <div class="hr-div"></div>
                 <section>
                     <div class="css-mtlaunchmeet-participate-container">
-                        <div class="css-mtlaunchmeet-mtl-infoadd-container weui-cell_access">
+                        <div class="css-mtlaunchmeet-mtl-infoadd-container">
                             <div class="css-mtlaunchmeet-mtl-info">
-                                <p>参会人员（
-                                    <span>{{meetingroom.length}}</span>）</p>
+                                <p>参会人员（{{meetingroom.length}}）</p>
                             </div>
-                            <div class="css-mtlaunchmeet-mtl-addbtn weui-cell__ft">
+                            <div class="css-mtlaunchmeet-mtl-addbtn">
                                 <router-link :to="'/mtaddcontarct'" tag="div">
-                                    <span class="css-add-btn">查看所有参与人</span>
+                                    <span class="css-add-btn">通过邮箱地址添加</span>
                                 </router-link>
                             </div>
+                        </div>
+                        <div class="css-invited-statu">
+                            <div class="css-invited-statu-btn">全部</div>
+                            <div class="css-invited-statu-btn">已接收(2)</div>
+                            <div class="css-invited-statu-btn">已谢绝(10)</div>
+                            <div class="css-invited-statu-btn mgr0">未接收(11)</div>
                         </div>
                         <div class="css-mtlaunchmeet-mtl-participate-items">
                             <div class="weui-uploader__bd">
