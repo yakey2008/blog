@@ -10,6 +10,7 @@ import Mtmeetdetailinvite from '../components/mtMeetDetailInvite/mtMeetDetailInv
 import Mtlocationsearch from '../components/mtlocationSearch/mtLocationSearch.vue';//搜索可用会议室
 import Mtparticipantslist from '../components/MtParticipantsList/mtParticipantsList.vue';//参会人员列表其他情况
 import Mtnoticelist from '../components/mtNoticeList/mtNoticeList.vue';//会议通知列表
+import Mtlisttimeline from '../components/mtListTimeline/mtListTimeline.vue';//我的会议查看
 
 export default[
     {
@@ -70,6 +71,11 @@ export default[
                 path:'/mtnoticelist',
                 meta:'false',
                 component:Mtnoticelist
+            },
+            {
+                path:'/mtlisttimeline',
+                meta:'false',
+                component:Mtlisttimeline
             }
         ]
     }
