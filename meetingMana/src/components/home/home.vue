@@ -45,7 +45,7 @@ let today = new Date()
 export default {
   data() {
     return {
-      curday:`${new Date().getFullYear()}/${new Date().getMonth() + 1}/${new Date().getDate()}`,
+      curday:`${today.getFullYear()}/${today.getMonth()>9 ? today.getMonth()+1 :'0'+ (today.getMonth() + 1)}/${today.getDate()}`,
       demoEvents: [
       //   {
       //   date: `${today.getFullYear()}/${today.getMonth() + 1}/${today.getDate()}`,
@@ -81,17 +81,18 @@ export default {
           let strStart2 = strStart.substr(0,strStart.length-3);
           let strEnd = el.End.substr(11);
           let strEnd2 = strEnd.substr(0,strEnd.length-3);
-
+          
           obj.title = el.Subject;
           obj.desc = el.Location;
           obj.date = el.End.substr(0,el.End.length-9).replace(/-/g,'/')
           obj.datetime = strStart2+' - '+strEnd2;
           this.demoEvents.push(obj);
-          this.$EventCalendar.toDate(this.curday);
         }, this);
       }
     }, response => {
-      
+      // error
+    }).then(()=>{
+        this.$EventCalendar.toDate(this.curday);
     });
   },
   methods: {

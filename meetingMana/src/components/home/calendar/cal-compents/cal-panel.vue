@@ -32,10 +32,10 @@
         <div v-for="date in dayList" class="item" :class="{
                     today: date.status ? (today == date.date) : false,
                     event: date.status ? (date.title != undefined) : false,
-                    [calendar.options.className] : (date.date == selectedDay)
-                  }" :key="date">
-          <p class="date-num" @click="handleChangeCurday(date)" :style="{color: date.title != undefined ? ((date.date == selectedDay) ? colfff:'inherit') : 'inherit'}">
-            {{date.status ? date.date.split('/')[2] : '&nbsp'}}</p>
+                    [calendar.options.className] : (date.date == selectedDay ||date.date ===curday)
+                  }" :key="date" v-on:click="removecls()">
+          <p class="date-num" @click="handleChangeCurday(date)" :style="{color: date.title != undefined ? ((date.date == selectedDay) ? ((date.status===0) ?'#ccc':colfff):((date.status===0) ?'#ccc':'inherit')) :((date.status===0) ?'#ccc':'inherit')}">
+            {{date.date.split('/')[2]}}</p>
           <span v-if="date.status ? (date.title != undefined) : false" class="has-event" :style="{backgroundColor: (date.date == selectedDay) ? colfff : eventsubcolor}"></span>
           <span v-if="date.status ? (date.title != undefined) : false" class="is-event" :style="{borderColor: customColor, backgroundColor: (date.date == selectedDay) ? customColor : 'inherit'}"></span>
         </div>
@@ -57,10 +57,12 @@ const router = new VueRouter({
 })
 
 const inBrowser = typeof window !== 'undefined'
+let dateObj = new Date()
 export default {
   name: 'cal-panel',
   data() {
     return {
+      curday:`${dateObj.getFullYear()}/${dateObj.getMonth() + 1}/${dateObj.getDate()}`,
       colfff: '#fff',
       eventsubcolor: '#4c8afe',
       todaybg,
@@ -130,10 +132,20 @@ export default {
       this.$emit('month-changed', this.curYearMonth)
     },
     handleChangeCurday(date) {
+      let str = date.date.substr(date.date.length-2,2);
+      if(date.status===0&&str.substr(0,1)!=='/'){
+        this.preMonth()
+      }
+      if(date.status===0&&str.substr(0,1)==='/'){
+        this.nextMonth()
+      }
       this.$emit('cur-day-changed', date.date)
     },
     backtoday() {
       this.today;
+    },
+    removecls(){
+      this.curday = false;
     }
   }
 }

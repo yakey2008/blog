@@ -35,7 +35,7 @@
     "weui": "^1.1.2"
   },
   "scripts": {
-    "dev": "cross-env NODE_ENV=development webpack-dev-server --inline --hot --quiet --host 10.100.69.100 --port 3300",
+    "dev": "cross-env NODE_ENV=development webpack-dev-server --inline --hot --quiet --host t00005162-7.corp.vipshop.com --port 3300",
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
   },
   "author": "Ceasar.zou",

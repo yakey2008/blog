@@ -177,10 +177,17 @@ $icon-border-size: 1px;
           }
           &.event {
             cursor: pointer;
-          }
-          &.selected-day {
-            .is-event {
-              background-color: $base-orange;
+
+            &.selected-day {
+              .date-num {
+                color: #fff!important;
+              }
+              .has-event {
+                background-color: #fff!important;
+              }
+              .is-event {
+                background-color: #88b1ff!important;
+              }
             }
           }
           .is-event {
@@ -340,9 +347,8 @@ export default {
   },
   data() {
     return {
-      curday: `${new Date().getFullYear()}/${new Date().getMonth() + 1}/${new Date().getDate()}`,
       selectedDayEvents: {
-        date: this.curday,
+        date: 'all',
         events: this.events || []  //default show all event
       }
     }
@@ -379,7 +385,7 @@ export default {
             curYear: dateObj.getFullYear(),
             curMonth: dateObj.getMonth(),
             curDate: dateObj.getDate(),
-            curEventsDate: this.curday
+            curEventsDate: 'all'
           }
         }
       }
@@ -399,7 +405,7 @@ export default {
     }
   },
   created() {
-    if (this.calendarParams.curEventsDate !== this.curday) {
+    if (this.calendarParams.curEventsDate !== 'all') {
       this.handleChangeCurDay(this.calendarParams.curEventsDate)
     }
   },
@@ -423,18 +429,18 @@ export default {
   },
   watch: {
     calendarParams() {
-      if (this.calendarParams.curEventsDate !== this.curday) {
+      if (this.calendarParams.curEventsDate !== 'all') {
         this.handleChangeCurDay(this.calendarParams.curEventsDate)
       } else {
         this.selectedDayEvents = {
-          date: this.curday,
+          date: 'all',
           events: this.events
         }
       }
     },
     events() {
       this.selectedDayEvents = {
-        date: this.curday,
+        date: 'all',
         events: this.events || []
       }
     }

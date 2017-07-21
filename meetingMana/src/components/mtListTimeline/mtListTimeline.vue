@@ -1,4 +1,23 @@
 <style lang="scss">
+@mixin placeholder($color) {
+     ::-webkit-input-placeholder {
+        // WebKit browsers
+        color: $color;
+    }
+     :-moz-placeholder {
+        // Mozilla Firefox 4 to 18
+        color: $color;
+    }
+     ::-moz-placeholder {
+        // Mozilla Firefox 19+
+        color: $color;
+    }
+     :-ms-input-placeholder {
+        // Internet Explorer 10+
+        color: $color;
+    }
+}
+
 @mixin flexbox() {
     display: -webkit-box;
     display: -webkit-flex;
@@ -11,16 +30,48 @@
     flex: $w;
 }
 
+@include placeholder(#9b9b9b);
 .css-mtnoticelist-page {
     .col9b {
         color: #9b9b9b;
     }
-    background-color: #f6f7f8;
+    background-color: #fff;
+    .css-searcharea {
+        position: relative;
+        margin: 20px 9px;
+        text-align: center;
+        background-color: #f3f3f3;
+        border-radius: 4px;
+        overflow: hidden;
+        .css-searcharea-icon {
+            position: absolute;
+            top: 10px;
+            left: 11px;
+            width: 15px;
+            height: 15px;
+            background-size: cover;
+            background-image: url('../../images/searchicon.png');
+        }
+        .css-searcharea-input {
+            width: 90%;
+            padding: 10px 0;
+            padding-left: 35px;
+            background-color: #f3f3f3;
+            outline: none;
+            border: none;
+        }
+    }
     .css-mtnoticelist-main {
         .css-main-container {
+            position: relative;
+            overflow: hidden;
+            background-color: #fff;
             .css-timeline-date {
                 width: 56px;
                 margin-left: 8px;
+                @media (max-width: 340px) {
+                    margin-left: 2px;
+                }
                 .css-left-datetime {
                     background-color: #fff;
                     border: 1px solid #ddd;
@@ -44,24 +95,59 @@
                     }
                 }
             }
+            &.first-container {
+                .css-timeline-line {
+                    top: 18px;
+                    &:after {
+                        top: -3px;
+                    }
+                    @media (max-width: 340px) {
+                        top: 20px;
+                        left: 71px;
+                        &:after {
+                            width: 5px;
+                            height: 5px;
+                        }
+                    }
+                }
+            }
+            &.last-container{
+                .css-timeline-line {
+                    height: 10%;
+                }
+            }
             .css-timeline-line {
                 position: absolute;
-                left: 81px;
+                top: -1px;
+                left: 82px;
                 height: 100%;
-                border: 2px solid #ddd;
-                &::after {
-                    width: 5px;
-                    height: 5px;
-                    background-color: #ccc;
+                border: 2px solid #e7e7e7;
+                &:after {
+                    content: '';
+                    position: absolute;
+                    top: 16px;
+                    left: -8px;
+                    border-radius: 50px;
+                    border: 3px solid #88b1ff;
+                    width: 9px;
+                    height: 9px;
+                    display: block;
+                    background-color: #fff;
                 }
                 @media (max-width: 340px) {
-                    left: 73px;
+                    left: 71px;
+                    &:after {
+                        width: 5px;
+                        height: 5px;
+                        top: 18px;
+                        left: -6px;
+                    }
                 }
             }
             .css-list-item {
                 @media (max-width: 340px) {
                     width: 71%;
-                    margin: 0 1% 26px 24px;
+                    margin: 0 1% 26px 30px;
                 }
                 @media (min-width: 425px) {
                     width: 68%;
@@ -186,11 +272,12 @@
 </style>
 <template>
     <div class="weui-tab css-mtnoticelist-page">
-        <section>
-            <input type="text">
+        <section class="css-searcharea">
+            <i class="css-searcharea-icon"></i>
+            <input type="text" placeholder="搜索会议主题" class="css-searcharea-input">
         </section>
         <div class="css-mtnoticelist-main">
-            <section class="css-main-container clearfix">
+            <section class="css-main-container first-container clearfix">
                 <div class="css-timeline-date fl-l">
                     <div class="css-left-datetime">
                         <p>10-10</p>
@@ -230,7 +317,7 @@
                     </div>
                 </div>
                 <div class="css-timeline-line fl-l"></div>
-                <div class="css-list-item fl-r">
+                <div class="css-list-item fl-l">
                     <span class="left-arrowpop"></span>
                     <div class="css-list-item-main">
                         <span class="right-ribbon">已预定</span>
@@ -255,7 +342,7 @@
                     </div>
                 </div>
             </section>
-            <section class="css-main-container clearfix">
+            <section class="css-main-container last-container clearfix">
                 <div class="css-timeline-date fl-l">
                     <div class="css-left-datetime">
                         <p>6-10</p>
@@ -264,7 +351,7 @@
                     </div>
                 </div>
                 <div class="css-timeline-line fl-l"></div>
-                <div class="css-list-item fl-r">
+                <div class="css-list-item fl-l">
                     <span class="left-arrowpop"></span>
                     <div class="css-list-item-main">
                         <span class="right-ribbon unaccept">未接受</span>
