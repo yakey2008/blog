@@ -1,5 +1,6 @@
 import 'weui';
 import Vue from 'vue';
+import API from '../lib/js/api.js';
 import App from './app.vue';
 import VueRouter from 'vue-router';
 import routes from './routes/routes.js';
@@ -7,19 +8,9 @@ import VueResource from 'vue-resource';
 
 import './scss/main.scss';
 
-Vue.use(VueRouter)
-Vue.use(VueResource)
-
-// function getCookie(name) {
-//     var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
-//     if (arr = document.cookie.match(reg))
-//         return unescape(arr[2]);
-//     else
-//         return null;
-// }
-
-
-// Vue.http.headers.common['CASTGC'] = getCookie('CASTGC');
+Vue.use(VueRouter);
+Vue.use(VueResource);
+Vue.use(API);
 
 const router = new VueRouter({
     routes

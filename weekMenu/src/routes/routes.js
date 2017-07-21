@@ -15,19 +15,7 @@ export default[
                 path:'/feedback',
                 meta:'false',
                 component:Feedback
-            },
-            // {
-            //     path:'/signin',
-            //     component:Signinpage
-            // },
-            // {
-            //     path:'/signout'
-            // },
-            // {
-            //     path:'/personal',
-            //     component:Personal
-            // }
-
+            }
         ]
     }
 ]

@@ -12,8 +12,8 @@ export default {
     monthNames: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
     format : 'yyyy年MM月',
     fullFormat: 'yyyy年MM月dd日',
-    dayEventsTitle: '全部事件',
-    notHaveEvents: '没有事件'
+    dayEventsTitle: '全部会议',
+    notHaveEvents: '没有预定会议室'
   },
   es: {
     dayNames: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá"],

@@ -148,7 +148,7 @@
 </style>
 
 <template>
-    <div class="weui-tab__panel">
+    <div class="container">
         <div class="weui-tab">
             <!--指引结构头部 Start-->
             <div class="weui-navbar css-nav-container" v-if="isShowguide">
@@ -171,6 +171,7 @@
                 <aside class="aside-container">
                     <div class="aside">
                         <div class="c-lefttab" v-for="(val,index) in mealtime" v-on:click="switchpanel(index)" :class="{tabactive:val.ishow}" :key="val.Id">{{val.name}}</div>
+                        <router-link to="/Feedback">意见反馈</router-link>
                         <div class="c-lefttab" v-on:click="clearlocal()">（重置指引）</div>
                     </div>
                 </aside>
@@ -214,7 +215,7 @@
                 <div class="weui-dialog">
                     <div class="weui-dialog__bd">是否将{{curregion}}设置为默认区域？</div>
                     <div class="weui-dialog__ft">
-                        <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary" v-on:click="showguide()">确认</a>
+                        <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary" v-on:click="confirmguide()">确认</a>
                         <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_default" v-on:click="cancelguide()">取消</a>
                     </div>
                 </div>
@@ -229,11 +230,11 @@
 </template>
 
 <script>
-import weui from '../../../../lib/js/weui.min.js';
+import weui from '../../../lib/js/weui.min.js';
 import moment from 'moment';
-import urldata from '../../../config/urldata.js';
-import notice from '../../popnotice/notice.vue';
-import defaultImg from '../../../images/defaultimg.png';
+import urldata from '../../config/urldata.js';
+import notice from '../popnotice/notice.vue';
+import defaultImg from '../../images/defaultimg.png';
 export default {
     mounted() {
         // this.$http.get('/GetUser').then(response => {
@@ -253,17 +254,10 @@ export default {
         //     }
         // }).then(()=>{
         // })
-        let localdata = this.getlocaldata('isShowguide');
+
+        let localdata = this.getlocaldata('curregion');
         if (localdata) {
             this.isShowguide = false;
-            this.curregion = localdata;
-            this.curregionId = this.getlocaldata('curregionId');
-            if (this.curregion !== '') {
-                //初始化区域菜单
-                this.ajaxregionmenu(this.curregionId, this.todaytime, this.mealtime[0].value);
-            }
-        } else {
-            document.querySelector('.css-bottombar').style.zIndex = -1;
         }
 
         let curweekday = moment().format('d');
@@ -278,18 +272,48 @@ export default {
         this.$http.get(urldata.basePath + urldata.Region).then(response => {
             if (response.body.Success) {
                 let obj = response.body.Object;
-                let str = '广新';
-                let _this = this;
+                let matchlocaldata = true;//检测是否存在于本地匹配的数据
                 this.regionVal = obj;
-
-                obj.forEach(function (el) {
-                    if (el.Name.indexOf(str) !== -1) {
-                        _this.defaultRegion = el.Name;
-                        _this.defaultRegionId = el.Id;
-                        _this.curregion = el.Name;
-                        _this.curregionId = el.Id;
+                if (localdata) {
+                    this.regionVal.forEach((el) => {
+                        if (matchlocaldata) {
+                            if (el.Name.indexOf(localdata) !== -1) {
+                                this.curregion = localdata;
+                                this.curregionId = this.getlocaldata('curregionId');
+                                matchlocaldata = false;
+                            }
+                        }
+                    })
+                    if (matchlocaldata) {
+                        let str = '广新';
+                        let _this = this;
+                        this.regionVal.forEach((el) => {
+                            if (el.Name.indexOf(str) !== -1) {
+                                _this.curregion = el.Name;
+                                _this.curregionId = el.Id;
+                            }
+                        })
                     }
-                })
+
+                    if (this.curregion !== '') {
+                        this.setlocaldata('curregion', this.curregion);
+                        this.setlocaldata('curregionId', this.curregionId);
+                        //初始化区域菜单
+                        this.ajaxregionmenu(this.curregionId, this.todaytime, this.mealtime[0].value);
+                    }
+                } else {
+                    let str = '广新';
+                    let _this = this;
+
+                    obj.forEach(function (el) {
+                        if (el.Name.indexOf(str) !== -1) {
+                            _this.defaultRegion = el.Name;
+                            _this.defaultRegionId = el.Id;
+                            _this.curregion = el.Name;
+                            _this.curregionId = el.Id;
+                        }
+                    })
+                }
             }
         }, response => {
             this.isShowerr = true;
@@ -306,7 +330,7 @@ export default {
             weekstart: '',//本周开始时间
             weekend: '',//本周结束时间
             // todaytime: moment().format('YYYY-MM-DD'),//今天时间
-            todaytime: '2016-8-30',//临时测试可删
+            todaytime: '2016-9-2',//临时测试可删
             errtitle: "提示",
             errinfo: "餐厅尚未上传菜单，请稍后再试",
             isShowguide: true,//是否显示指引页
@@ -347,12 +371,12 @@ export default {
             this.curregionId = this.regionVal[index].Id;
         },
         //处理指引页区域弹窗确认
-        showguide() {
+        confirmguide() {
             if (this.isShowguide) {
                 this.isShowguide = false;
-                this.setlocaldata('isShowguide', this.curregion);
+                this.setlocaldata('isShowguide', false);
+                this.setlocaldata('curregion', this.curregion);
                 this.setlocaldata('curregionId', this.curregionId);
-                document.querySelector('.css-bottombar').style.zIndex = 500;
                 this.ajaxregionmenu(this.curregionId, this.todaytime, this.mealtime[0].value);
             } else {
                 this.isShowguide = true;
@@ -368,9 +392,9 @@ export default {
                     this.curregion = this.defaultRegion;
                     this.curregionId = this.defaultRegionId;
                 }
-                this.setlocaldata('isShowguide', this.curregion);
+                this.setlocaldata('isShowguide', false);
+                this.setlocaldata('curregion', this.curregion);
                 this.setlocaldata('curregionId', this.curregionId);
-                document.querySelector('.css-bottombar').style.zIndex = 500;
                 this.ajaxregionmenu(this.curregionId, this.todaytime, this.mealtime[0].value);
             } else {
                 this.isShowguide = true;
@@ -405,7 +429,7 @@ export default {
                 onConfirm: function (result) {
                     _this.curregion = result[0].label;
                     _this.curregionId = result[0].value;
-                    _this.setlocaldata('isShowguide', _this.curregion);
+                    _this.setlocaldata('curregion', _this.curregion);
                     _this.setlocaldata('curregionId', _this.curregionId);
                     _this.isShowregion = false;
                     _this.ajaxregionmenu(_this.curregionId, _this.todaytime, _this.mealtime[0].value);

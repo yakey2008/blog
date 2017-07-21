@@ -1,4 +1,6 @@
 <template>
-  <router-view>
-  </router-view>
+  <transition mode="out-in">
+    <router-view>
+    </router-view>
+  </transition>
 </template>

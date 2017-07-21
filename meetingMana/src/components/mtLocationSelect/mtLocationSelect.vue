@@ -35,8 +35,16 @@ $col9b:#9b9b9b;
         white-space: normal;
     }
     .css-nav-container {
+        .weui-navbar__item:active {
+            .cov-datepicker {
+                background-color: #EDEDED!important;
+            }
+        }
         .select-btn {
             .css-arrow {
+                position: absolute;
+                right: 11px;
+                top: 19px;
                 display: inline-block;
                 height: 8px;
                 width: 8px;
@@ -47,6 +55,7 @@ $col9b:#9b9b9b;
                 margin-bottom: 3px;
             }
             .drop {
+                top: 24px;
                 transform: rotate(135deg);
                 margin-bottom: -2px;
             }
@@ -164,6 +173,14 @@ $col9b:#9b9b9b;
             }
         }
     }
+    .css-nav-container.weui-navbar {
+        z-index: 502;
+        background-color: #fff;
+        .css-select-region {
+            padding-left: 8%;
+            padding-right: 20%;
+        }
+    }
 }
 </style>
 <template>
@@ -171,14 +188,16 @@ $col9b:#9b9b9b;
         <div class="weui-tab__panel">
             <div class="weui-tab">
                 <div class="weui-navbar css-nav-container">
-                    <div class="weui-navbar__item select-btn" v-on:click="showtime()">
-                        6-15 星期四
+                    <div class="weui-navbar__item select-btn">
                         <i class="css-arrow" :class="{drop:isShowtime}"></i>
                     </div>
                     <div class="weui-navbar__item select-btn" v-on:click="showregion()">
-                        广州广新大厦
+                        <div class="css-select-region">广州广新大厦</div>
                         <i class="css-arrow" :class="{drop:isShowregion}"></i>
                     </div>
+                </div>
+                <div v-on:click="showtime()">
+                <date-picker :date="startTime" :option="option" :limit="limit"></date-picker>
                 </div>
                 <div class="weui-tab__panel css-main-container">
                     <section>
@@ -221,25 +240,6 @@ $col9b:#9b9b9b;
                             </div>
                         </div>
                     </section>
-                    <!--<section class="c-item-container" id="js-setheight">
-                                                                                                    <div class="c-item-panel">
-                                                                                                        <div class="weui-panel__bd" v-show="isShowtab">
-                                                                                                            <a href="javascript:void(0);" class="weui-media-box weui-media-box_appmsg" v-for="(val,index) in tabVal" :key="val.Id">
-                                                                                                                <div class="weui-media-box__hd">
-                                                                                                                    <img class="weui-media-box__thumb" v-bind:src="val.imgsrc" v-if="val.IconId">
-                                                                                                                    <img class="weui-media-box__thumb" v-bind:src="defaultimg" v-if="!val.IconId">
-                                                                                                                </div>
-                                                                                                                <div class="weui-media-box__bd">
-                                                                                                                    <h4 class="weui-media-box__title" v-for="(initme,index) in val.Items" :key="initme.Id">
-                                                                                                                        <span v-if="index">{{index}}：</span>
-                                                                                                                        <span v-if="initme.toString()">{{initme.toString()}}</span>
-                                                                                                                    </h4>
-                                                                                                                </div>
-                                                                                                            </a>
-                                                                                                        </div>
-                                                                                                        <div class="weui-panel__bd" v-show="isNodata">暂无数据</div>
-                                                                                                    </div>
-                                                                                                </section>-->
                 </div>
             </div>
         </div>
@@ -256,6 +256,7 @@ $col9b:#9b9b9b;
 <script>
 import weui from '../../lib/js/weui.min.js';
 import moment from 'moment';
+import myDatepicker from 'vue-datepicker';
 import VueRouter from 'vue-router';
 import routes from '../../routes/routes.js';
 
@@ -269,8 +270,55 @@ export default {
             this.initTimeitem.push({ value: i })
         }
     },
+    updated() {
+        this.dompadding = document.querySelector('.css-nav-container').offsetHeight;
+    },
     data() {
         return {
+            startTime: {
+                time: moment().format('YYYY-MM-DD')
+            },
+            endtime: {
+                time: ''
+            },
+            option: {
+                type: 'day',
+                week: ['一', '二', '三', '四', '五', '六', '日'],
+                month: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+                format: 'YYYY-MM-DD',
+                inputStyle: {
+                    'width': '90%',
+                    'border': 'none',
+                    'background-color': '#fff',
+                    'text-align': 'center',
+                    'font-size': '15px'
+                },
+                color: {
+                    header: '#ccc',
+                    headerText: '#f00'
+                },
+                buttons: {
+                    ok: 'Ok',
+                    cancel: 'Cancel'
+                },
+                overlayOpacity: 0.5, // 0.5 as default
+                dismissible: true // as true as default
+            },
+            timeoption: {
+                type: 'min',
+                week: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
+                month: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                format: 'YYYY-MM-DD HH:mm'
+            },
+            multiOption: {
+                type: 'multi-day',
+                week: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
+                month: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                format: "YYYY-MM-DD HH:mm"
+            },
+            limit: [],
+
+            dompadding: 50,//容器padding计算
             isShowregion: false,
             isShowtime: false,
             isNodata: false,
@@ -327,45 +375,48 @@ export default {
             ]
         }
     },
+    components: {
+        'date-picker': myDatepicker
+    },
     methods: {
         //时间下拉并处理
         showtime() {
-            let curyear = new Date().getFullYear();
-            let curMonth = (new Date().getMonth()) + 1;
-            let curday = new Date().getDate();
-            let _this = this;
+            // let curyear = new Date().getFullYear();
+            // let curMonth = (new Date().getMonth()) + 1;
+            // let curday = new Date().getDate();
+            // let _this = this;
             this.isShowregion = false;
             if (this.isShowtime) {
                 this.isShowtime = false;
             } else {
                 this.isShowtime = true;
             }
-            weui.datePicker({
-                // start:_this.weekstart,
-                // end: _this.weekend,
-                defaultValue: [curyear, curMonth, curday],
-                cron: '* * 1-6',  // 每逢周一到周六
-                onChange: function (result) {
-                    //选中后的处理
-                },
-                onConfirm: function (result) {
-                    let settime = '';
-                    for (let i = 0, len = result.length; i < len; i++) {
-                        if (i === 0) {
-                            settime = result[i].label.substr(0, result[i].label.length - 1);
-                        } else {
-                            settime = settime + '-' + result[i].label.substr(0, result[i].label.length - 1);
-                        }
-                    }
-                    _this.isShowtime = false;
-                    _this.todaytime = settime;
-                    _this.ajaxregionmenu(_this.curregionId, _this.todaytime, _this.mealtime[0].value);
-                },
-                onCancel: function () {
-                    _this.isShowtime = false;
-                },
-                id: 'js-datePicker'
-            });
+            // weui.datePicker({
+            //     // start:_this.weekstart,
+            //     // end: _this.weekend,
+            //     defaultValue: [curyear, curMonth, curday],
+            //     cron: '* * 1-6',  // 每逢周一到周六
+            //     onChange: function (result) {
+            //         //选中后的处理
+            //     },
+            //     onConfirm: function (result) {
+            //         let settime = '';
+            //         for (let i = 0, len = result.length; i < len; i++) {
+            //             if (i === 0) {
+            //                 settime = result[i].label.substr(0, result[i].label.length - 1);
+            //             } else {
+            //                 settime = settime + '-' + result[i].label.substr(0, result[i].label.length - 1);
+            //             }
+            //         }
+            //         _this.isShowtime = false;
+            //         _this.todaytime = settime;
+            //         _this.ajaxregionmenu(_this.curregionId, _this.todaytime, _this.mealtime[0].value);
+            //     },
+            //     onCancel: function () {
+            //         _this.isShowtime = false;
+            //     },
+            //     id: 'js-datePicker'
+            // });
         },
         //处理区域显示及选择
         showregion() {
@@ -404,9 +455,5 @@ export default {
             router.push({ path: '/mttimeselect' });
         }
     }
-    // components: {
-    //     Mmain,
-    //     Bottomnav
-    // }
 } 
 </script>

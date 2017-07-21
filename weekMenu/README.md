@@ -11,3 +11,6 @@
 > 使用props传递数据，使用$emit自定义事件名称    
 #### 搭建可能出现的问题   
 > vue-core-image-upload缺少编译依赖，安装babel相关   
+
+
+发布更新workflow.appcache     将dist.js内的路径/dist/修改为dist/

@@ -1,0 +1,95 @@
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei";
+    font-size: 14px;
+}
+
+h1,
+h2,
+h3,
+h4,
+p {
+    margin: 0;
+}
+a{text-decoration: none;color: #333;}
+.fl-l {
+    float: left;
+}
+
+.clearfix:after {
+    display: block;
+    content: "";
+    clear: both;
+}
+
+.main {
+    width: 100%;
+    height: 100%;
+    background-color: #e6e9f2;
+    overflow: hidden;
+}
+
+.container {
+    width: 1170px;
+    height: 100%;
+    margin: 0 auto;
+}
+
+.header {
+    height: 72px;
+    line-height: 72px;
+    background-color: #fff;
+    font-size: 32px;
+    font-weight: 600;
+}
+
+.colme3 {
+    width: 30.3333%;
+    margin-left: 30px;
+    border-radius: 20px;
+    &.marginl0 {
+        margin-left: 0;
+    }
+}
+
+.body {
+    margin-top: 20px;
+    .item-box {
+        background-color: #fff;
+        .item-box-title {
+            background: url('../images/title-bg.png') no-repeat;
+            filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src="../images/title-bg.png", sizingMethod="scale");
+            background-size: 100% 100%;
+            height: 130px;
+            line-height: 103px;
+            text-align: center;
+            color: #fff;
+            font-size: 30px;
+            font-weight: normal;
+        }
+        .inside-container {
+            margin: 10px;
+            .inside-box {
+                margin: 20px;
+                padding: 20px;
+                border: 1px solid #bfe0fb;
+                .index-box-title {
+                    font-weight: normal;
+                    color: #5fb3f7;
+                    font-size: 20px;
+                }
+                .index-box-main {
+                    margin-left: 10px;
+                    margin-top: 10px;
+                    .index-box-main-item {
+                        line-height: 30px;
+                    }
+                }
+            }
+        }
+    }
+}

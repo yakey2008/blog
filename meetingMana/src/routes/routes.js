@@ -13,6 +13,7 @@ import Mtnoticelist from '../components/mtNoticeList/mtNoticeList.vue';//会议�
 import Mtparticipantslistset from '../components/MtParticipantsListSet/mtParticipantsListSet.vue';//参会人员列表编辑情况
 import Mtlisttimeline from '../components/mtListTimeline/mtListTimeline.vue';//我的会议查看
 
+import Popcalendar from '../components/popCalendar/popCalendar.vue';
 export default[
     {
         path:'/',
@@ -82,6 +83,11 @@ export default[
                 path:'/mtlisttimeline',
                 meta:'false',
                 component:Mtlisttimeline
+            },
+            {
+                path:'/popcalendar',
+                meta:'false',
+                component:Popcalendar
             }
         ]
     }

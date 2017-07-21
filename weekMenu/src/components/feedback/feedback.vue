@@ -18,9 +18,10 @@
     .weui-cell.css-textinfo {
         padding-bottom: 5px;
     }
+}
+
+.css-bottombar {
     .css-submitbtn {
-        position: absolute;
-        bottom: 50px;
         width: 100%;
         border-radius: 0;
         background-color: #ec4280;
@@ -28,6 +29,20 @@
     .css-submitbtn:active {
         background-color: #ec4280;
     }
+}
+
+.css-upload-btn {
+    float: left;
+    margin-right: 9px;
+    margin-bottom: 9px;
+    width: 77px;
+    height: 77px;
+    border: 1px solid #D9D9D9;
+    background-image: url(/dist/4674e9a3a5daf5a7ea09b1ae5c54ee4f.png);
+    background-size: 70%;
+    background-position: 58% 40%;
+    background-repeat: no-repeat;
+    border-radius: 2px;
 }
 </style>
 
@@ -62,14 +77,16 @@
                             <ul class="weui-uploader__files" v-show="isShowpic">
                                 <li class="weui-uploader__file" v-bind:style="{backgroundImage:'url('+imgsrc+')'}" v-on:click="showviewpic()"></li>
                             </ul>
-                            <vciu v-bind:class="['weui-uploader__input-box','pure-button-primary','js-btn-crop']" text="" v-bind:crop="false" v-bind:url="uploadurl" extensions="png,gif,jpeg,jpg" v-on:imageuploaded="picUploaded" v-on:errorhandle="picError" v-show="!isShowpic"></vciu>
+                            <vciu v-bind:class="['css-upload-btn','pure-button-primary','js-btn-crop']" text="" v-bind:crop="false" v-bind:url="uploadurl" extensions="png,gif,jpeg,jpg" v-on:imageuploaded="picUploaded" v-on:errorhandle="picError" v-show="!isShowpic"></vciu>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="weui-tabbar css-bottombar">
             <a href="javascript:;" class="weui-btn weui-btn_primary css-submitbtn" v-on:click="submitevt()">确认提交</a>
         </div>
-        <Bottomnav :showtab="false"></Bottomnav>
+        <!-- <Bottomnav :showtab="false"></Bottomnav> -->
         <!--提示窗Start-->
         <notice v-show="isShowerr" v-bind:errtitle="errtitle" v-bind:errinfo="errinfo" v-on:closenotice="closeShowerr()"></notice>
         <!--提示窗End-->
@@ -77,21 +94,19 @@
 </template>
 
 <script>
-import Bottomnav from '../bottomnav/bottomnav.vue';
 import vciu from 'vue-core-image-upload';
 import urldata from '../../config/urldata.js';
 import notice from '../popnotice/notice.vue';
+import VueRouter from 'vue-router';
+import routes from '../../routes/routes.js';
+import picbg from '../../images/uploadbg.png';
+const router = new VueRouter({
+    routes
+})
 export default {
-    mounted: function () {
-        this.showtab = false;
-        let useragent = window.navigator.userAgent.toLowerCase();
-        if (useragent.indexOf('android') !== -1) {
-            this.sendData.OperateSystem = 'android';
-        }
-
-        if (useragent.indexOf('iphone') !== -1) {
-            this.sendData.OperateSystem = 'ios';
-        }
+    components: {
+        vciu,
+        notice
     },
     data() {
         return {
@@ -103,17 +118,28 @@ export default {
             errtitle: "提示",
             errinfo: "",
             imgsrc: "",
+            isSubmit: false,
             sendData: { Content: "", OperateSystem: "" }
         }
     },
-    components: {
-        Bottomnav,
-        vciu,
-        notice
+    mounted () {
+        this.$moaapi.updateNavTitle('意见反馈');
+        this.showtab = false;
+        let useragent = window.navigator.userAgent.toLowerCase();
+        if (useragent.indexOf('android') !== -1) {
+            this.sendData.OperateSystem = 'android';
+        }
+
+        if (useragent.indexOf('iphone') !== -1) {
+            this.sendData.OperateSystem = 'ios';
+        }
     },
     methods: {
         //关闭错误提示
         closeShowerr() {
+            if (this.isSubmit) {
+                router.push({ path: '/' });
+            }
             this.isShowerr = false;
         },
         showviewpic() {
@@ -152,6 +178,7 @@ export default {
                 this.$http.post(urldata.basePath + urldata.Feedback, this.sendData).then(response => {
                     this.isShowerr = true;
                     this.errinfo = '提交成功！后台意见反馈记录用户反馈的信息。';
+                    this.isSubmit = true;
                 }, response => {
                     this.isShowerr = true;
                     this.errinfo = '网络错误，请稍后刷新重试';
