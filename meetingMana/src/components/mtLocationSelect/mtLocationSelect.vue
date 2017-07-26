@@ -192,12 +192,12 @@ $col9b:#9b9b9b;
                         <i class="css-arrow" :class="{drop:isShowtime}"></i>
                     </div>
                     <div class="weui-navbar__item select-btn" v-on:click="showregion()">
-                        <div class="css-select-region">广州广新大厦</div>
+                        <div class="css-select-region">{{curregion}}</div>
                         <i class="css-arrow" :class="{drop:isShowregion}"></i>
                     </div>
                 </div>
                 <div v-on:click="showtime()">
-                <date-picker :date="startTime" :option="option" :limit="limit"></date-picker>
+                    <date-picker :date="startTime" :option="option" :limit="limit"></date-picker>
                 </div>
                 <div class="weui-tab__panel css-main-container">
                     <section>
@@ -231,9 +231,9 @@ $col9b:#9b9b9b;
                                 <div class="hr-div"></div>
                                 <router-link :to="'/mttimeselect'" tag="div">
                                     <div class="css-meetingroom-item clearfix">
-                                        <div class="css-meetingroom-name fl-l">{{meetingromm.name}}</div>
+                                        <div class="css-meetingroom-name fl-l">{{meetingromm.Location}}</div>
                                         <div class="css-meetingroom-timeline fl-l">
-                                            <div class="css-meetingroom-timeline-box fl-l" v-for="(ordered,index) in meetingromm.order" :key="ordered" :class="[ordered?'room-ordered':'',index===0?'border-l2':'',index===17?'border-r2':'']"></div>
+                                            <div class="css-meetingroom-timeline-box fl-l" v-for="(ordered,index) in meetingromm.timeorder" :key="ordered" :class="[ordered?'room-ordered':'',index===0?'border-l2':'',index===17?'border-r2':'']"></div>
                                         </div>
                                     </div>
                                 </router-link>
@@ -269,6 +269,12 @@ export default {
         for (let i = 0; i < this.initTimenum; i++) {
             this.initTimeitem.push({ value: i })
         }
+
+        this.$http.get('/mt/GetAllPosition').then(response => {
+            if (response.status === 200) {
+                this.tabVal = response.body.data;
+            }
+        })
     },
     updated() {
         this.dompadding = document.querySelector('.css-nav-container').offsetHeight;
@@ -286,21 +292,6 @@ export default {
                 week: ['一', '二', '三', '四', '五', '六', '日'],
                 month: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
                 format: 'YYYY-MM-DD',
-                inputStyle: {
-                    'width': '90%',
-                    'border': 'none',
-                    'background-color': '#fff',
-                    'text-align': 'center',
-                    'font-size': '15px'
-                },
-                color: {
-                    header: '#ccc',
-                    headerText: '#f00'
-                },
-                buttons: {
-                    ok: 'Ok',
-                    cancel: 'Cancel'
-                },
                 overlayOpacity: 0.5, // 0.5 as default
                 dismissible: true // as true as default
             },
@@ -318,6 +309,11 @@ export default {
             },
             limit: [],
 
+
+            timelist: ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00'],
+            timeorder: [
+                false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
+            ],
             dompadding: 50,//容器padding计算
             isShowregion: false,
             isShowtime: false,
@@ -327,51 +323,52 @@ export default {
             initTimeitem: [],
             curregion: '广州广新大厦',
             tabVal: [
-                { label: '广州广新大厦', value: 0 },
-                { label: '上海上新时代科技大厦', value: 1 },
-                { label: '北京北新科技大厦', value: 2 }
+                // { label: '广州广新大厦', value: 0 },
+                // { label: '上海上新时代科技大厦', value: 1 },
+                // { label: '北京北新科技大厦', value: 2 }
             ],
-            ordered: [
-                {
-                    name: '广州-广新2F 巴黎会议室 （18人）', order: [
-                        true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, true, false, false
-                    ]
-                },
-                {
-                    name: '广州-广新2F 巴黎会议室 （18人）', order: [
-                        true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, true, false, false
-                    ]
-                },
-                {
-                    name: '广州-广新2F 巴黎会议室 （18人）', order: [
-                        true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, true, false, false
-                    ]
-                },
-                {
-                    name: '广州-广新2F 巴黎会议室 （18人）', order: [
-                        true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, true, false, false
-                    ]
-                },
-                {
-                    name: '广州-广新2F 巴黎会议室 （18人）', order: [
-                        true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, true, false, false
-                    ]
-                },
-                {
-                    name: '广州-广新2F 巴黎会议室 （18人）', order: [
-                        true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, true, false, false
-                    ]
-                },
-                {
-                    name: '广州-广新2F 巴黎会议室 （18人）', order: [
-                        true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, true, false, false
-                    ]
-                },
-                {
-                    name: '广州-广新2F 巴黎会议室 （18人）', order: [
-                        true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, true, false, false
-                    ]
-                }
+            ordered: 
+            [
+                // {
+                //     name: '广州-广新2F 巴黎会议室 （18人）', order: [
+                //         true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, true, false, false
+                //     ]
+                // },
+                // {
+                //     name: '广州-广新2F 巴黎会议室 （18人）', order: [
+                //         true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, true, false, false
+                //     ]
+                // },
+                // {
+                //     name: '广州-广新2F 巴黎会议室 （18人）', order: [
+                //         true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, true, false, false
+                //     ]
+                // },
+                // {
+                //     name: '广州-广新2F 巴黎会议室 （18人）', order: [
+                //         true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, true, false, false
+                //     ]
+                // },
+                // {
+                //     name: '广州-广新2F 巴黎会议室 （18人）', order: [
+                //         true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, true, false, false
+                //     ]
+                // },
+                // {
+                //     name: '广州-广新2F 巴黎会议室 （18人）', order: [
+                //         true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, true, false, false
+                //     ]
+                // },
+                // {
+                //     name: '广州-广新2F 巴黎会议室 （18人）', order: [
+                //         true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, true, false, false
+                //     ]
+                // },
+                // {
+                //     name: '广州-广新2F 巴黎会议室 （18人）', order: [
+                //         true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, true, false, false
+                //     ]
+                // }
             ]
         }
     },
@@ -379,68 +376,89 @@ export default {
         'date-picker': myDatepicker
     },
     methods: {
+        ajaxMtrStatu(url, excdata) {
+            this.$http.get(url).then(response => {
+                if (response.status === 200) {
+                    excdata(response);
+                }
+            })
+        },
         //时间下拉并处理
         showtime() {
-            // let curyear = new Date().getFullYear();
-            // let curMonth = (new Date().getMonth()) + 1;
-            // let curday = new Date().getDate();
-            // let _this = this;
             this.isShowregion = false;
             if (this.isShowtime) {
                 this.isShowtime = false;
             } else {
                 this.isShowtime = true;
             }
-            // weui.datePicker({
-            //     // start:_this.weekstart,
-            //     // end: _this.weekend,
-            //     defaultValue: [curyear, curMonth, curday],
-            //     cron: '* * 1-6',  // 每逢周一到周六
-            //     onChange: function (result) {
-            //         //选中后的处理
-            //     },
-            //     onConfirm: function (result) {
-            //         let settime = '';
-            //         for (let i = 0, len = result.length; i < len; i++) {
-            //             if (i === 0) {
-            //                 settime = result[i].label.substr(0, result[i].label.length - 1);
-            //             } else {
-            //                 settime = settime + '-' + result[i].label.substr(0, result[i].label.length - 1);
-            //             }
-            //         }
-            //         _this.isShowtime = false;
-            //         _this.todaytime = settime;
-            //         _this.ajaxregionmenu(_this.curregionId, _this.todaytime, _this.mealtime[0].value);
-            //     },
-            //     onCancel: function () {
-            //         _this.isShowtime = false;
-            //     },
-            //     id: 'js-datePicker'
-            // });
         },
         //处理区域显示及选择
         showregion() {
             let _this = this;
-            this.isShowtime = false;
-            if (this.isShowregion) {
-                this.isShowregion = false;
-            } else {
-                this.isShowregion = true;
-            }
-
-            weui.picker(this.tabVal, {
+            // this.isShowtime = false;
+            // if (this.isShowregion) {
+            //     this.isShowregion = false;
+            // } else {
+            //     this.isShowregion = true;
+            // }
+            let mtroom = [];
+            this.tabVal.forEach(function (el) {
+                let obj = {}
+                obj.label = el.Name;
+                obj.value = el.Address;
+                mtroom.push(obj);
+            }, this);
+            weui.picker(mtroom, {
                 className: 'custom-classname',
                 defaultValue: [_this.curregion],
                 onChange: function (result) {
                     //选中后的处理
+
                 },
                 onConfirm: function (result) {
                     _this.curregion = result[0].label;
                     _this.curregionId = result[0].value;
-                    _this.setlocaldata('isShowguide', _this.curregion);
-                    _this.setlocaldata('curregionId', _this.curregionId);
-                    _this.isShowregion = false;
-                    _this.ajaxregionmenu(_this.curregionId, _this.todaytime, _this.mealtime[0].value);
+                    _this.ajaxMtrStatu('/mt/GetRoomsStatus?date='+_this.startTime.time+'&roomListAddress='+result[0].value, (res) => {
+                        //时间区域索引数组
+                        let arr = [];
+                        //会议地点数据初始化
+                        _this.ordered = res.body.data;
+                        //遍历会议数据
+                        _this.ordered.forEach((el) => {
+                            //取到会议室状态处理
+                            arr = [];
+                            el.RoomStatus.forEach((elrmstatu) => {
+                                //空临时对象存储已选中时间索引
+                                let obj = {};
+                                //已选中开始结束时间
+                                let st = elrmstatu.Start.split(' ')[1];
+                                let ed = elrmstatu.End.split(' ')[1];
+                                //已选中开始结束时间索引
+                                obj.stidx = _this.timelist.indexOf(st.substr(st, st.length - 3));
+                                obj.edidx = _this.timelist.indexOf(ed.substr(ed, ed.length - 3));
+                                arr.push(obj);
+                            }, _this)
+                            //时间状态数组
+                            _this.timeorder = [
+                                false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
+                            ];
+                            //遍历选中时间索引匹配选中时间数组
+                            arr.forEach((timecheck) => {
+                                let sttime = timecheck.stidx;
+                                let edtime = timecheck.edidx;
+
+                                _this.timelist.forEach((elinside, idx) => {
+                                    if (_this.timeorder[idx]) {
+                                        return false;
+                                    }
+                                    if (idx >= sttime && idx < edtime) {
+                                        _this.timeorder[idx] = true;
+                                    }
+                                }, _this)
+                            }, _this)
+                            el.timeorder = _this.timeorder;
+                        }, _this)
+                    })
                 },
                 onCancel: function () {
                     _this.isShowregion = false;

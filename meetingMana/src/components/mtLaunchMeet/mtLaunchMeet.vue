@@ -294,7 +294,7 @@ $col9b:#9b9b9b;
                     <div class="weui-cells weui-cells_form css-mtlaunchmeet-theme">
                         <div class="weui-cell">
                             <div class="weui-cell__bd">
-                                <textarea class="weui-textarea" placeholder="请输入文本" rows="3" maxlength="30"></textarea>
+                                <textarea class="weui-textarea" placeholder="请输入会议主题" rows="3" maxlength="30" v-model="sendData.Subject"></textarea>
                             </div>
                         </div>
                     </div>
@@ -308,7 +308,7 @@ $col9b:#9b9b9b;
                             </div>
                             <div class="weui-cell__ft">
                                 <span>2016-06-10</span>&nbsp;&nbsp;
-                                <span>10:11-11:30</span>
+                                <span>10:00-11:30</span>
                             </div>
                         </div>
                     </div>
@@ -342,7 +342,7 @@ $col9b:#9b9b9b;
                     <div class="weui-cells weui-cells_form css-mtlaunchmeet-content">
                         <div class="weui-cell">
                             <div class="weui-cell__bd">
-                                <textarea class="weui-textarea" placeholder="请输入会议内容（可选）" rows="3" maxlength="500"></textarea>
+                                <textarea class="weui-textarea" placeholder="请输入会议内容（可选）" rows="3" maxlength="500" v-model="sendData.Body"></textarea>
                             </div>
                         </div>
                     </div>
@@ -355,7 +355,7 @@ $col9b:#9b9b9b;
                                 <p>参会人员（{{meetingroom.length}}）</p>
                             </div>
                             <div class="css-mtlaunchmeet-mtl-addbtn">
-                                <router-link :to="'/mtaddcontarct'" tag="div">
+                                <router-link :to="'/mtaddcontact'" tag="div">
                                     <span class="css-add-btn">通过邮箱地址添加</span>
                                 </router-link>
                             </div>
@@ -427,7 +427,7 @@ $col9b:#9b9b9b;
                     <div class="weui-cells weui-cells_checkbox">
                         <label class="weui-cell weui-check__label" for="s11">
                             <div class="weui-cell__hd">
-                                <input type="checkbox" class="weui-check" name="checkbox1" id="s11" checked="checked">
+                                <input type="checkbox" class="weui-check" name="checkbox1" id="s11" checked="checked" v-model="sendDataIsResponseRequested">
                                 <i class="weui-icon-checked"></i>
                             </div>
                             <div class="weui-cell__bd">
@@ -454,11 +454,22 @@ const router = new VueRouter({
 })
 
 export default {
-    mounted() {
-
-    },
     data() {
         return {
+            sendData: {
+                Subject: "",//主题
+                Body: "",//内容
+                Start: "2017-7-24 22:10:00",
+                End: "2017-7-24 22:20:00",
+                RequiredAttendees: ["city-test@vipshop.com"],//必选人
+                OptionalAttendees: ["city-test2@vipshop.com"],//可选人
+                Resources: [
+                    "gd2bl-room2@vipshop.com",
+                    "gd2gg-room2@vipshop.com"
+                ],
+                OtherAttendees: [],//通过邮箱人
+                IsResponseRequested: true
+            },
             meetingroom: [
                 { name: '广州-广新2F 巴黎会议室（8人；投影仪；玻璃写字板）' },
                 { name: '广州-广新10F 黎巴嫩会议室（21人；玻璃写字板）' }

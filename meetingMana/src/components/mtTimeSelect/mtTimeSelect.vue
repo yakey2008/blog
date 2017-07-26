@@ -1,4 +1,5 @@
 <style lang="scss">
+div{-webkit-tap-highlight-color:rgba(0,0,0,0); }
 .css-mttime-page {
     &>.weui-tab__panel {
         padding-bottom: 64px;
@@ -159,10 +160,10 @@
                         <div class="weui-cell">
                             <div class="css-take-oneday css-align-right">
                                 <i class="arrow-left icon"></i>
-                                <span class="css-onday-text">前一天</span>
+                                <span class="css-onday-text" v-on:click="preday()">前一天</span>
                             </div>
                             <div class="weui-flex__item css-align-center">
-                                <span>2017-06-15</span>&nbsp;<span>星期四</span>
+                                {{curdate}}
                             </div>
                             <div class="css-take-oneday css-align-left">
                                 <span class="css-onday-text">后一天</span>
@@ -206,6 +207,8 @@
 import weui from '../../lib/js/weui.min.js';
 import moment from 'moment';
 import locaticon from '../../images/locaticon.png';
+moment.locale('zh-cn');
+
 
 export default {
     mounted() {
@@ -215,6 +218,7 @@ export default {
     },
     data() {
         return {
+            curdate:moment().format('YYYY-MM-DD dddd'),
             selectedBox: [],
             firstIndex: undefined,
             endIndex: undefined,
@@ -242,6 +246,9 @@ export default {
         }
     },
     methods: {
+        preday(){
+            this.curdate = this.curdate.subtract(1, 'days').calendar();
+        },
         selectedevent(index) {
             //为true记录第一个选择索引
             let cango = true;

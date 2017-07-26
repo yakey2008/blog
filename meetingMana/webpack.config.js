@@ -7,31 +7,10 @@ module.exports = {
         port: 3000,
         compress: false,
         proxy: {
-            '/MyCalendar': {
+            '/mt': {
                 target: 'http://10.100.68.57:40000',
                 pathRewrite: {
-                    '^/MyCalendar': '/api/Meeting/MyCalendar'
-                },
-                changeOrigin: true
-            },
-            '/Menu': {
-                target: 'http://t00005255.corp.vipshop.com:8045',
-                pathRewrite: {
-                    '^/Menu': '/Menu'
-                },
-                changeOrigin: true
-            },
-            '/picUpload': {
-                target: 'http://t00005255.corp.vipshop.com:8045',
-                pathRewrite: {
-                    '^/picUpload': '/Menu/UploadImage'
-                },
-                changeOrigin: true
-            },
-            '/Feedback': {
-                target: 'http://t00005255.corp.vipshop.com:8045',
-                pathRewrite: {
-                    '^/Feedback': '/Menu/Feedback'
+                    '^/mt': '/api/Meeting'
                 },
                 changeOrigin: true
             }
