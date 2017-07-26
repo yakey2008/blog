@@ -77,7 +77,7 @@
                             <ul class="weui-uploader__files" v-show="isShowpic">
                                 <li class="weui-uploader__file" v-bind:style="{backgroundImage:'url('+imgsrc+')'}" v-on:click="showviewpic()"></li>
                             </ul>
-                            <vciu v-bind:class="['css-upload-btn','pure-button-primary','js-btn-crop']" text="" v-bind:crop="false" v-bind:url="uploadurl" extensions="png,gif,jpeg,jpg" v-on:imageuploaded="picUploaded" v-on:errorhandle="picError" v-show="!isShowpic"></vciu>
+                            <vciu v-bind:class="['css-upload-btn','pure-button-primary','js-btn-crop']" text="" v-bind:crop="false" v-bind:url="uploadurl" extensions="png,gif,jpeg,jpg" v-on:imageuploaded="picUploaded" v-on:errorhandle="picError" :maxFileSize="10485760" v-show="!isShowpic"></vciu>
                         </div>
                     </div>
                 </div>
@@ -122,8 +122,9 @@ export default {
             sendData: { Content: "", OperateSystem: "" }
         }
     },
-    mounted () {
+    mounted() {
         this.$moaapi.updateNavTitle('意见反馈');
+        this.$moaapi.hideNavMenu();
         this.showtab = false;
         let useragent = window.navigator.userAgent.toLowerCase();
         if (useragent.indexOf('android') !== -1) {
@@ -167,7 +168,7 @@ export default {
 
         picError(err) {
             this.isShowerr = true;
-            this.errinfo = '网络错误，请稍后刷新重试';
+            this.errinfo = '请上传不大于10M图片';
         },
 
         submitevt() {
@@ -175,14 +176,20 @@ export default {
                 this.isShowerr = true;
                 this.errinfo = '请填写相关信息！';
             } else {
-                this.$http.post(urldata.basePath + urldata.Feedback, this.sendData).then(response => {
+                debugger
+                if (this.sendData.Content.length > 200) {
                     this.isShowerr = true;
-                    this.errinfo = '提交成功！后台意见反馈记录用户反馈的信息。';
-                    this.isSubmit = true;
-                }, response => {
-                    this.isShowerr = true;
-                    this.errinfo = '网络错误，请稍后刷新重试';
-                });
+                    this.errinfo = '反馈的信息不能多于200字';
+                } else {
+                    this.$http.post(urldata.basePath + urldata.Feedback, this.sendData).then(response => {
+                        this.isShowerr = true;
+                        this.errinfo = '提交成功！后台意见反馈记录用户反馈的信息。';
+                        this.isSubmit = true;
+                    }, response => {
+                        this.isShowerr = true;
+                        this.errinfo = '网络错误，请稍后刷新重试';
+                    });
+                }
             }
         }
     }

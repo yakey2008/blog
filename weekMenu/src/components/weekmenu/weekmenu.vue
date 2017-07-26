@@ -25,6 +25,15 @@
     overflow-x: scroll;
 }
 
+.weui-media-box:before {
+    left: 10px;
+}
+
+.weui-media-box_appmsg .weui-media-box__hd {
+    width: 76px;
+    height: 76px;
+}
+
 .css-nav-container {
     .select-btn {
         .css-arrow {
@@ -49,7 +58,7 @@
 }
 
 .css-nav-container.weui-navbar {
-    z-index: 502;
+    z-index: 548;
     background-color: #fff;
     .css-select-region {
         padding-left: 8%;
@@ -61,10 +70,11 @@
     background-color: #f6f7f9;
     .aside-container {
         position: relative;
+        z-index: 540;
         .aside {
             position: absolute;
             left: 0;
-            width: 21.3333%;
+            width: 18.67%;
             .c-lefttab {
                 height: 60px;
                 line-height: 60px;
@@ -75,18 +85,19 @@
                 background-color: #fff;
                 border-right: none;
                 color: #ec4280;
-                width: 101%;
+                width: 101.35%;
             }
         }
     }
     .c-item-container {
         height: 100%;
         overflow-y: scroll;
-        margin-left: 21.3333%;
+        margin-left: 18.67%;
         background-color: #fff;
         border-left: 1px solid #e7e7e7;
         .css-itembox {
             position: relative;
+            padding: 15px 10px;
             .css-menu-pic {
                 position: absolute;
                 top: 20px;
@@ -115,12 +126,12 @@
                     z-index: 51;
                     font-size: .8rem;
                     text-align: center;
-                    line-height: 61px;
+                    line-height: 76px;
                 }
             }
             .css-menu-info {
-                margin-left: 75px;
-                min-height: 72px;
+                margin-left: 85px;
+                min-height: 87px;
                 .weui-media-box__title {
                     @include flexbox();
                     line-height: 20px;
@@ -133,7 +144,7 @@
                     }
                     .css-menu-content {
                         @include flexboxwidth(1.5);
-                        padding-left: 5px;
+                        padding-left: 10px;
                     }
                 }
             }
@@ -143,14 +154,16 @@
 
 .css-guide-box {
     .weui-mask {
-        z-index: 500;
+        z-index: 547;
     }
     .css-guide {
         width: 100%;
         position: absolute;
-        z-index: 502;
+        z-index: 550;
         top: 50px;
         background-color: #fff;
+        max-height: 150px;
+        overflow-y: scroll;
         .css-guide-item {
             position: relative;
             padding-left: 22px;
@@ -205,10 +218,10 @@
         <div class="weui-tab">
             <!--指引结构头部 Start-->
             <!-- <div class="weui-navbar css-nav-container" v-if="isShowguide">
-                        <div class="weui-navbar__item select-btn">
-                            设置区域
-                        </div>
-                    </div> -->
+                                                    <div class="weui-navbar__item select-btn">
+                                                        设置区域
+                                                    </div>
+                                                </div> -->
             <!--指引结构头部 End-->
             <div class="weui-navbar css-nav-container">
                 <div class="weui-navbar__item select-btn" v-on:click="showguide()" v-if="isShowguide">
@@ -228,8 +241,8 @@
                 <aside class="aside-container">
                     <div class="aside">
                         <div class="c-lefttab" v-for="(val,index) in mealtime" v-on:click="switchpanel(index)" :class="{tabactive:val.ishow}" :key="val.Id">{{val.name}}</div>
-                        <!-- <router-link to="/Feedback">意见反馈</router-link>
-                            <div class="c-lefttab" v-on:click="clearlocal()">（重置指引）</div> -->
+                        <router-link to="/Feedback">意见反馈</router-link>
+                        <div class="c-lefttab" v-on:click="clearlocal()">（重置指引）</div>
                     </div>
                 </aside>
                 <section class="c-item-container">
@@ -240,7 +253,7 @@
                                     <div class="weui-media-box__thumb" v-bind:style="{backgroundImage:'url('+val.imgsrc+')',backgroundSize:'cover'}" v-if="val.IconId"></div>
                                     <div class="weui-media-box__thumb" v-bind:style="{backgroundImage:'url('+defaultimg+')',backgroundSize:'cover'}" v-if="!val.IconId"></div>
                                     <!-- <img class="weui-media-box__thumb" v-bind:src="val.imgsrc" v-if="val.IconId">
-                                        <img class="weui-media-box__thumb" v-bind:src="defaultimg" v-if="!val.IconId"> -->
+                                                                    <img class="weui-media-box__thumb" v-bind:src="defaultimg" v-if="!val.IconId"> -->
                                     <span class="css-explain-mask"></span>
                                     <span class="css-explain-text">{{val.Name}}</span>
                                 </div>
@@ -256,11 +269,19 @@
                     </div>
                 </section>
             </div>
+            <!-- 区域选择 Start-->
+            <div class="weui-skin_android css-guide-box" id="weui-android-actionsheet" v-if="isShowregion">
+                <div class="weui-mask" v-on:click="closeMask()"></div>
+                <div class="css-guide" v-bind:style="{top:dompadding+'px'}">
+                    <div class="css-guide-item" :class="{'css-curregion':region.Id === curregionId}" v-for="(region,index) in regionVal" v-on:click="menuselectregion(index)" :key="region.Id">{{region.Name}}</div>
+                </div>
+            </div>
+            <!-- 区域选择 End -->
             <!--指引结构弹出 Start-->
             <div class="weui-skin_android css-guide-box" id="weui-android-actionsheet" v-if="isShowguideselect">
                 <div class="weui-mask" v-on:click="closeMask()"></div>
                 <div class="css-guide" v-if="!noticeguide" v-bind:style="{top:dompadding+'px'}">
-                    <div class="css-guide-item" :class="{'css-curregion':region.Id === defaultRegionId}" v-for="(region,index) in regionVal" v-on:click="selectregion(index)" :key="region.Id">{{region.Name}}</div>
+                    <div class="css-guide-item" :class="{'css-curregion':region.Id === defaultRegionId}" v-for="(region,index) in regionVal" v-on:click="guideselectregion(index)" :key="region.Id">{{region.Name}}</div>
                 </div>
                 <div class="weui-dialog" v-if="isShowguideselect" v-show="noticeguide">
                     <div class="weui-dialog__bd">是否将{{curregion}}设置为默认区域？</div>
@@ -297,8 +318,8 @@ export default {
             defaultimg: defaultImg,//默认图片
             weekstart: '',//本周开始时间
             weekend: '',//本周结束时间
-            todaytime: moment().format('YYYY-MM-DD'),//今天时间
-            // todaytime: '2016-9-2',//临时测试可删
+            // todaytime: moment().format('YYYY-MM-DD'),//今天时间
+            todaytime: '2016-08-30',//临时测试可删
             errtitle: "提示",
             errinfo: "餐厅尚未上传菜单，请稍后再试",
             isShowguideselect: false,
@@ -309,7 +330,7 @@ export default {
             isShowtime: false,//是否显示时间区域下拉
             defaultRegion: "",//默认广新
             defaultRegionId: "",//默认广新id
-            curregion: "",//当前选中区域
+            curregion: "加载中...",//当前选中区域
             curregionId: "",//当前选中区域的id
             regionVal: [],//区域数据
             mealtime: [{ name: "早餐", value: 0, ishow: true }, { name: "午餐", value: 1, ishow: false }, { name: "晚餐", value: 2, ishow: false }],//用餐时间数据
@@ -319,7 +340,9 @@ export default {
     },
     mounted() {
         this.$moaapi.resetNavTitle();
-        this.$moaapi.showNavMenu(feedbackImg);
+        setTimeout(() => {
+            this.$moaapi.showNavMenu(feedbackImg);
+        }, 100)
 
         let localdata = this.getlocaldata('curregion');
         if (localdata) {
@@ -333,6 +356,8 @@ export default {
         //初始化区域
         this.$http.get(urldata.basePath + urldata.Region).then(response => {
             if (response.body.Success) {
+                this.isShowregion = false;
+                this.isShowtime = false;
                 let obj = response.body.Object;
                 let matchlocaldata = true;//检测是否存在于本地匹配的数据
                 this.regionVal = obj;
@@ -399,10 +424,24 @@ export default {
             this.isShowerr = false;
         },
         //处理指引页选中区域
-        selectregion(index) {
+        guideselectregion(index) {
             this.noticeguide = true;
             this.curregion = this.regionVal[index].Name;
             this.curregionId = this.regionVal[index].Id;
+        },
+        //菜单页区域选择
+        menuselectregion(index) {
+            this.isShowtime = false;
+            if (this.isShowregion) {
+                this.isShowregion = false;
+            } else {
+                this.isShowregion = true;
+            }
+            this.curregion = this.regionVal[index].Name;
+            this.curregionId = this.regionVal[index].Id;
+            this.setlocaldata('curregion', this.curregion);
+            this.setlocaldata('curregionId', this.curregionId);
+            this.ajaxregionmenu(this.curregionId, this.todaytime, this.mealtime[0].value);
         },
         //处理指引页区域弹窗确认
         confirmguide() {
@@ -446,6 +485,7 @@ export default {
         },
         closeMask() {
             this.isShowguideselect = false;
+            this.isShowregion = false;
         },
         //处理区域显示及选择
         showregion() {
@@ -456,39 +496,39 @@ export default {
             } else {
                 this.isShowregion = true;
             }
-            //拼接picker配置项
-            let temparr = [];
-            function setopt(el) {
-                let obj = {
-                    label: el.Name,
-                    value: el.Id
-                }
-                temparr.push(obj);
-                return temparr;
-            }
-            this.regionVal.map(setopt)
-            weui.picker(temparr, {
-                className: 'custom-classname',
-                defaultValue: [_this.curregionId],
-                onChange: function (result) {
-                    //选中后的处理
-                },
-                onConfirm: function (result) {
-                    _this.curregion = result[0].label;
-                    _this.curregionId = result[0].value;
-                    _this.setlocaldata('curregion', _this.curregion);
-                    _this.setlocaldata('curregionId', _this.curregionId);
-                    _this.isShowregion = false;
-                    _this.ajaxregionmenu(_this.curregionId, _this.todaytime, _this.mealtime[0].value);
-                },
-                onCancel: function () {
-                    _this.isShowregion = false;
-                },
-                id: 'pickregion'
-            });
-            document.querySelector('.custom-classname').addEventListener('click', function () {
-                this.isShowregion = false;
-            })
+            // //拼接picker配置项
+            // let temparr = [];
+            // function setopt(el) {
+            //     let obj = {
+            //         label: el.Name,
+            //         value: el.Id
+            //     }
+            //     temparr.push(obj);
+            //     return temparr;
+            // }
+            // this.regionVal.map(setopt)
+            // weui.picker(temparr, {
+            //     className: 'custom-classname',
+            //     defaultValue: [_this.curregionId],
+            //     onChange: function (result) {
+            //         //选中后的处理
+            //     },
+            //     onConfirm: function (result) {
+            //         _this.curregion = result[0].label;
+            //         _this.curregionId = result[0].value;
+            //         _this.setlocaldata('curregion', _this.curregion);
+            //         _this.setlocaldata('curregionId', _this.curregionId);
+            //         _this.isShowregion = false;
+            //         _this.ajaxregionmenu(_this.curregionId, _this.todaytime, _this.mealtime[0].value);
+            //     },
+            //     onCancel: function () {
+            //         _this.isShowregion = false;
+            //     },
+            //     id: 'pickregion'
+            // });
+            // document.querySelector('.custom-classname').addEventListener('click', function () {
+            //     this.isShowregion = false;
+            // })
         },
         //时间下拉并处理
         showtime() {
@@ -590,10 +630,10 @@ export default {
             });
         },
         //清除本地存储 可删
-        // clearlocal() {
-        //     window.localStorage.clear();
-        //     window.location.reload();
-        // }
+        clearlocal() {
+            window.localStorage.clear();
+            window.location.reload();
+        }
     }
 } 
 </script>
