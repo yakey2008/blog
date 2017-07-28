@@ -427,7 +427,7 @@ $col9b:#9b9b9b;
                     <div class="weui-cells weui-cells_checkbox">
                         <label class="weui-cell weui-check__label" for="s11">
                             <div class="weui-cell__hd">
-                                <input type="checkbox" class="weui-check" name="checkbox1" id="s11" checked="checked" v-model="sendDataIsResponseRequested">
+                                <input type="checkbox" class="weui-check" name="checkbox1" id="s11" checked="checked" v-model="sendData.IsResponseRequested">
                                 <i class="weui-icon-checked"></i>
                             </div>
                             <div class="weui-cell__bd">
@@ -438,7 +438,7 @@ $col9b:#9b9b9b;
                 </section>
             </div>
             <div class="weui-tabbar css-bottombar">
-                <div class="weui-btn weui-btn_primary css-submit-btn">提交</div>
+                <div class="weui-btn weui-btn_primary css-submit-btn" v-on:click="sendDataEvt()">提交</div>
             </div>
         </div>
     </div>
@@ -446,14 +446,9 @@ $col9b:#9b9b9b;
 <script>
 import weui from '../../lib/js/weui.min.js';
 import moment from 'moment';
-import VueRouter from 'vue-router';
-import routes from '../../routes/routes.js';
-
-const router = new VueRouter({
-    routes
-})
 
 export default {
+    name:'mtLaunchMeet',
     data() {
         return {
             sendData: {
@@ -483,6 +478,11 @@ export default {
         mtrAddone() {
             let arritem = { name: 'okok' }
             this.meetingroom.push(arritem);
+        },
+        sendDataEvt(){
+            this.$http.post('/mt/CreateMeeting',this.sendData).then(res => {
+        
+            })
         }
     }
 } 

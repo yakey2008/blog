@@ -47,6 +47,7 @@ a {
 <script>
 import moment from 'moment';
 export default {
+  name: 'home',
   data() {
     return {
       datetoday: moment().format('YYYY/MM/DD'),
@@ -94,6 +95,7 @@ export default {
             let strEnd = el.End.substr(11);
             let strEnd2 = strEnd.substr(0, strEnd.length - 3);
 
+            obj.curData = el;
             obj.title = el.Subject;
             obj.desc = el.Location;
             obj.date = el.End.substr(0, el.End.length - 9).replace(/-/g, '/')

@@ -204,13 +204,13 @@ div{-webkit-tap-highlight-color:rgba(0,0,0,0); }
     </div>
 </template>
 <script>
-import weui from '../../lib/js/weui.min.js';
 import moment from 'moment';
 import locaticon from '../../images/locaticon.png';
 moment.locale('zh-cn');
 
 
 export default {
+    name:'mtTimeSelect',
     mounted() {
         for (let i = 0; i < this.initTimenum; i++) {
             this.selectedBox.push({ value: i, selected: false })

@@ -177,14 +177,9 @@ $col9b:#9b9b9b;
 <script>
 import weui from '../../lib/js/weui.min.js';
 import moment from 'moment';
-import VueRouter from 'vue-router';
-import routes from '../../routes/routes.js';
-
-const router = new VueRouter({
-    routes
-})
 
 export default {
+    name: 'mtLocationSearch',
     mounted() {
     },
     data() {

@@ -1,0 +1,1 @@
+var webUrl = 'http://t00005162-7.corp.vipshop.com:3100/';

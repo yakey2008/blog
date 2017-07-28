@@ -325,7 +325,7 @@ $col9b:#9b9b9b;
                         <div class="css-mtlaunchmeet-mtl-infoadd-container">
                             <div class="css-mtlaunchmeet-mtl-info">
                                 <span>会议主题</span>
-                                <span class="css-mt-themetext">部门例会</span>
+                                <span class="css-mt-themetext">{{detailData.Subject}}</span>
                             </div>
                         </div>
                         <i class="css-meet-statu">未接受</i>
@@ -339,8 +339,7 @@ $col9b:#9b9b9b;
                                 <p>会议时间</p>
                             </div>
                             <div class="weui-cell__ft">
-                                <span>2016-06-10</span>&nbsp;&nbsp;
-                                <span>10:11-11:30</span>
+                                {{detailData.meetTimeDetail}}
                             </div>
                         </div>
                     </div>
@@ -350,12 +349,12 @@ $col9b:#9b9b9b;
                     <div class="css-mtlaunchmeet-meetlocation">
                         <div class="css-mtlaunchmeet-mtl-infoadd-container">
                             <div class="css-mtlaunchmeet-mtl-info">
-                                <p>会议地点（{{meetingroom.length}}）</p>
+                                <p>会议地点（{{detailData.Location.length}}）</p>
                             </div>
                         </div>
-                        <div class="css-mtlaunchmeet-mtl-location-container" v-for="(mtr,index) in meetingroom" :key="mtr">
+                        <div class="css-mtlaunchmeet-mtl-location-container" v-for="(mtr,index) in detailData.Location" :key="mtr">
                             <div class="css-mtlaunchmeet-mtl-location-info">
-                                <p>{{mtr.name}}</p>
+                                <p>{{mtr}}</p>
                             </div>
                         </div>
                     </div>
@@ -366,7 +365,7 @@ $col9b:#9b9b9b;
                         <div class="css-mtlaunchmeet-mtl-infoadd-container">
                             <div class="css-mtlaunchmeet-mtl-info">
                                 <span>会议内容</span>
-                                <span class="css-mt-themetext">6月份部门例会，圣诞快乐放假啦速度快解放收到了反馈</span>
+                                <span class="css-mt-themetext">{{detailData.Body}}</span>
                             </div>
                         </div>
                     </div>
@@ -376,7 +375,7 @@ $col9b:#9b9b9b;
                     <div class="css-mtlaunchmeet-participate-container">
                         <div class="css-mtlaunchmeet-mtl-infoadd-container weui-cell_access">
                             <div class="css-mtlaunchmeet-mtl-info">
-                                <p>参会人员（{{meetingroom.length}}）</p>
+                                <p>参会人员（{{detailData.RequiredAttendees.length+detailData.OptionalAttendees.length}}）</p>
                             </div>
                             <div class="css-mtlaunchmeet-mtl-addbtn weui-cell__ft">
                                 <router-link :to="'/mtaddcontarct'" tag="div">
@@ -387,11 +386,11 @@ $col9b:#9b9b9b;
                         <div class="css-mtlaunchmeet-mtl-participate-items">
                             <div class="weui-uploader__bd">
                                 <div class="weui-uploader__files css-invite-container">
-                                    <div class="fl-l css-must-in">
+                                    <div class="fl-l css-must-in" v-for="(requiremen,index) in detailData.RequiredAttendees" :key="requiremen.Address" v-if="index<4">
                                         <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
-                                        <p>图兰朵</p>
+                                        <p>{{requiremen.Name}}</p>
                                     </div>
-                                    <div class="fl-l css-must-in">
+                                    <!-- <div class="fl-l css-must-in">
                                         <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
                                         <p>巴图</p>
                                     </div>
@@ -402,19 +401,19 @@ $col9b:#9b9b9b;
                                     <div class="fl-l css-must-in">
                                         <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
                                         <p>露西</p>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                             <i class="css-right-icon css-must-icon"></i>
                         </div>
-                        <div class="css-mtlaunchmeet-mtl-participate-items">
+                        <div class="css-mtlaunchmeet-mtl-participate-items" v-if="detailData.OptionalAttendees.length>0">
                             <div class="weui-uploader__bd">
                                 <div class="weui-uploader__files css-invite-container">
-                                    <div class="fl-l css-must-in">
+                                    <div class="fl-l css-must-in" v-for="(optionalmen,index) in detailData.OptionalAttendees" :key="optionalmen.Address" v-if="index<4">
                                         <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
-                                        <p>图兰朵</p>
+                                        <p>{{optionalmen.Name}}</p>
                                     </div>
-                                    <div class="fl-l css-must-in">
+                                    <!-- <div class="fl-l css-must-in">
                                         <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
                                         <p>巴图</p>
                                     </div>
@@ -425,7 +424,7 @@ $col9b:#9b9b9b;
                                     <div class="fl-l css-must-in">
                                         <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
                                         <p>露西</p>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                             <i class="css-right-icon css-optional-icon"></i>
@@ -441,25 +440,25 @@ $col9b:#9b9b9b;
     </div>
 </template>
 <script>
-import weui from '../../lib/js/weui.min.js';
+import localdata from '../../js/localdata.js';
 import moment from 'moment';
-import VueRouter from 'vue-router';
-import routes from '../../routes/routes.js';
-
-const router = new VueRouter({
-    routes
-})
 
 export default {
+    name: 'mtMeetDetailAccept',
+    created(){
+        this.detailData= JSON.parse(localdata.getdata('meetDetailView'));
+        this.detailData.Location = this.detailData.Location.split('; ');
+        let date = this.detailData.Start.split(' ')[0];
+        let st = this.detailData.Start.split(' ')[1];
+        let ed = this.detailData.End.split(' ')[1];
+        
+        this.detailData.meetTimeDetail = date+' \r\n'+st.substr(0,st.length-3)+'-'+ed.substr(0,ed.length-3);
+    },
     mounted() {
-
     },
     data() {
         return {
-            meetingroom: [
-                { name: '广州-广新2F 巴黎会议室（8人；投影仪；玻璃写字板）' },
-                { name: '广州-广新10F 黎巴嫩会议室（21人；玻璃写字板）' }
-            ]
+            detailData:{},//本条数据详情
         }
     },
     methods: {

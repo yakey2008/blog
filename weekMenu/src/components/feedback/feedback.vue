@@ -1,4 +1,11 @@
 <style lang="scss">
+.weui-gallery {
+    display: block;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
+
 .css-feedbackmain {
     background-color: #f6f7f9;
     .weui-cell {
@@ -7,9 +14,6 @@
         margin-bottom: 10px;
         .weui-textarea {
             height: 95px;
-        }
-        .weui-gallery {
-            display: block;
         }
     }
     .weui-cell:before {
@@ -38,7 +42,6 @@
     width: 77px;
     height: 77px;
     border: 1px solid #D9D9D9;
-    background-image: url(/dist/4674e9a3a5daf5a7ea09b1ae5c54ee4f.png);
     background-size: 70%;
     background-position: 58% 40%;
     background-repeat: no-repeat;
@@ -66,18 +69,10 @@
     
                         </div>
                         <div class="weui-uploader__bd">
-                            <div class="weui-gallery" v-show="isShowviewpic">
-                                <span class="weui-gallery__img" v-bind:style="{backgroundImage:'url('+imgsrc+')'}" v-on:click="closeviewpic()"></span>
-                                <div class="weui-gallery__opr">
-                                    <a href="javascript:" class="weui-gallery__del">
-                                        <i class="weui-icon-delete weui-icon_gallery-delete" v-on:click="delpic()"></i>
-                                    </a>
-                                </div>
-                            </div>
                             <ul class="weui-uploader__files" v-show="isShowpic">
                                 <li class="weui-uploader__file" v-bind:style="{backgroundImage:'url('+imgsrc+')'}" v-on:click="showviewpic()"></li>
                             </ul>
-                            <vciu v-bind:class="['css-upload-btn','pure-button-primary','js-btn-crop']" text="" v-bind:crop="false" v-bind:url="uploadurl" extensions="png,gif,jpeg,jpg" v-on:imageuploaded="picUploaded" v-on:errorhandle="picError" :maxFileSize="10485760" v-show="!isShowpic"></vciu>
+                            <vciu v-bind:class="['css-upload-btn','pure-button-primary','js-btn-crop']" text="" v-bind:crop="false" v-bind:url="uploadurl" extensions="png,gif,jpeg,jpg" v-on:imageuploaded="picUploaded" v-on:errorhandle="picError" :maxFileSize="10485760" v-show="!isShowpic" v-bind:style="{backgroundImage:'url('+uploadbg+')'}"></vciu>
                         </div>
                     </div>
                 </div>
@@ -90,6 +85,15 @@
         <!--提示窗Start-->
         <notice v-show="isShowerr" v-bind:errtitle="errtitle" v-bind:errinfo="errinfo" v-on:closenotice="closeShowerr()"></notice>
         <!--提示窗End-->
+    
+        <div class="weui-gallery" v-show="isShowviewpic">
+            <span class="weui-gallery__img" v-bind:style="{backgroundImage:'url('+imgsrc+')'}" v-on:click="closeviewpic()"></span>
+            <div class="weui-gallery__opr">
+                <a href="javascript:" class="weui-gallery__del">
+                    <i class="weui-icon-delete weui-icon_gallery-delete" v-on:click="delpic()"></i>
+                </a>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -97,12 +101,8 @@
 import vciu from 'vue-core-image-upload';
 import urldata from '../../config/urldata.js';
 import notice from '../popnotice/notice.vue';
-import VueRouter from 'vue-router';
-import routes from '../../routes/routes.js';
 import picbg from '../../images/uploadbg.png';
-const router = new VueRouter({
-    routes
-})
+
 export default {
     components: {
         vciu,
@@ -118,6 +118,7 @@ export default {
             errtitle: "提示",
             errinfo: "",
             imgsrc: "",
+            uploadbg: picbg,
             isSubmit: false,
             sendData: { Content: "", OperateSystem: "" }
         }
@@ -139,7 +140,7 @@ export default {
         //关闭错误提示
         closeShowerr() {
             if (this.isSubmit) {
-                router.push({ path: '/' });
+                this.$router.push({ path: '/' });
             }
             this.isShowerr = false;
         },
@@ -176,7 +177,6 @@ export default {
                 this.isShowerr = true;
                 this.errinfo = '请填写相关信息！';
             } else {
-                debugger
                 if (this.sendData.Content.length > 200) {
                     this.isShowerr = true;
                     this.errinfo = '反馈的信息不能多于200字';

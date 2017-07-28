@@ -7,9 +7,7 @@
     <div class="cal-events">
       <slot>
         <div v-for="(event, index) in events" class="event-item" :key="event">
-          <router-link :to="'/mtmeetdetailaccept'" tag="div">
             <cal-event-item :event="event" :index="index" :locale="locale"></cal-event-item>
-          </router-link>
         </div>
       </slot>
     </div>
@@ -17,9 +15,9 @@
 </template>
 
 <script>
-import i18n from '../../../../js/i18n.js'
-import { dateTimeFormatter } from '../../../../js/tools.js'
-import calEventItem from './cal-event-item.vue'
+import i18n from '../../../../js/i18n.js';
+import { dateTimeFormatter } from '../../../../js/tools.js';
+import calEventItem from './cal-event-item.vue';
 export default {
   name: 'cal-events',
   data() {

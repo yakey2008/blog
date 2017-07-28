@@ -2,7 +2,7 @@
   <div class="cal-wrapper">
     <div class="cal-header">
       <div class="css-todaybtn" v-on:click="backtoday">
-        <router-link :to="'/mtmeetdetailinvite'" tag="div">
+        <router-link :to="'/mtnoticeset'" tag="div">
         <img v-bind:src="todaybg">
         </router-link>
       </div>
@@ -14,7 +14,7 @@
         <div class="arrow-right icon">&nbsp</div>
       </div>
       <div class="css-searchbtn">
-        <router-link :to="'/mtnoticeset'" tag="div">
+        <router-link :to="'/mtlocationsearch'" tag="div">
           <img v-bind:src="searchbtn">
         </router-link>
   
@@ -45,16 +45,10 @@
 </template>
 
 <script>
-import i18n from '../../../../js/i18n.js'
-import { dateTimeFormatter, isEqualDateStr } from '../../../../js/tools.js'
+import i18n from '../../../../js/i18n.js';
+import { dateTimeFormatter, isEqualDateStr } from '../../../../js/tools.js';
 import todaybg from '../../../../images/todaybg.png';
 import searchbtn from '../../../../images/searchicon.png';
-import VueRouter from 'vue-router';
-import routes from '../../../../routes/routes.js';
-
-const router = new VueRouter({
-  routes
-})
 
 const inBrowser = typeof window !== 'undefined'
 let dateObj = new Date()

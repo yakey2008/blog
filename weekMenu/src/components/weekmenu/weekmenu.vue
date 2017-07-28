@@ -45,11 +45,13 @@
             width: 8px;
             border-bottom: 1px solid #98989f;
             border-left: 1px solid #98989f;
+            -webkit-transform:rotate(-45deg);
             transform: rotate(-45deg);
             margin-left: 10px;
             margin-bottom: 3px;
         }
         .drop {
+            -webkit-transform:rotate(135deg);
             transform: rotate(135deg);
             margin-bottom: -2px;
             top: 23px;
@@ -162,8 +164,6 @@
         z-index: 550;
         top: 50px;
         background-color: #fff;
-        max-height: 150px;
-        overflow-y: scroll;
         .css-guide-item {
             position: relative;
             padding-left: 22px;
@@ -218,10 +218,10 @@
         <div class="weui-tab">
             <!--指引结构头部 Start-->
             <!-- <div class="weui-navbar css-nav-container" v-if="isShowguide">
-                                                    <div class="weui-navbar__item select-btn">
-                                                        设置区域
-                                                    </div>
-                                                </div> -->
+                                                        <div class="weui-navbar__item select-btn">
+                                                            设置区域
+                                                        </div>
+                                                    </div> -->
             <!--指引结构头部 End-->
             <div class="weui-navbar css-nav-container">
                 <div class="weui-navbar__item select-btn" v-on:click="showguide()" v-if="isShowguide">
@@ -241,8 +241,9 @@
                 <aside class="aside-container">
                     <div class="aside">
                         <div class="c-lefttab" v-for="(val,index) in mealtime" v-on:click="switchpanel(index)" :class="{tabactive:val.ishow}" :key="val.Id">{{val.name}}</div>
-                        <router-link to="/Feedback">意见反馈</router-link>
-                        <div class="c-lefttab" v-on:click="clearlocal()">（重置指引）</div>
+                        
+                        <!-- <div class="c-lefttab" v-on:click="clearlocal()">（重置指引）</div>  -->
+                   
                     </div>
                 </aside>
                 <section class="c-item-container">
@@ -253,7 +254,7 @@
                                     <div class="weui-media-box__thumb" v-bind:style="{backgroundImage:'url('+val.imgsrc+')',backgroundSize:'cover'}" v-if="val.IconId"></div>
                                     <div class="weui-media-box__thumb" v-bind:style="{backgroundImage:'url('+defaultimg+')',backgroundSize:'cover'}" v-if="!val.IconId"></div>
                                     <!-- <img class="weui-media-box__thumb" v-bind:src="val.imgsrc" v-if="val.IconId">
-                                                                    <img class="weui-media-box__thumb" v-bind:src="defaultimg" v-if="!val.IconId"> -->
+                                                                        <img class="weui-media-box__thumb" v-bind:src="defaultimg" v-if="!val.IconId"> -->
                                     <span class="css-explain-mask"></span>
                                     <span class="css-explain-text">{{val.Name}}</span>
                                 </div>
@@ -265,7 +266,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="weui-panel__bd" v-show="!isShowtab">暂无菜单！</div>
+                        <div class="weui-panel__bd" style="text-align: center;margin-top: 45px;" v-show="!isShowtab">暂无菜单！</div>
                     </div>
                 </section>
             </div>
@@ -318,8 +319,8 @@ export default {
             defaultimg: defaultImg,//默认图片
             weekstart: '',//本周开始时间
             weekend: '',//本周结束时间
-            // todaytime: moment().format('YYYY-MM-DD'),//今天时间
-            todaytime: '2016-08-30',//临时测试可删
+            todaytime: moment().format('YYYY-MM-DD'),//今天时间
+            // todaytime: '2016-08-30',//临时测试可删
             errtitle: "提示",
             errinfo: "餐厅尚未上传菜单，请稍后再试",
             isShowguideselect: false,
@@ -630,10 +631,10 @@ export default {
             });
         },
         //清除本地存储 可删
-        clearlocal() {
-            window.localStorage.clear();
-            window.location.reload();
-        }
+        // clearlocal() {
+        //     window.localStorage.clear();
+        //     window.location.reload();
+        // }
     }
 } 
 </script>

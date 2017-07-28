@@ -363,7 +363,7 @@ $col9b:#9b9b9b;
                             </div>
                             <div class="css-mtmeetdetailinvite-textarea weui-cell_access">
                                 <div class="weui-cell__ft">
-                                    <textarea class="weui-textarea" placeholder="请输入文本" rows="3" maxlength="30"></textarea>
+                                    <textarea class="weui-textarea" placeholder="请输入文本" rows="3" maxlength="30" v-model="detailData.Subject"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -378,8 +378,7 @@ $col9b:#9b9b9b;
                                 <p>会议时间</p>
                             </div>
                             <div class="weui-cell__ft">
-                                <span>2016-06-10</span>&nbsp;&nbsp;
-                                <span>10:11-11:30</span>
+                                {{detailData.meetTimeDetail}}
                             </div>
                         </div>
                     </div>
@@ -389,15 +388,15 @@ $col9b:#9b9b9b;
                     <div class="css-mtlaunchmeet-meetlocation">
                         <div class="css-mtlaunchmeet-mtl-infoadd-container">
                             <div class="css-mtlaunchmeet-mtl-info">
-                                <p>会议地点（{{meetingroom.length}}）</p>
+                                <p>会议地点（{{detailData.Location.length}}）</p>
                             </div>
                             <div class="css-mtlaunchmeet-mtl-addbtn">
                                 <span class="css-add-btn" v-on:click="mtrAddone()">添加</span>
                             </div>
                         </div>
-                        <div class="css-mtlaunchmeet-mtl-location-container" v-for="(mtr,index) in meetingroom" :key="mtr">
+                        <div class="css-mtlaunchmeet-mtl-location-container" v-for="(mtr,index) in detailData.Location" :key="mtr">
                             <div class="css-mtlaunchmeet-mtl-location-info">
-                                <p>{{mtr.name}}</p>
+                                <p>{{mtr}}</p>
                             </div>
                             <div class="css-mtlaunchmeet-mtl-location-deladdbtn">
                                 <i class="css-del-btn" v-on:click="mtrDelone(index)"></i>
@@ -417,7 +416,7 @@ $col9b:#9b9b9b;
                             </div>
                             <div class="css-mtmeetdetailinvite-textarea weui-cell_access">
                                 <div class="weui-cell__ft">
-                                    <textarea class="weui-textarea" placeholder="请输入会议内容（可选）" rows="3" maxlength="30"></textarea>
+                                    <textarea class="weui-textarea" placeholder="请输入会议内容（可选）" rows="3" maxlength="30" v-model="detailData.Body"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -428,10 +427,10 @@ $col9b:#9b9b9b;
                     <div class="css-mtlaunchmeet-participate-container">
                         <div class="css-mtlaunchmeet-mtl-infoadd-container">
                             <div class="css-mtlaunchmeet-mtl-info">
-                                <p>参会人员（{{meetingroom.length}}）</p>
+                                <p>参会人员（{{detailData.RequiredAttendees.length+detailData.OptionalAttendees.length}}）</p>
                             </div>
                             <div class="css-mtlaunchmeet-mtl-addbtn">
-                                <router-link :to="'/mtaddcontarct'" tag="div">
+                                <router-link :to="'/mtaddcontact'" tag="div">
                                     <span class="css-add-btn">通过邮箱地址添加</span>
                                 </router-link>
                             </div>
@@ -445,11 +444,11 @@ $col9b:#9b9b9b;
                         <div class="css-mtlaunchmeet-mtl-participate-items">
                             <div class="weui-uploader__bd">
                                 <div class="weui-uploader__files css-invite-container">
-                                    <div class="fl-l css-must-in">
+                                    <div class="fl-l css-must-in" v-for="(requiremen,index) in detailData.RequiredAttendees" :key="requiremen.Address" v-if="index<4">
                                         <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
-                                        <p>图兰朵</p>
+                                        <p>{{requiremen.Name}}</p>
                                     </div>
-                                    <div class="fl-l css-must-in">
+                                    <!-- <div class="fl-l css-must-in">
                                         <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
                                         <p>巴图</p>
                                     </div>
@@ -460,7 +459,7 @@ $col9b:#9b9b9b;
                                     <div class="fl-l css-must-in">
                                         <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
                                         <p>露西</p>
-                                    </div>
+                                    </div> -->
                                     <div class="fl-l css-must-in">
                                         <div class="weui-uploader__input-box css-mtlaunchmeet-mtl-participate marginle12p">
                                             <div class="weui-uploader__input"></div>
@@ -470,14 +469,14 @@ $col9b:#9b9b9b;
                             </div>
                             <i class="css-right-icon css-must-icon"></i>
                         </div>
-                        <div class="css-mtlaunchmeet-mtl-participate-items">
+                        <div class="css-mtlaunchmeet-mtl-participate-items" v-if="detailData.OptionalAttendees.length>0">
                             <div class="weui-uploader__bd">
                                 <div class="weui-uploader__files css-invite-container">
-                                    <div class="fl-l css-must-in">
+                                    <div class="fl-l css-must-in" v-for="(optionalmen,index) in detailData.OptionalAttendees" :key="optionalmen.Address" v-if="index<4">
                                         <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
-                                        <p>图兰朵</p>
+                                        <p>{{optionalmen.Name}}</p>
                                     </div>
-                                    <div class="fl-l css-must-in">
+                                    <!-- <div class="fl-l css-must-in">
                                         <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
                                         <p>巴图</p>
                                     </div>
@@ -488,7 +487,7 @@ $col9b:#9b9b9b;
                                     <div class="fl-l css-must-in">
                                         <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
                                         <p>露西</p>
-                                    </div>
+                                    </div> -->
                                     <div class="fl-l css-must-in">
                                         <div class="weui-uploader__input-box css-mtlaunchmeet-mtl-participate marginle12p">
                                             <div class="weui-uploader__input"></div>
@@ -505,7 +504,7 @@ $col9b:#9b9b9b;
                     <div class="weui-cells weui-cells_checkbox">
                         <label class="weui-cell weui-check__label" for="s11">
                             <div class="weui-cell__hd">
-                                <input type="checkbox" class="weui-check" name="checkbox1" id="s11" checked="checked">
+                                <input type="checkbox" class="weui-check" name="checkbox1" id="s11" checked="checked" v-model="detailData.IsResponseRequested">
                                 <i class="weui-icon-checked"></i>
                             </div>
                             <div class="weui-cell__bd">
@@ -523,34 +522,35 @@ $col9b:#9b9b9b;
     </div>
 </template>
 <script>
-import weui from '../../lib/js/weui.min.js';
+import localdata from '../../js/localdata.js';
 import moment from 'moment';
-import VueRouter from 'vue-router';
-import routes from '../../routes/routes.js';
-
-const router = new VueRouter({
-    routes
-})
 
 export default {
+    name: 'mtMeetDetailInvite',
+    created(){
+        this.detailData= JSON.parse(localdata.getdata('meetDetailView'));
+        this.detailData.Location = this.detailData.Location.split('; ');
+        let date = this.detailData.Start.split(' ')[0];
+        let st = this.detailData.Start.split(' ')[1];
+        let ed = this.detailData.End.split(' ')[1];
+        
+        this.detailData.meetTimeDetail = date+' \r\n'+st.substr(0,st.length-3)+'-'+ed.substr(0,ed.length-3);
+    },
     mounted() {
 
     },
     data() {
         return {
-            meetingroom: [
-                { name: '广州-广新2F 巴黎会议室（8人；投影仪；玻璃写字板）' },
-                { name: '广州-广新10F 黎巴嫩会议室（21人；玻璃写字板）' }
-            ]
+            detailData:{},//本条数据详情
         }
     },
     methods: {
         mtrDelone(idx) {
-            this.meetingroom.splice(idx, 1);
+            // this.meetingroom.splice(idx, 1);
         },
         mtrAddone() {
-            let arritem = { name: 'okok' }
-            this.meetingroom.push(arritem);
+            // let arritem = { name: 'okok' }
+            // this.meetingroom.push(arritem);
         }
     }
 } 

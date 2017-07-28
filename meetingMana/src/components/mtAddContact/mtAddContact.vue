@@ -41,25 +41,41 @@
             <div class="weui-cells weui-cells_form">
                 <div class="weui-cell">
                     <div class="weui-cell__bd">
-                        <textarea class="weui-textarea" placeholder="请输入参会人邮箱" rows="3"></textarea>
+                        <textarea class="weui-textarea" placeholder="请输入参会人邮箱" rows="3" v-model="inputemail"></textarea>
                     </div>
                 </div>
             </div>
         </div>
         <div class="weui-tabbar css-bottombar">
-            <div class="weui-btn weui-btn_primary css-submit-btn">确定</div>
+            <div class="weui-btn weui-btn_primary css-submit-btn" v-on:click="setEmail()">确定</div>
         </div>
     </div>
 </template>
 <script>
+import localdata from '../../js/localdata.js';
+
 export default {
     data() {
         return {
+            inputemail: '',
+            emailList: []
         }
     },
     mounted() {
+        let emArr = localdata.getdata('costomEmail');
+        if (emArr) {
+            this.emailList = JSON.parse(emArr);
+        }
     },
     methods: {
+        setEmail() {
+            if (this.inputemail !== '') {
+                this.emailList.push(this.inputemail);
+                localdata.setdata('costomEmailHistory', JSON.stringify(this.emailList));
+                localdata.setdata('costomEmail', this.inputemail);
+                this.$router.push({ path: '/mtlaunchmeet' });
+            }
+        }
     }
 }
 </script>

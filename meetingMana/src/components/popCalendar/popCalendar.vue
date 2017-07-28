@@ -3,6 +3,7 @@ import moment from 'moment';
 import myDatepicker from 'vue-datepicker'
 
 export default {
+  name: 'popCalendar',
   data () {
     return {
       startTime: {
