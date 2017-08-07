@@ -1,3 +1,135 @@
+<template>
+    <div>
+        <scroller :on-refresh="refresh" :on-infinite="infinite" ref="scroller" class="css-mtnoticelist-page">
+            <div v-for="item in data" :key="item.ID">
+                <div v-if="item.DisplayType == 1 && item.MeetingResponseType == 3" class="css-list-item">
+                    <p class="css-list-item-time col9b">{{item.CreateTime}}</p>
+                    <div class="css-list-item-main">
+                        <span class="right-ribbon">已接受</span>
+                        <div class="css-list-item-main-info">
+                            <h3 class="css-list-item-main-title">{{item.Subject}}</h3>
+                            <div class="inside-item css-list-item-main-info-time">
+                                <span class="leftdom col9b">时间</span>
+                                <span class="rightdom">{{item.AttendeeTime}}</span>
+                            </div>
+                            <div class="inside-item">
+                                <span class="leftdom col9b">地点</span>
+                                <span class="rightdom">{{item.MeetingAddress}}</span>
+                            </div>
+                            <div class="inside-item">
+                                <span class="leftdom col9b">人员</span>
+                                <span class="rightdom">{{item.RequiredAttendees}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div v-if="item.DisplayType == 1 && item.MeetingResponseType == 4" class="css-list-item">
+                    <p class="css-list-item-time col9b">{{item.CreateTime}}</p>
+                    <div class="css-list-item-main">
+                        <span class="right-ribbon unaccept">已谢绝</span>
+                        <div class="css-list-item-main-info">
+                            <h3 class="css-list-item-main-title">{{item.Subject}}</h3>
+                            <div class="inside-item css-list-item-main-info-time">
+                                <span class="leftdom col9b">时间</span>
+                                <span class="rightdom">{{item.AttendeeTime}}</span>
+                            </div>
+                            <div class="inside-item">
+                                <span class="leftdom col9b">地点</span>
+                                <span class="rightdom">{{item.MeetingAddress}}</span>
+                            </div>
+                            <div class="inside-item">
+                                <span class="leftdom col9b">人员</span>
+                                <span class="rightdom">{{item.RequiredAttendees}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div v-if="item.DisplayType == 1 && item.MeetingResponseType == 0" class="css-list-item">
+                    <p class="css-list-item-time col9b">{{item.CreateTime}}</p>
+                    <div class="css-list-item-main">
+                        <span class="right-ribbon unaccept">未接受</span>
+                        <div class="css-list-item-main-info">
+                            <h3 class="css-list-item-main-title">{{item.Subject}}</h3>
+                            <div class="inside-item css-list-item-main-info-time">
+                                <span class="leftdom col9b">时间</span>
+                                <span class="rightdom">{{item.AttendeeTime}}</span>
+                            </div>
+                            <div class="inside-item">
+                                <span class="leftdom col9b">地点</span>
+                                <span class="rightdom">{{item.MeetingAddress}}</span>
+                            </div>
+                            <div class="inside-item">
+                                <span class="leftdom col9b">人员</span>
+                                <span class="rightdom">{{item.RequiredAttendees}}</span>
+                            </div>
+                            <div class="css-bottombar">
+                                <div class="weui-btn css-bottombtn css-delinebtn" @click="respoMeeting(item, false)">谢绝</div>
+                                <div class="weui-btn css-bottombtn css-acceptbtn" @click="respoMeeting(item, true)">接受</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div  v-if="item.DisplayType == 2" class="css-list-item">
+                    <p class="css-list-item-time col9b">{{item.CreateTime}}</p>
+                    <div class="css-list-item-main bgcolor">
+                        <div class="css-list-item-main-info">{{item.Subject}}</div>
+                    </div>
+                </div>
+            </div>
+        </scroller>
+    </div>
+</template>
+
+<script>
+import Scroller from '../scroll/index.vue'
+import service from '../../services/getMeetingNotificationList'
+import service1 from '../../services/postReplyMeetingInvitation'
+
+export default {
+    name: 'mtNoticeList',
+    components: {
+      Scroller
+    },
+    mounted() {
+ service.init()
+    },
+    data() {
+        return {
+            data: []
+        }
+    },
+    methods: {
+      refresh () {
+        setTimeout(() => {
+          service.reload(this.$http, {}).then(data => {
+            this.data = data.list
+            this.$refs.scroller.finishPullToRefresh()
+          }, status => {
+            this.$refs.scroller.finishPullToRefresh()
+          })
+        })
+      },
+      infinite () {
+        setTimeout(() => {
+          service.get(this.$http, {}).then(data => {
+            this.data = data.list
+            this.$refs.scroller.finishInfinite(!data.hasMore)
+          }, status => {
+            this.$refs.scroller.finishInfinite(true)
+          })
+        }, 500)
+      },
+      respoMeeting (meeting,accept) {
+        service1.post(this.$http, {iCalUid: meeting.ICalUid, isAccept: accept}).then(data => {
+           meeting.MeetingResponseType = accept ? 3:4
+        }, status => {
+           console.log(status)
+        })
+      }
+    }
+}
+</script>
+
 <style lang="scss">
 @mixin flexbox() {
     display: -webkit-box;
@@ -12,6 +144,7 @@
 }
 
 .css-mtnoticelist-page {
+    height:100%;
     .col9b {
         color: #9b9b9b;
     }
@@ -112,107 +245,3 @@
     }
 }
 </style>
-<template>
-    <div class="weui-tab css-mtnoticelist-page">
-        <div class="css-mtnoticelist-main">
-            <section>
-                <div class="css-list-item">
-                    <p class="css-list-item-time col9b">2016-12-29 10:00</p>
-                    <div class="css-list-item-main">
-                        <span class="right-ribbon">已接受</span>
-                        <div class="css-list-item-main-info">
-                            <h3 class="css-list-item-main-title">部门例会是主题</h3>
-                            <div class="inside-item css-list-item-main-info-time">
-                                <span class="leftdom col9b">时间</span>
-                                <span class="rightdom">2017/6/18 12:00-15:00</span>
-                            </div>
-                            <div class="inside-item">
-                                <span class="leftdom col9b">地点</span>
-                                <span class="rightdom">广新5楼休息区</span>
-                            </div>
-                            <div class="inside-item">
-                                <span class="leftdom col9b">人员</span>
-                                <span class="rightdom">狂三/李四/张五/时六啊/超数字...</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <section>
-                <div class="css-list-item">
-                    <p class="css-list-item-time col9b">2016-12-29 10:00</p>
-                    <div class="css-list-item-main">
-                        <span class="right-ribbon unaccept">已谢绝</span>
-                        <div class="css-list-item-main-info">
-                            <h3 class="css-list-item-main-title">部门例会是主题</h3>
-                            <div class="inside-item css-list-item-main-info-time">
-                                <span class="leftdom col9b">时间</span>
-                                <span class="rightdom">2017/6/18 12:00-15:00</span>
-                            </div>
-                            <div class="inside-item">
-                                <span class="leftdom col9b">地点</span>
-                                <span class="rightdom">广新5楼休息区</span>
-                            </div>
-                            <div class="inside-item">
-                                <span class="leftdom col9b">人员</span>
-                                <span class="rightdom">狂三/李四/张五/时六啊/超数字...</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <section>
-                <div class="css-list-item">
-                    <p class="css-list-item-time col9b">2016-12-29 10:00</p>
-                    <div class="css-list-item-main">
-                        <span class="right-ribbon unaccept">未接受</span>
-                        <div class="css-list-item-main-info">
-                            <h3 class="css-list-item-main-title">部门例会是主题</h3>
-                            <div class="inside-item css-list-item-main-info-time">
-                                <span class="leftdom col9b">时间</span>
-                                <span class="rightdom">2017/6/18 12:00-15:00</span>
-                            </div>
-                            <div class="inside-item">
-                                <span class="leftdom col9b">地点</span>
-                                <span class="rightdom">广新5楼休息区</span>
-                            </div>
-                            <div class="inside-item">
-                                <span class="leftdom col9b">人员</span>
-                                <span class="rightdom">狂三/李四/张五/时六啊/超数字...</span>
-                            </div>
-                            <div class="css-bottombar">
-                                <div class="weui-btn css-bottombtn css-delinebtn">谢绝</div>
-                                <div class="weui-btn css-bottombtn css-acceptbtn">接受</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <section>
-                <div class="css-list-item">
-                    <p class="css-list-item-time col9b">2016-12-29 10:00</p>
-                    <div class="css-list-item-main bgcolor">
-                        <div class="css-list-item-main-info">李四接受了AB项目沟通会(2017/3/2 15:00 -16:00)的会议邀请</div>
-                    </div>
-                </div>
-            </section>
-        </div>
-    </div>
-</template>
-<script>
-import weui from '../../lib/js/weui.min.js';
-import moment from 'moment';
-
-export default {
-    name: 'mtNoticeList',
-    mounted() {
-
-    },
-    data() {
-        return {
-        }
-    },
-    methods: {
-    }
-}
-</script>

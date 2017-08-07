@@ -11,7 +11,8 @@ import Mtnoticeset from '../components/mtNoticeSet/mtNoticeSet.vue'; //会议通
 import Mtparticipantslist from '../components/MtParticipantsList/mtParticipantsList.vue'; //参会人员列表其他情况
 import Mtparticipantslistset from '../components/MtParticipantsListSet/mtParticipantsListSet.vue'; //参会人员列表编辑情况
 import Mtnoticelist from '../components/mtNoticeList/mtNoticeList.vue'; //会议通知列表
-import Mtlisttimeline from '../components/mtListTimeline/mtListTimeline.vue'; //我的会议查看
+import MtMineMeeting from '../components/mtMineMeeting/mtMineMeeting.vue'; //我的会议查看
+import MtSearchMtr from '../components/mtSearchMtr/mtSearchMtr.vue'; //搜索会议
 
 export default [{
     path: '/',
@@ -41,12 +42,15 @@ export default [{
             meta: 'false',
             component: Mtlocationselect
         },
-        {
+        {   
+            name:'mttimeselect',
+            // path: '/mttimeselect/:meetingroom/:dateTime/:listindex',
             path: '/mttimeselect',
             meta: 'false',
             component: Mttimeselect
         },
         {
+            name:'mtlaunchmeet',
             path: '/mtlaunchmeet',
             meta: {
                 keepAlive: true
@@ -81,9 +85,14 @@ export default [{
             component: Mtnoticelist
         },
         {
-            path: '/mtlisttimeline',
+            path: '/mtminemeeting/:mtrid',
             meta: 'false',
-            component: Mtlisttimeline
+            component: MtMineMeeting
+        },
+        {
+            path: '/mtsearchmtr',
+            meta: 'false',
+            component: MtSearchMtr
         }
     ]
 }]

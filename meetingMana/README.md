@@ -3,10 +3,11 @@
 > 依赖：vue2   
 > 路由：vue-router,异步：vue-resource
 > ui库：weui
-#### 命令
+#### 命令 
 > npm run dev 启动开发服务  
 > npm run build 合并压缩代码   
 
+#### 包的修改   
 修改了vue-calendar-upload 插件源码     
 vue-datepicker.vue          
 ···
@@ -17,7 +18,14 @@ line 380-383  --
 </div>
 ···
 
+修改了vue2-timepicker 插件 package.json
+···
+dist目录添加build.js
+package.json整体修改
+···
 
+> 所修改的包在modified_modules目录有备份
+#### todo
 > mtLocationSelect 选择会议室     
  选择地点根据上个页面选择后默认地点
 

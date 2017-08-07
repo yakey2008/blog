@@ -1,4 +1,15 @@
 <style lang="scss">
+.css-pageloading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 60px;
+    height: 60px;
+    margin-top: -30px;
+    margin-left: -30px;
+}
+
+
 .weui-gallery {
     display: block;
     position: absolute;
@@ -94,6 +105,9 @@
                 </a>
             </div>
         </div>
+        <div class="weui-mask" v-show="pageloading">
+            <i class="weui-loading css-pageloading"></i>
+        </div>
     </div>
 </template>
 
@@ -110,6 +124,7 @@ export default {
     },
     data() {
         return {
+            pageloading: false,
             uploadurl: urldata.basePath + urldata.UploadImage,
             showtab: true,
             isShowerr: false,
@@ -140,7 +155,7 @@ export default {
         //关闭错误提示
         closeShowerr() {
             if (this.isSubmit) {
-                this.$router.push({ path: '/' });
+                this.$router.go(-1)
             }
             this.isShowerr = false;
         },
@@ -181,12 +196,15 @@ export default {
                     this.isShowerr = true;
                     this.errinfo = '反馈的信息不能多于200字';
                 } else {
+                    this.pageloading = true;
                     this.$http.post(urldata.basePath + urldata.Feedback, this.sendData).then(response => {
+                        this.pageloading = false;
                         this.isShowerr = true;
                         this.errinfo = '提交成功！后台意见反馈记录用户反馈的信息。';
                         this.isSubmit = true;
                     }, response => {
                         this.isShowerr = true;
+                        this.pageloading = false;
                         this.errinfo = '网络错误，请稍后刷新重试';
                     });
                 }

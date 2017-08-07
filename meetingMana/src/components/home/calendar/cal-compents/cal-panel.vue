@@ -2,9 +2,9 @@
   <div class="cal-wrapper">
     <div class="cal-header">
       <div class="css-todaybtn" v-on:click="backtoday">
-        <router-link :to="'/mtnoticeset'" tag="div">
+        <!-- <router-link :to="'/mtnoticeset'" tag="div"> -->
         <img v-bind:src="todaybg">
-        </router-link>
+        <!-- </router-link> -->
       </div>
       <div class="l" @click="preMonth">
         <div class="arrow-left icon">&nbsp</div>
@@ -13,7 +13,7 @@
       <div class="r" @click="nextMonth">
         <div class="arrow-right icon">&nbsp</div>
       </div>
-      <div class="css-searchbtn">
+      <!-- <div class="css-searchbtn">
         <router-link :to="'/mtlocationsearch'" tag="div">
           <img v-bind:src="searchbtn">
         </router-link>
@@ -22,7 +22,7 @@
       <router-link :to="'/mtlocationselect'" tag="section">
         <div class="css-viewlocation">
         </div>
-      </router-link>
+      </router-link> -->
     </div>
     <div class="cal-body">
       <div class="weeks">
@@ -136,7 +136,7 @@ export default {
       this.$emit('cur-day-changed', date.date)
     },
     backtoday() {
-      this.today;
+       this.$EventCalendar.toDate(this.today);
     },
     removecls(){
       this.curday = false;

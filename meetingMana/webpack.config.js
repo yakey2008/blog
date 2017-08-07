@@ -7,11 +7,17 @@ module.exports = {
         port: 3000,
         compress: false,
         proxy: {
-            '/mt': {
-                target: 'http://10.100.68.57:40000',
-                pathRewrite: {
-                    '^/mt': '/api/Meeting'
-                },
+            // '/mt': {
+            //     // target: 'http://10.100.68.57:40000',
+            //     target: 'http://10.100.69.209:40000',
+            //     pathRewrite: {
+            //         '^/mt': '/api/Meeting'
+            //     },
+            //     changeOrigin: true
+            // },
+            '/api/Meeting': {
+                // target: 'http://10.100.68.57:40000',
+                target: 'http://10.100.69.209:40000',
                 changeOrigin: true
             }
         }
@@ -19,7 +25,7 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, "dist"),
         filename: "dist.js",
-        publicPath: "/dist/"
+        publicPath: "dist/"
     },
     module: {
         rules: [{
@@ -63,6 +69,11 @@ if (process.env.NODE_ENV === 'production') {
         new webpack.LoaderOptionsPlugin({
             minimize: true
         }),
-        new ExtractTextPlugin("style.css")
+        new ExtractTextPlugin("style.css"),
+        new webpack.optimize.UglifyJsPlugin({
+            compress: {
+                warnings: false
+            }
+        })
     ])
 }

@@ -1,3 +1,128 @@
+<template>
+    <div class="weui-tab css-mtnotice-page">
+        <div class="weui-tab__panel">
+            <div class="weui-tab">
+                <div class="css-main-container" v-if="!loading">
+                    <section class="css-pageinfo">
+                        <div class="css-pagebox">
+                        <div class="weui-cell weui-cell_switch">
+                            <div class="weui-cell__bd css-item">接收会议邀请通知</div>
+                            <div class="weui-cell__ft">
+                                <input class="weui-switch" type="checkbox" v-model="recNoti" @change="recNotiAct">
+                            </div>
+                        </div>
+                          <p class="css-explantime">开启后，当有您有受邀请的会议时，唯秘将推送消息到您的手机消息通知栏。</p>
+                        </div>
+                    </section>
+                    <section class="css-pageinfo">
+                        <div class="css-pagebox">
+                        <div class="weui-cell weui-cell_switch">
+                            <div class="weui-cell__bd css-item">会议开始前，通知我</div>
+                            <div class="weui-cell__ft">
+                                <input class="weui-switch" type="checkbox" v-model="remind" @change="remindAct">
+                            </div>
+                        </div>
+                          <p class="css-explantime">开启后，在会议开始前，唯秘将推送会议提醒到您的手机消息通知栏。</p>
+                        </div>
+                    </section>
+
+                    <section class="css-pagesetting">
+                        <div class="weui-cell weui-cell_switch css-setting weui-cell_access">
+                            <div class="weui-cell__bd css-item ">提醒时间</div>
+                            <div>
+                              提前
+                              <span class="css-settime" @click="timePicker">{{remindTime}} 分钟</span>
+                            </div>
+                            <div class="weui-cell__ft"></div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+import service1 from '../../services/getMeetingSetting'
+import service2 from '../../services/postMeetingSetting'
+import weui from '../../lib/js/weui.min.js';
+
+export default {
+    name: 'mtNoticeSet',
+    mounted() {
+       this.getMeetingSetting()
+    },
+    data() {
+        return {
+            recNoti:true,
+            remind:true,
+            remindTime:15,
+            loading: true
+        }
+    },
+    methods: {
+        getMeetingSetting() {
+           service1.get(this.$http, {}).then(data => {
+              this.recNoti = data.ReceiveMeetingPush === "true"
+              this.remind = data.RemindMeetingPush === "true"
+              this.remindTime = data.RemindMeetinTime
+              this.loading = false
+           }, status => {
+             console.log(status)
+             this.loading = false
+           })
+        },
+        setMeetingSetting(key, value) {
+           service2.post(this.$http, {key: key, value: value}).then(data => {
+             console.log(data)
+           }, status => {
+             console.log(status)
+           })
+        },
+        timePicker() {
+            let _this = this;
+            weui.picker([{
+	           label: '5分钟',
+	           value: '5'
+	        }, {
+	           label: '10分钟',
+	           value: '10'
+	        }, {
+	           label: '15分钟',
+	           value: '15'
+	        }, {
+	           label: '30分钟',
+	           value: '30'
+	        }, {
+	           label: '1小时',
+	           value: '60'
+	        }, {
+	           label: '2小时',
+	           value: '120'
+	        }, {
+	           label: '3小时',
+	           value: '180'
+	        }], {
+	           defaultValue: [_this.remindTime],
+	           onConfirm: function onConfirm(result) {
+	               _this.remindTime = result[0].value
+                   _this.remindTimeAct()
+	           },
+	           id: 'picker'
+	        })
+        },
+        recNotiAct() {
+          this.setMeetingSetting("ReceiveMeetingPush", this.recNoti)
+        },
+        remindAct() {
+          this.setMeetingSetting("RemindMeetingPush", this.remind)
+        },
+        remindTimeAct() {
+          this.setMeetingSetting("RemindMeetinTime", this.remindTime)
+        }
+    }
+}
+</script>
+
 <style lang="scss">
   @mixin placeholder($color) {
        ::-webkit-input-placeholder {
@@ -37,7 +162,7 @@
       .css-main-container {
           .css-pageinfo {
               background-color: #fff;
-               padding: 0px 5.86%;
+               padding: 0px 10px;
               .css-pagebox{
                   height: 90px;
                 padding: 5px 0px ;
@@ -80,6 +205,7 @@
                   margin-top: -5px;
                   font-size: 0.75rem;
                   color: $col9b;
+                  padding:0 15px;
               }
           }
           .css-pagesetting {
@@ -101,63 +227,3 @@
       }
   }
 </style>
-<template>
-    <div class="weui-tab css-mtnotice-page">
-        <div class="weui-tab__panel">
-            <div class="weui-tab">
-                <div class="css-main-container">
-                    <section class="css-pageinfo">
-                        <div class="css-pagebox">
-                        <div class="weui-cell weui-cell_switch css-status">
-                            <div class="weui-cell__bd css-item">接收会议邀请通知</div>
-                            <div class="weui-cell__ft">
-                                <input class="weui-switch" type="checkbox">
-                            </div>
-                        </div>
-                          <p class="css-explantime">开启后，当有您有受邀请的会议时，唯秘将推送消息到您的手机消息通知栏。</p>
-                        </div>
-                    </section>
-                    <section class="css-pageinfo">
-                        <div class="css-pagebox">
-                        <div class="weui-cell weui-cell_switch css-status">
-                            <div class="weui-cell__bd css-item">会议开始前，通知我</div>
-                            <div class="weui-cell__ft">
-                                <input class="weui-switch" type="checkbox">
-                            </div>
-                        </div>
-                          <p class="css-explantime">开启后，在会议开始前，唯秘将推送会议提醒到您的手机消息通知栏。</p>
-                        </div>
-                    </section>
-
-                    <section class="css-pagesetting">
-                        <div class="weui-cell weui-cell_switch css-setting weui-cell_access">
-                            <div class="weui-cell__bd css-item ">提醒时间</div>
-                            <div>
-                              提前
-                              <span class="css-settime">15分钟</span>
-                            </div>
-                            <div class="weui-cell__ft"></div>
-                        </div>
-                    </section>
-                </div>
-            </div>
-        </div>
-    </div>
-</template>
-<script>
-import weui from '../../lib/js/weui.min.js';
-import moment from 'moment';
-
-export default {
-    name: 'mtNoticeSet',
-    mounted() {
-
-    },
-    data() {
-        return {
-        }
-    },
-     methods: {
-    }
-}
-</script>

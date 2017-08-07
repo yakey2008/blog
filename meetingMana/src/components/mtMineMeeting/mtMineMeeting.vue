@@ -272,9 +272,8 @@
 </style>
 <template>
     <div class="weui-tab css-mtnoticelist-page">
-        <section class="css-searcharea">
-            <i class="css-searcharea-icon"></i>
-            <input type="text" placeholder="搜索会议主题" class="css-searcharea-input">
+        <section>
+            滑动查看前后会议室
         </section>
         <div class="css-mtnoticelist-main">
             <section class="css-main-container first-container clearfix">
@@ -381,11 +380,8 @@
     </div>
 </template>
 <script>
-import weui from '../../lib/js/weui.min.js';
-import moment from 'moment';
-
 export default {
-    name: 'mtListTimeline',
+    name: 'mtMineMeeting',
     mounted() {
 
     },

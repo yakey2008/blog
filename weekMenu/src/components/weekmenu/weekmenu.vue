@@ -34,6 +34,24 @@
     height: 76px;
 }
 
+.weui-navbar:after {
+    height: 0;
+    border-bottom: 1px solid #E5E5E5;
+    color: #E5E5E5;
+    -webkit-transform-origin:0 0;
+    transform-origin: 0 0;
+}
+
+.css-pageloading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 60px;
+    height: 60px;
+    margin-top: -30px;
+    margin-left: -30px;
+}
+
 .css-nav-container {
     .select-btn {
         .css-arrow {
@@ -45,13 +63,13 @@
             width: 8px;
             border-bottom: 1px solid #98989f;
             border-left: 1px solid #98989f;
-            -webkit-transform:rotate(-45deg);
+            -webkit-transform: rotate(-45deg);
             transform: rotate(-45deg);
             margin-left: 10px;
             margin-bottom: 3px;
         }
         .drop {
-            -webkit-transform:rotate(135deg);
+            -webkit-transform: rotate(135deg);
             transform: rotate(135deg);
             margin-bottom: -2px;
             top: 23px;
@@ -82,6 +100,8 @@
                 line-height: 60px;
                 border-bottom: 1px solid #e7e7e7;
                 text-align: center;
+                -webkit-appearance: none;
+                -webkit-tap-highlight-color: rgba(255, 255, 255, 0)
             }
             .tabactive {
                 background-color: #fff;
@@ -115,6 +135,7 @@
                     width: 100%;
                     height: 100%;
                     background-color: #000;
+                    border-radius: 4px;
                     opacity: 0.3;
                     z-index: 50;
                 }
@@ -218,10 +239,10 @@
         <div class="weui-tab">
             <!--指引结构头部 Start-->
             <!-- <div class="weui-navbar css-nav-container" v-if="isShowguide">
-                                                        <div class="weui-navbar__item select-btn">
-                                                            设置区域
-                                                        </div>
-                                                    </div> -->
+                                                                                    <div class="weui-navbar__item select-btn">
+                                                                                        设置区域
+                                                                                    </div>
+                                                                                </div> -->
             <!--指引结构头部 End-->
             <div class="weui-navbar css-nav-container">
                 <div class="weui-navbar__item select-btn" v-on:click="showguide()" v-if="isShowguide">
@@ -241,9 +262,9 @@
                 <aside class="aside-container">
                     <div class="aside">
                         <div class="c-lefttab" v-for="(val,index) in mealtime" v-on:click="switchpanel(index)" :class="{tabactive:val.ishow}" :key="val.Id">{{val.name}}</div>
-                        
+    
                         <!-- <div class="c-lefttab" v-on:click="clearlocal()">（重置指引）</div>  -->
-                   
+    
                     </div>
                 </aside>
                 <section class="c-item-container">
@@ -254,7 +275,7 @@
                                     <div class="weui-media-box__thumb" v-bind:style="{backgroundImage:'url('+val.imgsrc+')',backgroundSize:'cover'}" v-if="val.IconId"></div>
                                     <div class="weui-media-box__thumb" v-bind:style="{backgroundImage:'url('+defaultimg+')',backgroundSize:'cover'}" v-if="!val.IconId"></div>
                                     <!-- <img class="weui-media-box__thumb" v-bind:src="val.imgsrc" v-if="val.IconId">
-                                                                        <img class="weui-media-box__thumb" v-bind:src="defaultimg" v-if="!val.IconId"> -->
+                                                                                                    <img class="weui-media-box__thumb" v-bind:src="defaultimg" v-if="!val.IconId"> -->
                                     <span class="css-explain-mask"></span>
                                     <span class="css-explain-text">{{val.Name}}</span>
                                 </div>
@@ -298,6 +319,9 @@
         <!--提示窗Start-->
         <notice v-show="isShowerr" v-bind:title="errtitle" v-bind:errinfo="errinfo" v-on:closenotice="closeShowerr()"></notice>
         <!--提示窗End-->
+        <div class="weui-mask" v-show="pageloading">
+            <i class="weui-loading css-pageloading"></i>
+        </div>
     </div>
 </template>
 
@@ -315,6 +339,7 @@ export default {
     },
     data() {
         return {
+            pageloading: false,
             dompadding: 50,//容器padding计算
             defaultimg: defaultImg,//默认图片
             weekstart: '',//本周开始时间
@@ -331,7 +356,7 @@ export default {
             isShowtime: false,//是否显示时间区域下拉
             defaultRegion: "",//默认广新
             defaultRegionId: "",//默认广新id
-            curregion: "加载中...",//当前选中区域
+            curregion: "区域加载中...",//当前选中区域
             curregionId: "",//当前选中区域的id
             regionVal: [],//区域数据
             mealtime: [{ name: "早餐", value: 0, ishow: true }, { name: "午餐", value: 1, ishow: false }, { name: "晚餐", value: 2, ishow: false }],//用餐时间数据
@@ -344,9 +369,10 @@ export default {
         setTimeout(() => {
             this.$moaapi.showNavMenu(feedbackImg);
         }, 100)
-
-        let localdata = this.getlocaldata('curregion');
-        if (localdata) {
+        this.pageloading = true;
+        let localRegion = this.getlocaldata('curregion');
+        let localRegionId = this.getlocaldata('curregionId');
+        if (localRegion) {
             this.isShowguide = false;
             this.isShowguideselect = false;
         }
@@ -355,19 +381,19 @@ export default {
         this.weekstart = moment().add('days', -curweekday + 1).format('YYYY/MM/DD');
         this.weekend = moment().add('days', 7 - curweekday).format('YYYY/MM/DD');
         //初始化区域
-        this.$http.get(urldata.basePath + urldata.Region).then(response => {
+        this.$http.get(urldata.basePath + urldata.Region + '?v=' + this.randomNum()).then(response => {
             if (response.body.Success) {
                 this.isShowregion = false;
                 this.isShowtime = false;
                 let obj = response.body.Object;
                 let matchlocaldata = true;//检测是否存在于本地匹配的数据
                 this.regionVal = obj;
-                if (localdata) {
+                if (localRegion) {
                     this.regionVal.forEach((el) => {
                         if (matchlocaldata) {
-                            if (el.Name.indexOf(localdata) !== -1) {
-                                this.curregion = localdata;
-                                this.curregionId = this.getlocaldata('curregionId');
+                            if (el.Id.indexOf(localRegionId) !== -1) {
+                                this.curregion = el.Name;
+                                this.curregionId = el.Id;
                                 matchlocaldata = false;
                             }
                         }
@@ -392,7 +418,7 @@ export default {
                 } else {
                     let str = '广新';
                     let _this = this;
-                    obj.reverse().forEach(function (el) {
+                    obj.forEach(function (el) {
                         if (el.Name.indexOf(str) !== -1) {
                             _this.defaultRegion = el.Name;
                             _this.defaultRegionId = el.Id;
@@ -402,8 +428,10 @@ export default {
                     })
                     this.ajaxregionmenu(this.curregionId, this.todaytime, this.mealtime[0].value);
                 }
+                this.pageloading = false;
             }
         }, response => {
+            this.pageloading = false;
             this.isShowerr = true;
         });
 
@@ -412,6 +440,10 @@ export default {
         this.dompadding = document.querySelector('.css-nav-container').offsetHeight;
     },
     methods: {
+        //随机数
+        randomNum() {
+            return Math.random().toString(36).substring(3, 8);
+        },
         //设置本地存储
         setlocaldata(item, val) {
             return window.localStorage.setItem(item, val);

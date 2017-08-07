@@ -23,6 +23,10 @@ ul {
 
 
 
+
+
+
+
 /* li {
   display: inline-block;
   margin: 0 10px;
@@ -41,15 +45,25 @@ a {
 <template>
   <div>
     <vue-event-calendar :events="demoEvents" @day-changed="handleDayChanged" @month-changed="handleMonthChanged"></vue-event-calendar>
+    <loading v-bind:pageloading="pageloading"></loading>
   </div>
 </template>
 
 <script>
+import loading from '../loading/loading.vue';
 import moment from 'moment';
+import searchicon from '../../images/searchicon.png';
+import localdata from '../../js/localdata.js';
+import urldata from '../../config/urldata.js';
+
 export default {
   name: 'home',
+  components: {
+    loading
+  },
   data() {
     return {
+      pageloading: false,
       datetoday: moment().format('YYYY/MM/DD'),
       isInit: true,
       isEvent: false,
@@ -78,14 +92,40 @@ export default {
     }
   },
   mounted() {
-    //获取当前月的数据
-    this.initData(this.datetoday);
+    //原生右上角菜单
+    let _this = this;
+    window.orderMtr = function () {
+      _this.$router.push({ path: '/mtlocationselect' });
+    }
+    window.mineMtr = function () {
+      _this.$router.push({ path: '/mtminemeeting' });
+    }
+    window.searchMtr = function () {
+      _this.$router.push({ path: '/mtsearchmtr' });
+    }
+    window.noticeSet = function () {
+      _this.$router.push({ path: '/mtnoticeset' });
+    }
+    let list = '[{ "name": "预定会议", "action": "orderMtr" }, { "name": "我的会议", "action": "mineMtr" },{ "name": "搜索会议", "action": "searchMtr" }, { "name": "会议通知设置", "action": "noticeSet" }]';
+    this.$moaapi.showListNavMenu(list);
+    //清除本地存储已存在的数据
+    localdata.cleardata();
+
+    //获取当前登录人信息
+    // this.$http.get('mt/CurrentUserInfo').then(res => {
+    this.$http.get(urldata.basePath + urldata.CurrentUserInfo).then(res => {
+      //获取当前月的数据
+      this.initData(this.datetoday,res.body.data.UserEmail);
+      localdata.setdata('currentUserData', JSON.stringify(res.body.data));
+    })
   },
   methods: {
-    initData(date, isEvent) {
+    initData(date,userEmail, isEvent) {
       this.demoEvents = [];
+      this.pageloading = true;
       // this.$http.get('/json/index.json').then(response => {
-      this.$http.get('/mt/MyCalendar?date=' + date).then(response => {
+      // this.$http.get('/mt/MyCalendar?date=' + date + '&userEmail=eric.hu@vipshop.com').then(response => {
+      this.$http.get(urldata.basePath + urldata.MyCalendar + '?date=' + date + '&userEmail='+userEmail).then(response => {
         if (response.status === 200) {
           let arr = response.body.data;
           arr.forEach(function (el) {
@@ -102,6 +142,7 @@ export default {
             obj.datetime = strStart2 + ' - ' + strEnd2;
             this.demoEvents.push(obj);
           }, this);
+          this.pageloading = false;
         }
       }, response => {
         // error

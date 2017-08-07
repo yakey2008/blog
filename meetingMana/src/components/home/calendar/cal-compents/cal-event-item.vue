@@ -42,7 +42,7 @@ export default {
     nextPage() {
       localdata.setdata('meetDetailView', JSON.stringify(this.event.curData));
       if (this.event.curData.IsShowAttentdeesStat) {
-        this.$router.push({ path: '/mtmeetdetailinvite' });
+        this.$router.push({ path: '/mtmeetdetailinvite', query:{mtrid:false}});
       } else {
         this.$router.push({ path: '/mtmeetdetailaccept' });
       }

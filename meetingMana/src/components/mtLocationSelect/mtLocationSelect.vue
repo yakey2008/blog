@@ -1,8 +1,13 @@
 <style lang="scss">
 //区域弹出 Start
-.css-curregion{
+.css-curregion {
     color: #308ee3;
 }
+
+.weui-navbar__item:after {
+    border: none;
+}
+
 .css-selector-container {
     .css-mask {
         position: fixed;
@@ -50,6 +55,19 @@
     }
 }
 
+.css-nav-container.weui-navbar {
+    z-index: 502;
+    background-color: #fff;
+    .css-select-region {
+        padding-left: 8%;
+        padding-right: 20%;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        border-left: 1px solid #e7e7e7;
+    }
+}
+
 //区域弹出 End
 @mixin placeholder($color) {
      ::-webkit-input-placeholder {
@@ -87,16 +105,20 @@ $col9b:#9b9b9b;
         white-space: normal;
     }
     .css-nav-container {
-        .weui-navbar__item:active {
-            .cov-datepicker {
-                background-color: #EDEDED!important;
+        .weui-navbar__item {
+            width: 50%; // padding: 0;
+            // margin: 13px 0;
+            &:active {
+                background-color: #fff; // .cov-datepicker {
+                //     background-color: #EDEDED!important;
+                // }
             }
         }
         .select-btn {
             .css-arrow {
                 position: absolute;
                 right: 11px;
-                top: 19px;
+                top: 18px;
                 display: inline-block;
                 height: 8px;
                 width: 8px;
@@ -227,17 +249,6 @@ $col9b:#9b9b9b;
             }
         }
     }
-    .css-nav-container.weui-navbar {
-        z-index: 502;
-        background-color: #fff;
-        .css-select-region {
-            padding-left: 8%;
-            padding-right: 20%;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-        }
-    }
 }
 </style>
 <template>
@@ -245,8 +256,8 @@ $col9b:#9b9b9b;
         <div class="weui-tab__panel">
             <div class="weui-tab">
                 <div class="weui-navbar css-nav-container">
-                    <div class="weui-navbar__item select-btn" v-on:click="showtime()">
-                        <date-picker :date="startTime" :option="option" :limit="limit"></date-picker>
+                    <div class="weui-navbar__item select-btn">
+                        <date-picker :date="startTime" :option="option" :limit="limit" v-on:ajaxdata="changeday()" v-on:showpicker="showtime()"></date-picker>
                         <i class="css-arrow" :class="{drop:isShowtime}"></i>
                     </div>
                     <div class="weui-navbar__item select-btn" v-on:click="showregion()" :class="{'css-curregion':isShowregion}">
@@ -285,16 +296,16 @@ $col9b:#9b9b9b;
                     </section>
                     <section>
                         <div class="css-locationdatetime-container">
-                            <div class="css-locationdatetime" v-for="meetingromm in ordered" :key="meetingromm">
+                            <div class="css-locationdatetime" v-for="(meetingroom,index) in ordered" :key="meetingroom">
                                 <div class="hr-div"></div>
-                                <router-link :to="'/mttimeselect?dddd=11111'" tag="div">
-                                    <div class="css-meetingroom-item clearfix">
-                                        <div class="css-meetingroom-name fl-l">{{meetingromm.Location}}</div>
-                                        <div class="css-meetingroom-timeline fl-l">
-                                            <div class="css-meetingroom-timeline-box fl-l" v-for="(ordered,index) in meetingromm.timeorder" :key="ordered" :class="[ordered?'room-ordered':'',index===0?'border-l2':'',index===17?'border-r2':'']"></div>
-                                        </div>
+                                <!-- <router-link :to="{path:'/mttimeselect',query:{meetingroom:meetingroom,listindex:index}}" tag="div"> -->
+                                <div class="css-meetingroom-item clearfix" v-on:click="totimeselect(meetingroom,index)">
+                                    <div class="css-meetingroom-name fl-l">{{meetingroom.Location}}</div>
+                                    <div class="css-meetingroom-timeline fl-l">
+                                        <div class="css-meetingroom-timeline-box fl-l" v-for="(ordered,index) in meetingroom.timeorder" :key="ordered" :class="[ordered?'room-ordered':'',index===0?'border-l2':'',index===17?'border-r2':'']"></div>
                                     </div>
-                                </router-link>
+                                </div>
+                                <!-- </router-link> -->
                             </div>
                         </div>
                     </section>
@@ -318,38 +329,61 @@ $col9b:#9b9b9b;
             </div>
         </div>
         <!-- 区域弹出 Start -->
-    
+        <loading v-bind:pageloading="pageloading"></loading>
+        <notice v-show="isShowerr" v-bind:title="errtitle" v-bind:errinfo="errinfo" v-on:closenotice="closeShowerr()"></notice>
         <!-- <psltor :list="tabVal" :curRegionId="curregionId" v-on:listclick="regionEvt()" v-if="isShowregion"></psltor> -->
     </div>
 </template>
 <script>
+import loading from '../loading/loading.vue';
+import notice from '../popNotice/popNotice.vue';
 import weui from '../../lib/js/weui.min.js';
 import moment from 'moment';
 import myDatepicker from 'vue-datepicker';
 import localdata from '../../js/localdata.js';
+import urldata from '../../config/urldata.js';
 
 export default {
     name: 'mtLocationSelect',
+    components: {
+        loading,
+        notice,
+        'date-picker': myDatepicker
+    },
     mounted() {
+        this.$moaapi.hideNavMenu();
+        let getParams = this.$route.query;
+        if (getParams.searchregionid) {
+            // let searchurl = decodeURIComponent('/mt/SearchRooms?begin=' + getParams.starttime + '&end=' + getParams.endtime + '&roomListAddress=' + getParams.searchregionid);
+            let searchurl = decodeURIComponent(urldata.basePath + urldata.SearchRooms + '?begin=' + getParams.starttime + '&end=' + getParams.endtime + '&roomListAddress=' + getParams.searchregionid);
+            this.ajaxMtrStatu(searchurl);
+            return false;
+        }
         for (let i = 0; i < this.initTimenum; i++) {
             this.initTimeitem.push({ value: i })
         }
 
-        this.$http.get('/mt/GetAllPosition').then(response => {
+        // this.$http.get('/mt/GetAllPosition').then(response => {
+        this.$http.get(urldata.basePath + urldata.GetAllPosition).then(response => {
             if (response.status === 200) {
                 this.tabVal = response.body.data;
             }
         })
-        this.curRegion = 'Webex-云会议室列表';
-        this.curRegionId = 'WebexCloudMeeting-room@vipshop.com';
-        this.ajaxMtrStatu('/mt/GetRoomsStatus?date=' + this.startTime.time + '&roomListAddress=' + this.curRegionId);
-
+        this.curRegion = '广州-广新办公区会议室列表';
+        this.curRegionId = 'gd2wpds-room@vipshop.com';
+        // this.ajaxMtrStatu('/mt/GetRoomsStatus?date=' + this.startTime.time + '&roomListAddress=' + this.curRegionId);
+        this.ajaxMtrStatu(urldata.basePath + urldata.GetRoomsStatus + '?date=' + this.startTime.time + '&roomListAddress=' + this.curRegionId);
     },
     updated() {
         this.dompadding = document.querySelector('.css-nav-container').offsetHeight;
     },
     data() {
         return {
+            isShowerr: false,//错误提示关闭
+            errtitle: "提示",
+            errinfo: "请稍后再试",
+            pageloading: false,
+
             startTime: {
                 time: moment().format('YYYY-MM-DD')
             },
@@ -397,6 +431,7 @@ export default {
                 // { label: '上海上新时代科技大厦', value: 1 },
                 // { label: '北京北新科技大厦', value: 2 }
             ],
+            //会议室信息
             ordered:
             [
                 // {
@@ -439,15 +474,15 @@ export default {
                 //         true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, true, false, false
                 //     ]
                 // }
-            ]
+            ],
+
+            // saveLocaldata:[]
         }
-    },
-    components: {
-        'date-picker': myDatepicker
     },
     methods: {
         //根据会议室Id获取会议室方法
         ajaxMtrStatu(url) {
+            this.pageloading = true;
             this.$http.get(url).then(res => {
                 if (res.status === 200) {
 
@@ -464,6 +499,7 @@ export default {
                             arr = [];
                             let objNextpage = {};
                             objNextpage.Id = el.Address;
+                            objNextpage.selectedTime = [];
                             el.RoomStatus.forEach((elrmstatu) => {
                                 //空临时对象存储已选中时间索引
                                 let obj = {};
@@ -474,13 +510,15 @@ export default {
                                 //存储选中会议室时间格式
                                 timeobg.st = st;
                                 timeobg.ed = ed;
-                                objNextpage.selectedTime = [];
                                 objNextpage.selectedTime.push(timeobg);
                                 //已选中开始结束时间索引
                                 obj.stidx = _this.timelist.indexOf(st.substr(st, st.length - 3));
                                 obj.edidx = _this.timelist.indexOf(ed.substr(ed, ed.length - 3));
-                                arr.push(obj);
+                                if (obj.stidx !== -1) {
+                                    arr.push(obj);
+                                }
                             }, _this)
+
                             //存储选中会议室时间
                             arrNextpage.push(objNextpage);
                             localdata.setdata('selectedTime', JSON.stringify(arrNextpage))
@@ -492,7 +530,6 @@ export default {
                             arr.forEach((timecheck) => {
                                 let sttime = timecheck.stidx;
                                 let edtime = timecheck.edidx;
-
                                 _this.timelist.forEach((elinside, idx) => {
                                     if (_this.timeorder[idx]) {
                                         return false;
@@ -503,9 +540,11 @@ export default {
                                 }, _this)
                             }, _this)
                             el.timeorder = _this.timeorder;
+
                         }, _this)
                     })(res, this)
                 }
+                this.pageloading = false;
             })
         },
         //时间下拉并处理
@@ -517,93 +556,84 @@ export default {
                 this.isShowtime = true;
             }
         },
-        //处理区域显示及选择
+        changeday(){
+            this.ajaxMtrStatu(urldata.basePath + urldata.GetRoomsStatus + '?date=' + this.startTime.time + '&roomListAddress=' + this.curRegionId);
+        },
+        //处理区域显示
         showregion() {
-            // let _this = this;
             this.isShowtime = false;
             if (this.isShowregion) {
                 this.isShowregion = false;
             } else {
                 this.isShowregion = true;
             }
-            // let mtroom = [];
-            // this.tabVal.forEach(function (el) {
-            //     let obj = {}
-            //     obj.label = el.Name;
-            //     obj.value = el.Address;
-            //     mtroom.push(obj);
-            // }, this);
-            // weui.picker(mtroom, {
-            //     className: 'custom-classname',
-            //     defaultValue: [_this.curregion],
-            //     onChange: function (result) {
-            //         //选中后的处理
-
-            //     },
-            //     onConfirm: function (result) {
-            //         _this.curregion = result[0].label;
-            //         _this.curregionId = result[0].value;
-            //         _this.ajaxMtrStatu('/mt/GetRoomsStatus?date=' + _this.startTime.time + '&roomListAddress=' + result[0].value, (res) => {
-            //             //时间区域索引数组
-            //             let arr = [];
-            //             //会议地点数据初始化
-            //             _this.ordered = res.body.data;
-            //             //遍历会议数据
-            //             _this.ordered.forEach((el) => {
-            //                 //取到会议室状态处理
-            //                 arr = [];
-            //                 el.RoomStatus.forEach((elrmstatu) => {
-            //                     //空临时对象存储已选中时间索引
-            //                     let obj = {};
-            //                     //已选中开始结束时间
-            //                     let st = elrmstatu.Start.split(' ')[1];
-            //                     let ed = elrmstatu.End.split(' ')[1];
-            //                     //已选中开始结束时间索引
-            //                     obj.stidx = _this.timelist.indexOf(st.substr(st, st.length - 3));
-            //                     obj.edidx = _this.timelist.indexOf(ed.substr(ed, ed.length - 3));
-            //                     if (obj.stidx.substr(0, obj.stidx.length - 3) > 9 && obj.stidx.substr(0, obj.stidx.length - 3) < 18) {
-            //                         arr.push(obj);
-            //                     }
-            //                 }, _this)
-            //                 //时间状态数组
-            //                 _this.timeorder = [
-            //                     false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
-            //                 ];
-            //                 //遍历选中时间索引匹配选中时间数组
-            //                 arr.forEach((timecheck) => {
-            //                     let sttime = timecheck.stidx;
-            //                     let edtime = timecheck.edidx;
-
-            //                     _this.timelist.forEach((elinside, idx) => {
-            //                         if (_this.timeorder[idx]) {
-            //                             return false;
-            //                         }
-            //                         if (idx >= sttime && idx < edtime) {
-            //                             _this.timeorder[idx] = true;
-            //                         }
-            //                     }, _this)
-            //                 }, _this)
-            //                 el.timeorder = _this.timeorder;
-            //             }, _this)
-            //         })
-            //     },
-            //     onCancel: function () {
-            //         _this.isShowregion = false;
-            //     },
-            //     id: 'pickregion'
-            // });
-            // document.querySelector('.custom-classname').addEventListener('click', function () {
-            //     this.isShowregion = false;
-            // })
         },
+        //选择区域
         regionEvt(item) {
             this.curRegion = item.Name;
             this.curRegionId = item.Address;
-            this.ajaxMtrStatu('/mt/GetRoomsStatus?date=' + this.startTime.time + '&roomListAddress=' + item.Address);
+            // this.ajaxMtrStatu('/mt/GetRoomsStatus?date=' + this.startTime.time + '&roomListAddress=' + item.Address);
+            this.ajaxMtrStatu(urldata.basePath + urldata.GetRoomsStatus + '?date=' + this.startTime.time + '&roomListAddress=' + this.curRegionId);
             this.showregion();
         },
-        totimeselect() {
-            this.$router.push({ path: '/mttimeselect' });
+        //选择会议室
+        totimeselect(meetingroom, index) {
+            // this.$router.push({ name: 'mttimeselect',params:{meetingroom:JSON.stringify(meetingroom),dateTime:this.startTime.time,listindex:index} });
+            let saveLocaldata = {}
+            let mtrinfo = {};
+            if (localdata.getdata('mtrSelected')) {
+                let pass = true;
+                let isAddedPass = true;
+                saveLocaldata = JSON.parse(localdata.getdata('mtrSelected'));
+                // saveLocaldata.mtrList.every((el) => {
+                //     if (meetingroom.Address === el.mtrId && el.isAdded) {
+                //         alert('不可重复添加会议室');
+                //         pass = false;
+                //         return false;
+                //     // } else if (meetingroom.Address === el.mtrId) {
+                //     //     isAddedPass = false;
+                //     //     return false;
+                //     } else {
+                //         pass = true;
+                //     }
+                // })
+
+                if (saveLocaldata.mtrList[index] && meetingroom.Address === saveLocaldata.mtrList[index].mtrId && saveLocaldata.mtrList[index].isAdded) {
+                    this.isShowerr = true;
+                    this.errinfo = '不可重复添加会议室';
+                    return false;
+                }
+                // if (isAddedPass) {
+                mtrinfo.mtrId = meetingroom.Address;
+                mtrinfo.mtrName = meetingroom.Location;
+                mtrinfo.isAdded = true;
+                saveLocaldata.mtrList.push(mtrinfo)
+                // }
+
+            } else {
+                saveLocaldata.listindex = index;
+                saveLocaldata.dateTime = this.startTime.time;
+                saveLocaldata.regionId = this.curRegionId;
+                saveLocaldata.mtrList = [];
+                mtrinfo.mtrId = meetingroom.Address;
+                mtrinfo.mtrName = meetingroom.Location;
+                mtrinfo.isAdded = false;
+                saveLocaldata.mtrList.push(mtrinfo)
+            }
+
+            if (localdata.getdata('mtrSelected')) {
+                // this.mtrSelected.mtrList[this.mtrSelected.mtrList.length - 1].isAdded = true;
+                localdata.setdata('mtrSelected', JSON.stringify(saveLocaldata));
+                this.$router.push({ path: '/mtlaunchmeet' });
+            } else {
+                localdata.setdata('mtrSelected', JSON.stringify(saveLocaldata));
+                this.$router.push({ path: '/mttimeselect' });
+            }
+            localdata.setdata('curRegionId', this.curRegionId)
+        },
+        //关闭错误提示
+        closeShowerr() {
+            this.isShowerr = false;
         }
     }
 } 
