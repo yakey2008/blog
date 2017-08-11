@@ -8,7 +8,7 @@
 > npm run build 合并压缩代码   
 
 #### 包的修改   
-修改了vue-calendar-upload 插件源码     
+修改了vue-calendar 插件源码     
 vue-datepicker.vue          
 ···
 line 380-383  --
@@ -26,7 +26,23 @@ package.json整体修改
 
 > 所修改的包在modified_modules目录有备份
 #### todo
-> mtLocationSelect 选择会议室     
- 选择地点根据上个页面选择后默认地点
+> mtLocationSelect 选择会议室     done
+ 选择地点根据上个页面选择后默认地点  done
+> 删除人员 详情页删除人员 修改时间，添加地点  消息跳转详情    dene
+> 自定义会议室 进入选择时间默认判断 done
+> 详情页 地点->选择区域，区域id   时间 -> 会议室id done
+> 详情页 提交修改  done
+> 详情页删除人员  全部人员查看删除人员 done
 
-> 
+> 详情页 时间带换行符
+#### 临时内容
+> home -- this.initData(this.datetoday, 'eric.hu@vipshop.com');//临时
+> 选择会议室页面时间写死，
+    startTime: {
+        time: '2017-07-31'
+    },     
+    let selectedDate = moment().format('YYYY-MM-DD');//临时
+
+> mtTimeSelect  this.ajaxMtrStatu(urldata.basePath + urldata.GetRoomsStatus+'?date=2017-08-09&roomListAddress=' + localdata.getdata('curRegionId')); 日期写死
+> 通过邮箱添加 暂时注释验证
+

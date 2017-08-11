@@ -1,34 +1,6 @@
-<style lang="scss">
-@mixin placeholder($color) {
-     ::-webkit-input-placeholder {
-        // WebKit browsers
-        color: $color;
-    }
-     :-moz-placeholder {
-        // Mozilla Firefox 4 to 18
-        color: $color;
-    }
-     ::-moz-placeholder {
-        // Mozilla Firefox 19+
-        color: $color;
-    }
-     :-ms-input-placeholder {
-        // Internet Explorer 10+
-        color: $color;
-    }
-}
-
-@mixin boxshadow($hs, $vs, $blur, $spread, $color:#000) {
-    box-shadow: $hs $vs $blur $spread $color;
-    -ms-box-shadow: $hs $vs $blur $spread $color;
-    -webkit-box-shadow: $hs $vs $blur $spread $color;
-    -moz-box-shadow: $hs $vs $blur $spread $color;
-    -o-box-shadow: $hs $vs $blur $spread $color;
-}
-
+<style lang="scss" scoped>
 $col9b:#9b9b9b;
 
-@include placeholder(#ccc);
 .css-mtnotice-page {
     background-color: white;
     .weui-media-box__title {
@@ -43,16 +15,12 @@ $col9b:#9b9b9b;
                 padding-left: 0px;
                 padding-right: 0px;
                 .css-picBox {
-                    position: relative;
-                    margin-right: 16px;
-                    .css-pic {
-                        overflow: hidden;
-                        border-radius: 50%;
-                        img {
-                            width: 44px;
-                            display: block;
-                        }
-                    }
+                    width: 46px;
+                    height: 46px;
+                    border-radius: 50px;
+                    background: no-repeat center center;
+                    background-size: cover;
+                    margin: 0 auto;
                 }
                 .css-pagebox {
                     height: 90px;
@@ -143,49 +111,44 @@ $col9b:#9b9b9b;
             <div class="weui-tab">
                 <div class="css-main-container">
                     <!-- <section class="css-pageinfo">
-                            <div class="weui-cell css-pageinfoBox" style="">
-                                <div class="weui-cell__hd css-picBox">
-                                    <div class="css-pic">
-                                        <img src="./../../images/user.jpg">
+                                <div class="weui-cell css-pageinfoBox" style="">
+                                    <div class="weui-cell__hd css-picBox">
+                                        <div class="css-pic">
+                                            <img src="./../../images/user.jpg">
+                                        </div>
+                                    </div>
+                                    <div class="weui-cell__bd">
+                                        <div class="css-username">{{currentUserData.Name}}</div>
+                                        <div class="css-useractor">
+                                            <span class="css-label purple">会议组织者</span>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                        <p class="css-userposition">{{currentUserData.DeptFullName}}</p>
                                     </div>
                                 </div>
-                                <div class="weui-cell__bd">
-                                    <div class="css-username">{{currentUserData.Name}}</div>
-                                    <div class="css-useractor">
-                                        <span class="css-label purple">会议组织者</span>
-                                    </div>
-                                    <div class="clearfix"></div>
-                                    <p class="css-userposition">{{currentUserData.DeptFullName}}</p>
-                                </div>
-                            </div>
-                        </section> -->
+                            </section> -->
     
                     <section class="css-pageinfo">
                         <div class="weui-cell css-pageinfoBox" v-for="must in userMustList" :key="must.id">
-                            <div class="weui-cell__hd css-picBox">
-                                <div class="css-pic">
-                                    <img v-bind:src="must.url">
-                                </div>
-                            </div>
+                            <div class="weui-cell__hd css-picBox" v-bind:style="{backgroundImage:'url('+must.url+')'}" v-if="must.url"></div>
+                            <div class="weui-cell__hd css-picBox" v-bind:style="{backgroundImage:'url('+noavatar+')'}" v-else></div>
                             <div class="weui-cell__bd">
                                 <div class="css-username">{{must.name}}</div>
                                 <div class="css-useractor" v-if="must.isInitiator">
                                     <span class="css-label purple">会议组织者</span>
                                 </div>
                                 <div class="clearfix"></div>
-                                <p class="css-userposition" v-if="!must.hasOwnProperty('isMust')">职位</p>
+
+                                <p class="css-userposition" v-if="!must.hasOwnProperty('isMust')">{{must.isInitiator?must.dept:'职位'}}</p>
                                 <p class="css-userposition" v-if="must.hasOwnProperty('isMust')">通过邮件邀请的人员</p>
                             </div>
                         </div>
                     </section>
     
-                    <section class="css-pageinfo">
+                    <section class="css-pageinfo" v-if="userOptionalList.length>0">
                         <div class="weui-cell css-pageinfoBox" v-for="optional in userOptionalList" :key="optional.id">
-                            <div class="weui-cell__hd css-picBox">
-                                <div class="css-pic">
-                                    <img v-bind:src="optional.url">
-                                </div>
-                            </div>
+                            <div class="weui-cell__hd css-picBox" v-bind:style="{backgroundImage:'url('+optional.url+')'}" v-if="optional.url"></div>
+                            <div class="weui-cell__hd css-picBox" v-bind:style="{backgroundImage:'url('+noavatar+')'}" v-else></div>
                             <div class="weui-cell__bd">
                                 <div class="css-username">{{optional.name}}</div>
                                 <div class="css-useractor">
@@ -198,22 +161,22 @@ $col9b:#9b9b9b;
                         </div>
                     </section>
                     <!-- <section class="css-pageinfo">
-                            <div class="weui-cell css-pageinfoBox">
-                                <div class="weui-cell__hd css-picBox">
-                                    <div class="css-pic">
-                                        <img src="./../../images/user.jpg">
+                                <div class="weui-cell css-pageinfoBox">
+                                    <div class="weui-cell__hd css-picBox">
+                                        <div class="css-pic">
+                                            <img src="./../../images/user.jpg">
+                                        </div>
+                                    </div>
+                                    <div class="weui-cell__bd">
+                                        <div class="css-username">sam.zhang@123.com</div>
+                                        <div class="css-useractor">
+                                            <span class="css-label gray">可选参会者</span>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                        <p class="css-userposition">通过邮件邀请的人员</p>
                                     </div>
                                 </div>
-                                <div class="weui-cell__bd">
-                                    <div class="css-username">sam.zhang@123.com</div>
-                                    <div class="css-useractor">
-                                        <span class="css-label gray">可选参会者</span>
-                                    </div>
-                                    <div class="clearfix"></div>
-                                    <p class="css-userposition">通过邮件邀请的人员</p>
-                                </div>
-                            </div>
-                        </section> -->
+                            </section> -->
                 </div>
             </div>
         </div>
@@ -221,20 +184,22 @@ $col9b:#9b9b9b;
 </template>
 <script>
 import localdata from '../../js/localdata.js';
+import noavatar from '../../images/noavatar.jpg';
 
 export default {
     name: 'mtParticipantsList',
     mounted() {
         // this.currentUserData = JSON.parse(localdata.getdata('currentUserData'));
         if (localdata.getdata('userFromEmail')) {
-            this.userFromEmail = JSON.parse(localdata.getdata('userFromEmail').toLocaleLowerCase());
+            this.userFromEmail = JSON.parse(localdata.getdata('userFromEmail'));
         }
-        this.userMustList = JSON.parse(localdata.getdata('userMustList').toLocaleLowerCase());
-        this.userOptionalList = JSON.parse(localdata.getdata('userOptionalList').toLocaleLowerCase());
+        this.userMustList = JSON.parse(localdata.getdata('userMustList'));
+        this.userOptionalList = JSON.parse(localdata.getdata('userOptionalList'));
 
     },
     data() {
         return {
+            noavatar,//无头像显示
             // currentUserData: {},//当前登录用户信息
             userFromEmail: [],
             userMustList: [],

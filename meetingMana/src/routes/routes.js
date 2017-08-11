@@ -85,7 +85,7 @@ export default [{
             component: Mtnoticelist
         },
         {
-            path: '/mtminemeeting/:mtrid',
+            path: '/mtminemeeting',
             meta: 'false',
             component: MtMineMeeting
         },

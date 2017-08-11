@@ -16,8 +16,9 @@ module.exports = {
             //     changeOrigin: true
             // },
             '/api/Meeting': {
-                // target: 'http://10.100.68.57:40000',
+                // target: 'http://10.100.149.248:40000',
                 target: 'http://10.100.69.209:40000',
+                // target:'http://gzoaweb04.sit.vipshop.com:9000/EWS.RestAPI',
                 changeOrigin: true
             }
         }

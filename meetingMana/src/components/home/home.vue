@@ -19,19 +19,6 @@ ul {
   padding: 0;
 }
 
-
-
-
-
-
-
-
-
-/* li {
-  display: inline-block;
-  margin: 0 10px;
-} */
-
 a {
   color: #42b983;
 }
@@ -44,7 +31,7 @@ a {
 
 <template>
   <div>
-    <vue-event-calendar :events="demoEvents" @day-changed="handleDayChanged" @month-changed="handleMonthChanged"></vue-event-calendar>
+    <vue-event-calendar :events="demoEvents" @day-changed="handleDayChanged" @month-changed="handleMonthChanged" @date-back-today="dateBackToday"></vue-event-calendar>
     <loading v-bind:pageloading="pageloading"></loading>
   </div>
 </template>
@@ -55,7 +42,7 @@ import moment from 'moment';
 import searchicon from '../../images/searchicon.png';
 import localdata from '../../js/localdata.js';
 import urldata from '../../config/urldata.js';
-
+import storageList from '../../config/storageList.js';
 export default {
   name: 'home',
   components: {
@@ -67,28 +54,8 @@ export default {
       datetoday: moment().format('YYYY/MM/DD'),
       isInit: true,
       isEvent: false,
-      demoEvents: [
-        //   {
-        //   date: `${today.getFullYear()}/${today.getMonth() + 1}/${today.getDate()}`,
-        //   title: 'ABC项目沟通会',
-        //   desc: '广州-唯品大学创新会议室（130人；可外接电话会议）'
-        // }, {
-        //   date: `${today.getFullYear()}/${today.getMonth() + 1}/${today.getDate()}`,
-        //   title: 'ABC项目沟通会',
-        //   desc: '广州-唯品大学创新会议室（130人；可外接电话会议）'
-        // }, {
-        //   date: `${today.getFullYear()}/${today.getMonth() + 1}/15`,
-        //   title: 'Title-1',
-        //   desc: 'longlonglong description'
-        // }, {
-        //   date: `${today.getFullYear()}/${today.getMonth() + 1}/24`,
-        //   title: 'Title-2'
-        // }, {
-        //   date: `${today.getFullYear()}/${today.getMonth() === 11 ? 1 : today.getMonth() + 2}/06`,
-        //   title: 'Title-3',
-        //   desc: 'description'
-        // }
-      ]
+      currentUserData: [],//当前登录用户信息
+      demoEvents: []
     }
   },
   mounted() {
@@ -106,26 +73,35 @@ export default {
     window.noticeSet = function () {
       _this.$router.push({ path: '/mtnoticeset' });
     }
-    let list = '[{ "name": "预定会议", "action": "orderMtr" }, { "name": "我的会议", "action": "mineMtr" },{ "name": "搜索会议", "action": "searchMtr" }, { "name": "会议通知设置", "action": "noticeSet" }]';
+    let list = '[{ "name": "预定会议", "action": "orderMtr()" }, { "name": "我的会议", "action": "mineMtr()" },{ "name": "搜索会议", "action": "searchMtr()" }, { "name": "会议通知设置", "action": "noticeSet()" }]';
     this.$moaapi.showListNavMenu(list);
     //清除本地存储已存在的数据
-    localdata.cleardata();
-
+    this.clearStorage();
     //获取当前登录人信息
     // this.$http.get('mt/CurrentUserInfo').then(res => {
     this.$http.get(urldata.basePath + urldata.CurrentUserInfo).then(res => {
       //获取当前月的数据
-      this.initData(this.datetoday,res.body.data.UserEmail);
+      // this.initData(this.datetoday, res.body.data.UserEmail);
+      this.initData(this.datetoday, 'eric.hu@vipshop.com');//临时
+      this.currentUserData = res.body.data;
       localdata.setdata('currentUserData', JSON.stringify(res.body.data));
     })
+    //获取所有会议室列表和会议室的映射关系
+    this.$http.get(urldata.basePath + urldata.GetAllRoomListAndRoom).then(res => {
+      //获取当前月的数据
+      this.currentUserData = res.body.data;
+      localdata.setdata('GetAllRoomListAndRoom', JSON.stringify(res.body.data));
+    })
+
   },
   methods: {
-    initData(date,userEmail, isEvent) {
+    //初始化 重新获取
+    initData(date, userEmail, isEvent) {
       this.demoEvents = [];
       this.pageloading = true;
       // this.$http.get('/json/index.json').then(response => {
       // this.$http.get('/mt/MyCalendar?date=' + date + '&userEmail=eric.hu@vipshop.com').then(response => {
-      this.$http.get(urldata.basePath + urldata.MyCalendar + '?date=' + date + '&userEmail='+userEmail).then(response => {
+      this.$http.get(urldata.basePath + urldata.MyCalendar + '?date=' + date + '&userEmail=' + userEmail).then(response => {
         if (response.status === 200) {
           let arr = response.body.data;
           arr.forEach(function (el) {
@@ -158,8 +134,11 @@ export default {
         //   this.isInit = false;
       });
     },
+    //回到当前
+    dateBackToday(){
+      this.initData(this.datetoday, this.currentUserData.UserEmail);
+    },
     handleDayChanged(data) {
-
       // this.$EventCalendar.toDate(data.date);
     },
     handleMonthChanged(data) {
@@ -172,7 +151,12 @@ export default {
           str2 = el;
         }
       })
-      this.initData(str2);
+      //切换月份
+      this.initData(str2, this.currentUserData.UserEmail);
+    },
+    //清除本地存储已存在的数据
+    clearStorage() {
+      localdata.removedata(storageList);
     }
   }
 }

@@ -67,12 +67,14 @@ $icon-border-size: 1px;
       .css-todaybtn {
         position: absolute;
         width: 32px;
+        height: 24px;
         top: 9px;
         left: 4%;
         padding: 0;
-        img {
-          width: 100%;
-        }
+        background-size: cover;
+        background-repeat: no-repeat; // img {
+        //   width: 100%;
+        // }
       }
       .css-searchbtn {
         position: absolute;
@@ -324,7 +326,7 @@ $icon-border-size: 1px;
 </style>
 <template>
   <div class="__vev_calendar-wrapper">
-    <cal-panel :events="events" :calendar="calendarOptions" :selectedDay='selectedDayEvents.date' @cur-day-changed="handleChangeCurDay" @month-changed="handleMonthChanged">
+    <cal-panel :events="events" :calendar="calendarOptions" :selectedDay='selectedDayEvents.date' @cur-day-changed="handleChangeCurDay" @month-changed="handleMonthChanged" @back-today="dateBacktoday">
     </cal-panel>
     <div class="hr-div"></div>
     <cal-events :dayEvents="selectedDayEvents" :locale="calendarOptions.options.locale" :color="calendarOptions.options.color">
@@ -410,6 +412,9 @@ export default {
     }
   },
   methods: {
+    dateBacktoday(){
+      this.$emit('date-back-today');
+    },
     handleChangeCurDay(date) {
       let events = this.events.filter(function (event) {
         return isEqualDateStr(event.date, date)

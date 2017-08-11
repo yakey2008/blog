@@ -5,10 +5,16 @@ export default {
     getdata(key) {
         return window.localStorage.getItem(key);
     },
-    removedata(key){
-        window.localStorage.removeItem(key);
+    removedata(key) {
+        if (typeof key === 'string') {
+            window.localStorage.removeItem(key);
+        } else {
+            key.forEach((el) => {
+                window.localStorage.removeItem(el);
+            })
+        }
     },
-    cleardata(){
+    cleardata() {
         window.localStorage.clear();
     }
 }

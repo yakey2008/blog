@@ -7,9 +7,9 @@ let $pagination = pagination.init()
 
 let pageTotal = 1
 
-let url = config.APIDOMAIN  + '/api/Meeting/GetServiceNotification'
+// let url = config.APIDOMAIN  + '/api/Meeting/GetServiceNotification'
 
-const get = ($http, options) => {
+const get = (url,$http, options) => {
   return new Promise((resolve, reject) => {
     $pagination.Index++
     if (pageTotal >= $pagination.Index) {
@@ -46,12 +46,12 @@ const init = () => {
 
 export default {
   init: init,
-  get: ($http, options) => {
-    return get($http, options)
+  get: (url,$http, options) => {
+    return get(url,$http, options)
   },
-  reload: ($http, options) => {
+  reload: (url,$http, options) => {
     init()
-    return get($http, options)
+    return get(url,$http, options)
   }
 }
 

@@ -396,17 +396,17 @@ $col9b:#9b9b9b;
                                         <p class="css-name-box">{{requiremen.Name}}</p>
                                     </div>
                                     <!-- <div class="fl-l css-must-in">
-                                                    <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
-                                                    <p>巴图</p>
-                                                </div>
-                                                <div class="fl-l css-must-in">
-                                                    <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
-                                                    <p>艾尔巴以</p>
-                                                </div>
-                                                <div class="fl-l css-must-in">
-                                                    <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
-                                                    <p>露西</p>
-                                                </div> -->
+                                                                <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
+                                                                <p>巴图</p>
+                                                            </div>
+                                                            <div class="fl-l css-must-in">
+                                                                <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
+                                                                <p>艾尔巴以</p>
+                                                            </div>
+                                                            <div class="fl-l css-must-in">
+                                                                <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
+                                                                <p>露西</p>
+                                                            </div> -->
                                 </div>
                             </div>
                             <i class="css-right-icon css-must-icon"></i>
@@ -419,17 +419,17 @@ $col9b:#9b9b9b;
                                         <p class="css-name-box">{{optionalmen.Name}}</p>
                                     </div>
                                     <!-- <div class="fl-l css-must-in">
-                                                    <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
-                                                    <p>巴图</p>
-                                                </div>
-                                                <div class="fl-l css-must-in">
-                                                    <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
-                                                    <p>艾尔巴以</p>
-                                                </div>
-                                                <div class="fl-l css-must-in">
-                                                    <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
-                                                    <p>露西</p>
-                                                </div> -->
+                                                                <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
+                                                                <p>巴图</p>
+                                                            </div>
+                                                            <div class="fl-l css-must-in">
+                                                                <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
+                                                                <p>艾尔巴以</p>
+                                                            </div>
+                                                            <div class="fl-l css-must-in">
+                                                                <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
+                                                                <p>露西</p>
+                                                            </div> -->
                                 </div>
                             </div>
                             <i class="css-right-icon css-optional-icon"></i>
@@ -438,19 +438,28 @@ $col9b:#9b9b9b;
                 </section>
             </div>
             <div class="weui-tabbar css-bottombar">
-                <div class="weui-btn css-bottombtn css-delinebtn" v-on:click="accecpt()">谢绝</div>
-                <div class="weui-btn css-bottombtn css-acceptbtn" v-on:click="decline()">接受</div>
+                <div class="weui-btn css-bottombtn css-delinebtn" v-on:click="responseMeeting(false)">谢绝</div>
+                <div class="weui-btn css-bottombtn css-acceptbtn" v-on:click="responseMeeting(true)">接受</div>
             </div>
         </div>
+        <loading v-bind:pageloading="pageloading"></loading>
+        <notice v-show="isShowerr" v-bind:title="errtitle" v-bind:errinfo="errinfo" v-on:closenotice="closeShowerr()"></notice>
     </div>
 </template>
 <script>
 import localdata from '../../js/localdata.js';
 import moment from 'moment';
 import urldata from '../../config/urldata.js';
+import storageList from '../../config/storageList.js';
+import loading from '../loading/loading.vue';
+import notice from '../popNotice/popNotice.vue';
 
 export default {
     name: 'mtMeetDetailAccept',
+    components: {
+        loading,
+        notice
+    },
     created() {
         this.mtrSelected = JSON.parse(localdata.getdata('meetDetailView'));
         this.mtrSelected.Location = this.mtrSelected.Location.split('; ');
@@ -492,6 +501,11 @@ export default {
     },
     data() {
         return {
+            isShowerr: false,//错误提示关闭
+            errtitle: "提示",
+            errinfo: "请稍后再试",
+            pageloading: false,
+
             mtrSelected: {},//选择的会议室
             showMore: 2,//显示更多会议室
         }
@@ -545,39 +559,52 @@ export default {
             localdata.setdata('userOptionalList', JSON.stringify(this.mtrSelected.OptionalAttendees));
             this.$router.push({ path: '/mtparticipantslist' });
         },
-        accecpt() {
+        responseMeeting(type) {
             let sendData = {
                 "ICalUid": this.mtrSelected.ICalUid,
-                "IsAccept": true
+                "IsAccept": type
             }
             // this.$http.post('/mt/ResponseMeeting', this.sendData).then(res => {
-            this.$http.post(urldata + ResponseMeeting, this.sendData).then(res => {
+            this.$http.post(urldata + ResponseMeeting, sendData).then(res => {
                 if (res.status === 200) {
-                    localdata.cleardata();
-                    console.log(sendData)
+                    //清除本地存储已存在的数据
+                    this.clearStorage();
+                    this.pageloading = false;
+                    this.isShowerr = true;
+                    if (type) {
+                        this.errinfo = '接受成功';
+                    } else {
+                        this.errinfo = '谢绝成功';
+                    }
                     this.$router.push({ path: '/' });
-                    // this.pageloading = false;
-                    // this.isShowerr = true;
-                    this.errinfo = '接受成功';
                 }
             })
         },
-        decline() {
-            let sendData = {
-                "ICalUid": this.mtrSelected.ICalUid,
-                "IsAccept": false
-            }
-            // this.$http.post('/mt/ResponseMeeting', sendData).then(res => {
-            this.$http.post(urldata + ResponseMeeting, sendData).then(res => {
-                if (res.status === 200) {
-                    localdata.cleardata();
-                    console.log(sendData)
-                    this.$router.push({ path: '/' });
-                    // this.pageloading = false;
-                    // this.isShowerr = true;
-                    this.errinfo = '谢绝成功';
-                }
-            })
+        // decline() {
+        //     let sendData = {
+        //         "ICalUid": this.mtrSelected.ICalUid,
+        //         "IsAccept": false
+        //     }
+        //     // this.$http.post('/mt/ResponseMeeting', sendData).then(res => {
+        //     this.$http.post(urldata + ResponseMeeting, sendData).then(res => {
+        //         if (res.status === 200) {
+        //             //清除本地存储已存在的数据
+        //             this.clearStorage();
+        //             console.log(sendData)
+        //             this.$router.push({ path: '/' });
+        //             // this.pageloading = false;
+        //             // this.isShowerr = true;
+        //             // this.errinfo = '谢绝成功';
+        //         }
+        //     })
+        // },
+        //清除本地存储已存在的数据
+        clearStorage() {
+            localdata.removedata(storageList);
+        },
+        //关闭错误提示
+        closeShowerr() {
+            this.isShowerr = false;
         }
     }
 } 

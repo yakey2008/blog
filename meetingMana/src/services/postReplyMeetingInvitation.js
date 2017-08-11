@@ -1,8 +1,8 @@
 import * as config from './config'
 
-let url = config.APIDOMAIN + '/api/Meeting/ResponseMeeting'
+// let url = config.APIDOMAIN + '/api/Meeting/ResponseMeeting'
 
-const post = ($http, options) => {
+const post = (url,$http, options) => {
   return new Promise((resolve, reject) => {
     $http.post(url, {ICalUid: options.iCalUid, IsAccept: options.isAccept}).then(
       response => {
@@ -20,7 +20,7 @@ const post = ($http, options) => {
 }
 
 export default {
-  post: ($http, options) => {
-    return post($http, options)
+  post: (url,$http, options) => {
+    return post(url,$http, options)
   }
 }

@@ -56,42 +56,83 @@
         <div class="weui-tabbar css-bottombar">
             <div class="weui-btn weui-btn_primary css-submit-btn" v-on:click="setEmail()">确定</div>
         </div>
+        <loading v-bind:pageloading="pageloading"></loading>
+        <notice v-show="isShowerr" v-bind:title="errtitle" v-bind:errinfo="errinfo" v-on:closenotice="closeShowerr()"></notice>
     </div>
 </template>
 <script>
 import localdata from '../../js/localdata.js';
+import loading from '../loading/loading.vue';
+import notice from '../popNotice/popNotice.vue';
 
 export default {
+    name: 'mtaddcontact',
+    components: {
+        loading,
+        notice
+    },
     data() {
         return {
-            isMust:true,
-            inputemail:'',
+            isShowerr: false,//错误提示关闭
+            errtitle: "提示",
+            errinfo: "请稍后再试",
+            pageloading: false,
+
+            isMust: true,
+            inputemail: '',
             userFromEmail: [],
-            userMustList:[],
-            userOptionalList:[]
+            userMustList: [],
+            userOptionalList: []
         }
     },
     mounted() {
-        this.userFromEmail = JSON.parse(localdata.getdata('userFromEmail'));
-        this.userMustList = JSON.parse(localdata.getdata('userMustList'));
-        this.userOptionalList = JSON.parse(localdata.getdata('userOptionalList'));
+        if (localdata.getdata('userFromEmail') !== "undefined") {
+            this.userFromEmail = JSON.parse(localdata.getdata('userFromEmail'));
+        }
+        if (localdata.getdata('userMustList') !== "undefined") {
+            this.userMustList = JSON.parse(localdata.getdata('userMustList'));
+        }
+        if (localdata.getdata('userOptionalList') !== "undefined") {
+            this.userOptionalList = JSON.parse(localdata.getdata('userOptionalList'));
+        }
     },
     methods: {
         setEmail() {
-            let obj = {};
-            obj.name = this.inputemail;
-            obj.id = this.inputemail;
-            obj.isMust = this.isMust;
-            this.userFromEmail.push(obj);
-            if(this.isMust){
-                this.userMustList.push(obj);
-            }else{
-                this.userOptionalList.push(obj);
+            // if (this.checkEmail(this.inputemail)) {
+                let obj = {};
+                obj.name = this.inputemail;
+                obj.id = this.inputemail;
+                obj.isMust = this.isMust;
+                this.userFromEmail.push(obj);
+                if (this.isMust) {
+                    this.userMustList.push(obj);
+                } else {
+                    this.userOptionalList.push(obj);
+                }
+                localdata.setdata('userMustList', JSON.stringify(this.userMustList));
+                localdata.setdata('userOptionalList', JSON.stringify(this.userOptionalList));
+                localdata.setdata('userFromEmail', JSON.stringify(this.userFromEmail));
+                if (localdata.getdata('isFromModified')) {
+                    this.$router.push({ path: '/mtmeetdetailinvite' });
+                } else {
+                    this.$router.push({ path: '/mtlaunchmeet' });
+                }
+            // } else {
+            //     this.isShowerr = true;
+            //     this.errinfo = '请输入正确的邮箱';
+            // }
+        },
+        checkEmail(email_address) {
+            var regex = /^([0-9A-Za-z\-_\.]+)@([0-9a-z]+\.[a-z]{2,3}(\.[a-z]{2})?)$/g;
+            if (regex.test(email_address)) {
+                return true;
+            }else {
+                return false;
             }
-            localdata.setdata('userMustList', JSON.stringify(this.userMustList));
-            localdata.setdata('userOptionalList', JSON.stringify(this.userOptionalList));
-            localdata.setdata('userFromEmail', JSON.stringify(this.userFromEmail));
-            this.$router.push({ path: '/mtlaunchmeet'});
+        },
+        //关闭错误提示
+        closeShowerr() {
+            this.isShowerr = false;
         }
     }
 }

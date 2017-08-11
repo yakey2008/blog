@@ -161,7 +161,12 @@ div {
         <div class="weui-tab__panel">
             <div class="weui-tab">
                 <div class="weui-navbar css-nav-container">
-                    <p class="location-info">
+                    <p class="location-info" v-if="!mtrSelected.DIYResource">
+                        <i class="css-locaticon">
+                            <img v-bind:src="locaticonpng">
+                        </i>{{mtrSelected.mtrList[mtrSelected.mtrList.length-1].mtrName}}</p>
+    
+                    <p class="location-info" v-if="mtrSelected.DIYResource">
                         <i class="css-locaticon">
                             <img v-bind:src="locaticonpng">
                         </i>{{mtrSelected.mtrList[mtrSelected.mtrList.length-1].mtrName}}</p>
@@ -174,7 +179,10 @@ div {
                                 <i class="arrow-left icon"></i>
                                 <span class="css-onday-text">前一天</span>
                             </div>
-                            <div class="weui-flex__item css-align-center">
+                            <div class="weui-flex__item css-align-center" v-if="!mtrSelected.DIYResource">
+                                {{mtrSelected.weekDateTime}}
+                            </div>
+                            <div class="weui-flex__item css-align-center" v-if="mtrSelected.DIYResource">
                                 {{mtrSelected.weekDateTime}}
                             </div>
                             <div class="css-take-oneday css-align-left" v-on:click="nextday()">
@@ -253,27 +261,46 @@ export default {
             }
             return res;
         }
+        if (localdata.getdata('DIYResource')) {
+            this.mtrSelected = JSON.parse(localdata.getdata('DIYResource'));
+            this.mtrSelected.weekDateTime = moment(this.mtrSelected.dateTime).format('YYYY-MM-DD dddd');
+        }
         if (localdata.getdata('mtrSelected')) {
             this.mtrSelected = JSON.parse(localdata.getdata('mtrSelected'));
+            this.mtrSelected.weekDateTime = moment(this.mtrSelected.dateTime).format('YYYY-MM-DD dddd');
         }
-        this.mtrSelected.weekDateTime = moment(this.mtrSelected.dateTime).format('YYYY-MM-DD dddd');
     },
     mounted() {
         //已过时间标记
         let now = +new Date();
-        let selectedDate = this.mtrSelected.dateTime;
-        this.matchAllTimezone.forEach((el, i) => {
-            if (now > +new Date(selectedDate + ' ' + el.value)) {
-                this.matchAllTimezone[i].passed = true;
-            }
-        }, this)
-        // console.log(moment().format('YYYY-MM-DD HH:mm'))
+        if (this.mtrSelected.isDIYResource) {
+            // let selectedDate = this.mtrSelected.dateTime;
+            let selectedDate = moment().format('YYYY-MM-DD');//临时
+            this.matchAllTimezone.forEach((el, i) => {
+                if (now > +new Date(selectedDate + ' ' + el.value)) {
+                    this.matchAllTimezone[i].passed = true;
+                }
+            }, this)
+        } else {
+            let selectedDate = this.mtrSelected.dateTime;
+            this.matchAllTimezone.forEach((el, i) => {
+                if (now > +new Date(selectedDate + ' ' + el.value)) {
+                    this.matchAllTimezone[i].passed = true;
+                }
+            }, this)
+            // console.log(moment().format('YYYY-MM-DD HH:mm'))
 
-        // for (let i = 0; i < this.initTimenum; i++) {
-        //     this.selectedBox.push({ value: i, selected: false })
-        // }
-        // this.ajaxMtrStatu('/mt/GetRoomsStatus?date=' + this.mtrSelected.dateTime + '&roomListAddress=' + localdata.getdata('curRegionId'));
-        this.ajaxMtrStatu(urldata.basePath + urldata.GetRoomsStatus+'?date=' + this.mtrSelected.dateTime + '&roomListAddress=' + localdata.getdata('curRegionId'));
+            // for (let i = 0; i < this.initTimenum; i++) {
+            //     this.selectedBox.push({ value: i, selected: false })
+            // }
+            // this.ajaxMtrStatu('/mt/GetRoomsStatus?date=' + this.mtrSelected.dateTime + '&roomListAddress=' + localdata.getdata('curRegionId'));
+
+            // this.ajaxMtrStatu(urldata.basePath + urldata.GetRoomsStatus+'?date=' + this.mtrSelected.dateTime + '&roomListAddress=' + localdata.getdata('curRegionId'));
+            if (!this.mtrSelected.DIYResource) {
+                this.ajaxMtrStatu(urldata.basePath + urldata.GetRoomsStatus + '?date=2017-08-10&roomListAddress=' + localdata.getdata('curRegionId'));
+            }
+        }
+
     },
     data() {
         return {
@@ -388,14 +415,19 @@ export default {
                     }
                     this.pageloading = false;
                 }
-            })
+            }, response => {
+                this.isShowerr = true;
+                this.errinfo = '网络错误，请稍后刷新重试';
+            });
         },
         preday() {
             let pretimestemp = +moment(this.mtrSelected.weekDateTime.split(' ')[0]) - 24 * 60 * 60 * 1000;
             this.mtrSelected.weekDateTime = moment(pretimestemp).format('YYYY-MM-DD dddd');
             this.mtrSelected.dateTime = this.mtrSelected.weekDateTime.split(' ')[0];
             // this.ajaxMtrStatu('/mt/GetRoomsStatus?date=' + this.mtrSelected.dateTime + '&roomListAddress=' + localdata.getdata('curRegionId'));
-            this.ajaxMtrStatu(urldata.basePath + urldata.GetRoomsStatus+'?date=' + this.mtrSelected.dateTime + '&roomListAddress=' + localdata.getdata('curRegionId'));
+            if (!this.mtrSelected.DIYResource) {
+                this.ajaxMtrStatu(urldata.basePath + urldata.GetRoomsStatus + '?date=' + this.mtrSelected.dateTime + '&roomListAddress=' + localdata.getdata('curRegionId'));
+            }
             // this.mtrSelected.weekDateTime = this.mtrSelected.dateTime
             // this.curdate = this.curdate.subtract(1, 'days').calendar();
         },
@@ -404,7 +436,10 @@ export default {
             this.mtrSelected.weekDateTime = moment(pretimestemp).format('YYYY-MM-DD dddd');
             this.mtrSelected.dateTime = this.mtrSelected.weekDateTime.split(' ')[0];
             // this.ajaxMtrStatu('/mt/GetRoomsStatus?date=' + this.mtrSelected.dateTime + '&roomListAddress=' + localdata.getdata('curRegionId'));
-            this.ajaxMtrStatu(urldata.basePath + urldata.GetRoomsStatus+'?date=' + this.mtrSelected.dateTime + '&roomListAddress=' + localdata.getdata('curRegionId'));
+            if (!this.mtrSelected.DIYResource) {
+                this.ajaxMtrStatu(urldata.basePath + urldata.GetRoomsStatus + '?date=' + this.mtrSelected.dateTime + '&roomListAddress=' + localdata.getdata('curRegionId'));
+            }
+
             // this.mtrSelected.weekDateTime = this.mtrSelected.dateTime
             // this.curdate = this.curdate.subtract(1, 'days').calendar();
         },
@@ -498,17 +533,23 @@ export default {
                 this.errinfo = '请选择正确的时间区域';
             } else {
                 this.mtrSelected.dateTime = this.mtrSelected.weekDateTime.split(' ')[0];
-                this.mtrSelected.mtrList[this.mtrSelected.mtrList.length - 1].isAdded = true;
                 this.mtrSelected.timeInterval = this.mtrSelected.dateTime + ' ' + this.startTime + '-' + this.endTime;
                 this.mtrSelected.startTime = this.startTime;
                 this.mtrSelected.endTime = this.endTime;
-                // this.mtrSelected.meetingroom = JSON.stringify(this.mtrSelected.meetingroom);
 
-                localdata.setdata('mtrSelected', JSON.stringify(this.mtrSelected))
+                if (!this.mtrSelected.DIYResource) {
+                    this.mtrSelected.mtrList[this.mtrSelected.mtrList.length - 1].isAdded = true;
+                    // this.mtrSelected.meetingroom = JSON.stringify(this.mtrSelected.meetingroom);
+                }
+                localdata.setdata('mtrSelected', JSON.stringify(this.mtrSelected));
                 // this.$router.push({ name: 'mtlaunchmeet',params:this.mtrSelected});
-                this.$router.push({ path: '/mtlaunchmeet' });
+                //来自详情修改
+                if (localdata.getdata('isFromModified')) {
+                    this.$router.push({ path: '/mtmeetdetailinvite' });
+                } else {
+                    this.$router.push({ path: '/mtlaunchmeet' });
+                }
             }
-
         },
         //关闭错误提示
         closeShowerr() {

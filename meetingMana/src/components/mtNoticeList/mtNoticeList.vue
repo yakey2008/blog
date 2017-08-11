@@ -69,7 +69,7 @@
                         </div>
                     </div>
                 </div>
-                <div  v-if="item.DisplayType == 2" class="css-list-item">
+                <div v-if="item.DisplayType == 2" class="css-list-item">
                     <p class="css-list-item-time col9b">{{item.CreateTime}}</p>
                     <div class="css-list-item-main bgcolor">
                         <div class="css-list-item-main-info">{{item.Subject}}</div>
@@ -81,51 +81,59 @@
 </template>
 
 <script>
-import Scroller from '../scroll/index.vue'
-import service from '../../services/getMeetingNotificationList'
-import service1 from '../../services/postReplyMeetingInvitation'
+import Scroller from '../scroll/index.vue';
+import urldata from '../../config/urldata.js';
+import service from '../../services/getMeetingNotificationList';
+import service1 from '../../services/postReplyMeetingInvitation';
 
 export default {
     name: 'mtNoticeList',
     components: {
-      Scroller
+        Scroller
     },
     mounted() {
- service.init()
+        service.get(this.getNoticeList,this.$http, {}).then(data => {
+            this.data = data.list
+            this.$refs.scroller.finishInfinite(!data.hasMore)
+        }, status => {
+            this.$refs.scroller.finishInfinite(true)
+        })
     },
     data() {
         return {
+            getNoticeList:urldata.basePath+urldata.GetServiceNotification,//获取消息列表
+            ResponseMeeting:urldata.basePath+urldata.ResponseMeeting,
             data: []
         }
     },
     methods: {
-      refresh () {
-        setTimeout(() => {
-          service.reload(this.$http, {}).then(data => {
-            this.data = data.list
-            this.$refs.scroller.finishPullToRefresh()
-          }, status => {
-            this.$refs.scroller.finishPullToRefresh()
-          })
-        })
-      },
-      infinite () {
-        setTimeout(() => {
-          service.get(this.$http, {}).then(data => {
-            this.data = data.list
-            this.$refs.scroller.finishInfinite(!data.hasMore)
-          }, status => {
-            this.$refs.scroller.finishInfinite(true)
-          })
-        }, 500)
-      },
-      respoMeeting (meeting,accept) {
-        service1.post(this.$http, {iCalUid: meeting.ICalUid, isAccept: accept}).then(data => {
-           meeting.MeetingResponseType = accept ? 3:4
-        }, status => {
-           console.log(status)
-        })
-      }
+        refresh() {
+            setTimeout(() => {
+                service.reload(this.getNoticeList,this.$http, {}).then(data => {
+                    this.data = data.list
+                    this.$refs.scroller.finishPullToRefresh()
+                }, status => {
+                    this.$refs.scroller.finishPullToRefresh()
+                })
+            })
+        },
+        infinite() {
+            setTimeout(() => {
+                service.get(this.getNoticeList,this.$http, {}).then(data => {
+                    this.data = data.list
+                    this.$refs.scroller.finishInfinite(!data.hasMore)
+                }, status => {
+                    this.$refs.scroller.finishInfinite(true)
+                })
+            }, 500)
+        },
+        respoMeeting(meeting, accept) {
+            service1.post(this.ResponseMeeting,this.$http, { iCalUid: meeting.ICalUid, isAccept: accept }).then(data => {
+                meeting.MeetingResponseType = accept ? 3 : 4
+            }, status => {
+                console.log(status)
+            })
+        }
     }
 }
 </script>
@@ -144,7 +152,7 @@ export default {
 }
 
 .css-mtnoticelist-page {
-    height:100%;
+    height: 100%;
     .col9b {
         color: #9b9b9b;
     }

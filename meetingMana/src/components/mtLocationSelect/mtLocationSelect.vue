@@ -1,4 +1,4 @@
-<style lang="scss">
+<style lang="scss" scoped>
 //区域弹出 Start
 .css-curregion {
     color: #308ee3;
@@ -257,7 +257,8 @@ $col9b:#9b9b9b;
             <div class="weui-tab">
                 <div class="weui-navbar css-nav-container">
                     <div class="weui-navbar__item select-btn">
-                        <date-picker :date="startTime" :option="option" :limit="limit" v-on:ajaxdata="changeday()" v-on:showpicker="showtime()"></date-picker>
+                        <date-picker :date="startTime" :option="option" :limit="limit" v-on:ajaxdata="changeday()" v-on:showpicker="showtime()" v-if="isPicker"></date-picker>
+                        <div v-if="!isPicker" v-on:click="showtime()">{{formatToWeek(startTime.time)}}</div>
                         <i class="css-arrow" :class="{drop:isShowtime}"></i>
                     </div>
                     <div class="weui-navbar__item select-btn" v-on:click="showregion()" :class="{'css-curregion':isShowregion}">
@@ -266,8 +267,8 @@ $col9b:#9b9b9b;
                     </div>
                 </div>
                 <!-- <div v-on:click="showtime()">
-                    <date-picker :date="startTime" :option="option" :limit="limit"></date-picker>
-                </div> -->
+                                                                        <date-picker :date="startTime" :option="option" :limit="limit"></date-picker>
+                                                                    </div> -->
                 <div class="weui-tab__panel css-main-container">
                     <section>
                         <div class="css-pageinfo-container">
@@ -315,8 +316,8 @@ $col9b:#9b9b9b;
         <div class="weui-tabbar css-bottombar">
             <div class="weui-cell css-maxwidth">
                 <div class="weui-cell__bd">
-                    <i class="css-inputinco"></i>
-                    <input class="weui-input" type="text" placeholder="其它地点">
+                    <i class="css-inputinco" v-on:click="addCustomMtr()"></i>
+                    <input class="weui-input" type="text" placeholder="其它地点" v-model="customMtr">
                 </div>
             </div>
         </div>
@@ -337,11 +338,11 @@ $col9b:#9b9b9b;
 <script>
 import loading from '../loading/loading.vue';
 import notice from '../popNotice/popNotice.vue';
-import weui from '../../lib/js/weui.min.js';
 import moment from 'moment';
 import myDatepicker from 'vue-datepicker';
 import localdata from '../../js/localdata.js';
 import urldata from '../../config/urldata.js';
+import searchicon from '../../images/searchicon.png';
 
 export default {
     name: 'mtLocationSelect',
@@ -352,7 +353,17 @@ export default {
     },
     mounted() {
         this.$moaapi.hideNavMenu();
+        window.rightHeaderEvent = function () {
+            window.location.href = '#/mtlocationsearch';
+        }
+        setTimeout(() => {
+            this.$moaapi.showNavMenu(searchicon);
+        }, 100)
+
         let getParams = this.$route.query;
+
+        // this.weekDate = moment(this.startTime.time).format('MM-DD dddd');
+
         if (getParams.searchregionid) {
             // let searchurl = decodeURIComponent('/mt/SearchRooms?begin=' + getParams.starttime + '&end=' + getParams.endtime + '&roomListAddress=' + getParams.searchregionid);
             let searchurl = decodeURIComponent(urldata.basePath + urldata.SearchRooms + '?begin=' + getParams.starttime + '&end=' + getParams.endtime + '&roomListAddress=' + getParams.searchregionid);
@@ -369,23 +380,33 @@ export default {
                 this.tabVal = response.body.data;
             }
         })
-        this.curRegion = '广州-广新办公区会议室列表';
-        this.curRegionId = 'gd2wpds-room@vipshop.com';
+        // this.curRegion = '广州-广新办公区会议室列表';
+        // this.curRegionId = 'gd2wpds-room@vipshop.com';
         // this.ajaxMtrStatu('/mt/GetRoomsStatus?date=' + this.startTime.time + '&roomListAddress=' + this.curRegionId);
-        this.ajaxMtrStatu(urldata.basePath + urldata.GetRoomsStatus + '?date=' + this.startTime.time + '&roomListAddress=' + this.curRegionId);
+        if (localdata.getdata('curRegion')) {
+            this.curRegion = localdata.getdata('curRegion');
+            this.curRegionId = localdata.getdata('curRegionId');
+            this.ajaxMtrStatu(urldata.basePath + urldata.GetRoomsStatus + '?date=' + this.startTime.time + '&roomListAddress=' + this.curRegionId);
+        }
     },
     updated() {
         this.dompadding = document.querySelector('.css-nav-container').offsetHeight;
     },
     data() {
         return {
+            searchicon,
+
             isShowerr: false,//错误提示关闭
             errtitle: "提示",
             errinfo: "请稍后再试",
             pageloading: false,
+            // weekDate: '',
 
+            // startTime: {
+            //     time: moment().format('YYYY-MM-DD')
+            // },
             startTime: {
-                time: moment().format('YYYY-MM-DD')
+                time: '2017-07-31'
             },
             endtime: {
                 time: ''
@@ -422,64 +443,21 @@ export default {
             isShowtime: false,
             isNodata: false,
             isShowtab: true,
+            isPicker: true,//是否使用时间组件
             initTimenum: 18,//预定格数量
             initTimeitem: [],
-            curRegion: '广州广新大厦',
+            curRegion: '请选择',
             curRegionId: '',
-            tabVal: [
-                // { label: '广州广新大厦', value: 0 },
-                // { label: '上海上新时代科技大厦', value: 1 },
-                // { label: '北京北新科技大厦', value: 2 }
-            ],
+            customMtr: '',//自定义会议室
+            tabVal: [],
             //会议室信息
-            ordered:
-            [
-                // {
-                //     name: '广州-广新2F 巴黎会议室 （18人）', order: [
-                //         true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, true, false, false
-                //     ]
-                // },
-                // {
-                //     name: '广州-广新2F 巴黎会议室 （18人）', order: [
-                //         true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, true, false, false
-                //     ]
-                // },
-                // {
-                //     name: '广州-广新2F 巴黎会议室 （18人）', order: [
-                //         true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, true, false, false
-                //     ]
-                // },
-                // {
-                //     name: '广州-广新2F 巴黎会议室 （18人）', order: [
-                //         true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, true, false, false
-                //     ]
-                // },
-                // {
-                //     name: '广州-广新2F 巴黎会议室 （18人）', order: [
-                //         true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, true, false, false
-                //     ]
-                // },
-                // {
-                //     name: '广州-广新2F 巴黎会议室 （18人）', order: [
-                //         true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, true, false, false
-                //     ]
-                // },
-                // {
-                //     name: '广州-广新2F 巴黎会议室 （18人）', order: [
-                //         true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, true, false, false
-                //     ]
-                // },
-                // {
-                //     name: '广州-广新2F 巴黎会议室 （18人）', order: [
-                //         true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, true, false, false
-                //     ]
-                // }
-            ],
-
-            // saveLocaldata:[]
+            ordered: []
         }
     },
     methods: {
+        formatToWeek(val) {
+            return moment(val).format('MM-DD dddd');
+        },
         //根据会议室Id获取会议室方法
         ajaxMtrStatu(url) {
             this.pageloading = true;
@@ -547,6 +525,9 @@ export default {
                 this.pageloading = false;
             })
         },
+        swichTimeDom() {
+            this.isPicker = true;
+        },
         //时间下拉并处理
         showtime() {
             this.isShowregion = false;
@@ -556,22 +537,32 @@ export default {
                 this.isShowtime = true;
             }
         },
-        changeday(){
+        changeday() {
             this.ajaxMtrStatu(urldata.basePath + urldata.GetRoomsStatus + '?date=' + this.startTime.time + '&roomListAddress=' + this.curRegionId);
         },
         //处理区域显示
         showregion() {
-            this.isShowtime = false;
+            this.isPicker = true;
             if (this.isShowregion) {
                 this.isShowregion = false;
             } else {
+                if (this.isShowtime) {
+                    this.isPicker = false;
+                }
+                let _this = this;
+                setTimeout(() => {
+                    _this.isPicker = true;
+                }, 100)
                 this.isShowregion = true;
             }
+            this.isShowtime = false;
         },
         //选择区域
         regionEvt(item) {
             this.curRegion = item.Name;
             this.curRegionId = item.Address;
+            localdata.setdata('curRegion', this.curRegion);
+            localdata.setdata('curRegionId', this.curRegionId);
             // this.ajaxMtrStatu('/mt/GetRoomsStatus?date=' + this.startTime.time + '&roomListAddress=' + item.Address);
             this.ajaxMtrStatu(urldata.basePath + urldata.GetRoomsStatus + '?date=' + this.startTime.time + '&roomListAddress=' + this.curRegionId);
             this.showregion();
@@ -581,6 +572,9 @@ export default {
             // this.$router.push({ name: 'mttimeselect',params:{meetingroom:JSON.stringify(meetingroom),dateTime:this.startTime.time,listindex:index} });
             let saveLocaldata = {}
             let mtrinfo = {};
+            if (localdata.getdata('mtrSelected') && JSON.parse(localdata.getdata('mtrSelected')).mtrList.length === 1 && !JSON.parse(localdata.getdata('mtrSelected')).mtrList[0].isAdded) {
+                localdata.removedata('mtrSelected');
+            }
             if (localdata.getdata('mtrSelected')) {
                 let pass = true;
                 let isAddedPass = true;
@@ -597,11 +591,21 @@ export default {
                 //         pass = true;
                 //     }
                 // })
-
-                if (saveLocaldata.mtrList[index] && meetingroom.Address === saveLocaldata.mtrList[index].mtrId && saveLocaldata.mtrList[index].isAdded) {
-                    this.isShowerr = true;
-                    this.errinfo = '不可重复添加会议室';
-                    return false;
+                //是否来自修改
+                if (localdata.getdata('isFromModified')) {
+                    for (let i = 0, len = saveLocaldata.mtrList.length; i < len; i++) {
+                        if (saveLocaldata.mtrList[i].mtrId === meetingroom.Address) {
+                            this.isShowerr = true;
+                            this.errinfo = '不可重复添加会议室';
+                            return false;
+                        }
+                    }
+                } else {
+                    if (saveLocaldata.mtrList[index] && meetingroom.Address === saveLocaldata.mtrList[index].mtrId && saveLocaldata.mtrList[index].isAdded) {
+                        this.isShowerr = true;
+                        this.errinfo = '不可重复添加会议室';
+                        return false;
+                    }
                 }
                 // if (isAddedPass) {
                 mtrinfo.mtrId = meetingroom.Address;
@@ -620,16 +624,38 @@ export default {
                 mtrinfo.isAdded = false;
                 saveLocaldata.mtrList.push(mtrinfo)
             }
-
-            if (localdata.getdata('mtrSelected')) {
-                // this.mtrSelected.mtrList[this.mtrSelected.mtrList.length - 1].isAdded = true;
+            //来自详情修改
+            if (localdata.getdata('isFromModified')) {
                 localdata.setdata('mtrSelected', JSON.stringify(saveLocaldata));
-                this.$router.push({ path: '/mtlaunchmeet' });
+                this.$router.push({ path: '/mtmeetdetailinvite' });
             } else {
-                localdata.setdata('mtrSelected', JSON.stringify(saveLocaldata));
-                this.$router.push({ path: '/mttimeselect' });
+                if (localdata.getdata('mtrSelected')) {
+                    // this.mtrSelected.mtrList[this.mtrSelected.mtrList.length - 1].isAdded = true;
+                    localdata.setdata('mtrSelected', JSON.stringify(saveLocaldata));
+                    this.$router.push({ path: '/mtlaunchmeet' });
+                } else {
+                    localdata.setdata('mtrSelected', JSON.stringify(saveLocaldata));
+                    this.$router.push({ path: '/mttimeselect' });
+                }
             }
-            localdata.setdata('curRegionId', this.curRegionId)
+
+            localdata.setdata('curRegionId', this.curRegionId);
+        },
+        //添加其它地点
+        addCustomMtr() {
+            if (this.customMtr !== '') {
+                if (localdata.getdata('mtrSelected') && !JSON.parse(localdata.getdata('mtrSelected')).DIYResource && JSON.parse(localdata.getdata('mtrSelected')).isAdded) {
+                    this.isShowerr = true;
+                    this.errinfo = '已选择会议室，不可再添加其它地点';
+                    // localdata.setdata('mtrSelected', JSON.stringify(saveLocaldata));
+                    // this.$router.push({ path: '/mtlaunchmeet' });
+                } else {
+                    localdata.removedata('mtrSelected');
+                    localdata.setdata('mtrSelected', JSON.stringify({ "listindex": 0, "mtrList": [{ "isAdded": false, "mtrId": "", "mtrName": this.customMtr }], "dateTime": this.startTime.time, "isDIYResource": true }));
+                    this.$router.push({ path: '/mttimeselect' });
+                }
+
+            }
         },
         //关闭错误提示
         closeShowerr() {

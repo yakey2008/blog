@@ -1,9 +1,9 @@
 <template>
   <div class="cal-wrapper">
     <div class="cal-header">
-      <div class="css-todaybtn" v-on:click="backtoday">
+      <div class="css-todaybtn" v-on:click="backtoday" v-bind:style="{backgroundImage:'url('+todaybg+')'}">
         <!-- <router-link :to="'/mtnoticeset'" tag="div"> -->
-        <img v-bind:src="todaybg">
+        <!-- <img v-bind:src="todaybg"> -->
         <!-- </router-link> -->
       </div>
       <div class="l" @click="preMonth">
@@ -133,10 +133,11 @@ export default {
       if(date.status===0&&str.substr(0,1)==='/'){
         this.nextMonth()
       }
-      this.$emit('cur-day-changed', date.date)
+      this.$emit('cur-day-changed', date.date);
     },
     backtoday() {
        this.$EventCalendar.toDate(this.today);
+       this.$emit('back-today');
     },
     removecls(){
       this.curday = false;

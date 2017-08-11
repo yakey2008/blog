@@ -1,29 +1,6 @@
-<style lang="scss">
-@mixin placeholder($color) {
-     ::-webkit-input-placeholder {
-        // WebKit browsers
-        color: $color;
-    }
-     :-moz-placeholder {
-        // Mozilla Firefox 4 to 18
-        color: $color;
-    }
-     ::-moz-placeholder {
-        // Mozilla Firefox 19+
-        color: $color;
-    }
-     :-ms-input-placeholder {
-        // Internet Explorer 10+
-        color: $color;
-    }
-}
-
-@mixin boxshadow($hs, $vs, $blur, $spread, $color:#000) {
-    box-shadow: $hs $vs $blur $spread $color;
-    -ms-box-shadow: $hs $vs $blur $spread $color;
-    -webkit-box-shadow: $hs $vs $blur $spread $color;
-    -moz-box-shadow: $hs $vs $blur $spread $color;
-    -o-box-shadow: $hs $vs $blur $spread $color;
+<style lang="scss" scoped>
+.weui-uploader__bd {
+    overflow: initial;
 }
 
 @mixin flexbox() {
@@ -40,7 +17,6 @@
 
 $col9b:#9b9b9b;
 
-@include placeholder(#ccc);
 .css-mtlaunchmeet-page {
     background-color: #f6f7f8;
     .weui-cells_checkbox .weui-check:checked+.weui-icon-checked:before {
@@ -223,9 +199,20 @@ $col9b:#9b9b9b;
                 .css-invite-container {
                     // @include flexbox();
                     .css-must-in {
+                        position: relative;
                         width: 25%;
                         text-align: center;
                         font-size: .87rem;
+                        .css-delIcon {
+                            position: absolute;
+                            top: -6px;
+                            right: 0;
+                            width: 19px;
+                            height: 19px;
+                            border-radius: 18px;
+                            z-index: 500;
+                            background-size: cover;
+                        }
                         .css-name-box {
                             word-break: break-all;
                             word-wrap: break-word;
@@ -323,7 +310,7 @@ $col9b:#9b9b9b;
                             <div class="css-mtlaunchmeet-mtl-info">
                                 <p>会议地点（{{mtrSelected.mtrList.length}}）</p>
                             </div>
-                            <div class="css-mtlaunchmeet-mtl-addbtn">
+                            <div class="css-mtlaunchmeet-mtl-addbtn" v-if="!mtrSelected.DIYResource && mtrSelected.mtrList.length!==0">
                                 <span class="css-add-btn" v-on:click="mtrAddone()">添加</span>
                             </div>
                         </div>
@@ -364,28 +351,30 @@ $col9b:#9b9b9b;
                             </div>
                         </div>
                         <div class="css-mtlaunchmeet-mtl-participate-items">
-                            <div class="weui-uploader__bd">
+                            <div class="weui-uploader__bd clearfix">
                                 <div class="weui-uploader__files css-invite-container">
                                     <!-- <div class="fl-l css-must-in">
                                                             <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
                                                             <p>{{this.currentUserData.Name}}</p>
                                                         </div> -->
                                     <div class="fl-l css-must-in" v-for="(mustuser,index) in userMustList" :key="mustuser.id" v-if="index<4">
-                                        <div class="css-must-in-item" v-bind:style="{backgroundImage:'url('+mustuser.url+')'}"></div>
+                                        <div class="css-must-in-item" v-bind:style="{backgroundImage:'url('+mustuser.url+')'}" v-if="mustuser.url"></div>
+                                        <div class="css-must-in-item" v-bind:style="{backgroundImage:'url('+noavatar+')'}" v-else></div>
+                                        <span class="css-delIcon" v-bind:style="{backgroundImage:'url('+deluserIcon+')'}" v-on:click="delUser(0,index)" v-if="index!==0"></span>
                                         <p class="css-name-box">{{mustuser.name}}</p>
                                     </div>
                                     <!-- <div class="fl-l css-must-in">
-                                                <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
-                                                <p>巴图</p>
-                                            </div>
-                                            <div class="fl-l css-must-in">
-                                                <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
-                                                <p>艾尔巴以</p>
-                                            </div>
-                                            <div class="fl-l css-must-in">
-                                                <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
-                                                <p>露西</p>
-                                            </div> -->
+                                                                                    <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
+                                                                                    <p>巴图</p>
+                                                                                </div>
+                                                                                <div class="fl-l css-must-in">
+                                                                                    <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
+                                                                                    <p>艾尔巴以</p>
+                                                                                </div>
+                                                                                <div class="fl-l css-must-in">
+                                                                                    <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
+                                                                                    <p>露西</p>
+                                                                                </div> -->
                                     <div class="fl-l css-must-in">
                                         <div class="weui-uploader__input-box css-mtlaunchmeet-mtl-participate marginle12p" v-on:click="userTaker(0)">
                                             <div class="weui-uploader__input"></div>
@@ -399,21 +388,23 @@ $col9b:#9b9b9b;
                             <div class="weui-uploader__bd">
                                 <div class="weui-uploader__files css-invite-container">
                                     <div class="fl-l css-must-in" v-for="(optional,index) in userOptionalList" :key="optional.id" v-if="index<4">
-                                        <div class="css-must-in-item" v-bind:style="{backgroundImage:'url('+optional.url+')'}"></div>
+                                        <div class="css-must-in-item" v-bind:style="{backgroundImage:'url('+optional.url+')'}" v-if="optional.url"></div>
+                                        <div class="css-must-in-item" v-bind:style="{backgroundImage:'url('+noavatar+')'}" v-else></div>
+                                        <span class="css-delIcon" v-bind:style="{backgroundImage:'url('+deluserIcon+')'}" v-on:click="delUser(1,index)"></span>
                                         <p class="css-name-box">{{optional.name}}</p>
                                     </div>
                                     <!-- <div class="fl-l css-must-in">
-                                            <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
-                                            <p>巴图</p>
-                                        </div>
-                                        <div class="fl-l css-must-in">
-                                            <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
-                                            <p>艾尔巴以</p>
-                                        </div>
-                                        <div class="fl-l css-must-in">
-                                            <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
-                                            <p>露西</p>
-                                        </div> -->
+                                                                                <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
+                                                                                <p>巴图</p>
+                                                                            </div>
+                                                                            <div class="fl-l css-must-in">
+                                                                                <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
+                                                                                <p>艾尔巴以</p>
+                                                                            </div>
+                                                                            <div class="fl-l css-must-in">
+                                                                                <div class="css-must-in-item" style="background-image:url(./src/images/avatar2.jpg)"></div>
+                                                                                <p>露西</p>
+                                                                            </div> -->
                                     <div class="fl-l css-must-in">
                                         <div class="weui-uploader__input-box css-mtlaunchmeet-mtl-participate marginle12p" v-on:click="userTaker(1)">
                                             <div class="weui-uploader__input"></div>
@@ -453,11 +444,14 @@ $col9b:#9b9b9b;
     </div>
 </template>
 <script>
-import loading from '../loading/loading.vue';
-import notice from '../popNotice/popNotice.vue';
 import moment from 'moment';
 import localdata from '../../js/localdata.js';
 import urldata from '../../config/urldata.js';
+import storageList from '../../config/storageList.js';
+import loading from '../loading/loading.vue';
+import notice from '../popNotice/popNotice.vue';
+import noavatar from '../../images/noavatar.jpg';
+import deluserIcon from '../../images/deluser.png';
 export default {
     name: 'mtLaunchMeet',
     components: {
@@ -488,14 +482,14 @@ export default {
         let _this = this;
         window.excMustUser = function (userList) {
             if (_this.userMustList.length > 0) {
-                _this.userMustList = _this.userMustList.concat(_this.userMustList);
+                _this.userMustList = _this.userMustList.concat(JSON.parse(userList));
             } else {
                 _this.userMustList = JSON.parse(userList);
             }
         }
         window.excOptionalUser = function (userList) {
             if (_this.userOptionalList.length > 0) {
-                _this.userOptionalList = _this.userOptionalList.concat(_this.userOptionalList);
+                _this.userOptionalList = _this.userOptionalList.concat(JSON.parse(userList));
             } else {
                 _this.userOptionalList = JSON.parse(userList);
             }
@@ -509,6 +503,9 @@ export default {
     },
     data() {
         return {
+            noavatar,//无头像显示
+            deluserIcon,//删除人员icon
+
             isShowerr: false,//错误提示关闭
             errtitle: "提示",
             errinfo: "请稍后再试",
@@ -519,8 +516,9 @@ export default {
                 Body: "",//内容
                 Start: "",//2017-9-24 22:10:00
                 End: "",//2017-9-24 22:20:00
-                RequiredAttendees: [],//必选人"city-test@vipshop.com"
-                OptionalAttendees: [],//可选人"city-test2@vipshop.com"
+                OrganizerEmailAndAvatarUrl: {},//组织者信息{"Email":"eric.hu@vipshop.com","AvatarUrl":"OrganizerEmailAndAvatarUrl"}
+                RequiredAttendees: [],//必选人[{"Email":"city-test@vipshop.com","AvatarUrl":"url_1"}]
+                OptionalAttendees: [],//可选人[{"Email":"city-test@vipshop.com","AvatarUrl":"url_1"}]
                 Resources: [],//会议室id "gd2bl-room2@vipshop.com","gd2gg-room2@vipshop.com"
                 OtherAttendees: [],//通过邮箱人
                 IsResponseRequested: true
@@ -581,6 +579,21 @@ export default {
             localdata.setdata('userFromEmail', JSON.stringify(this.userFromEmail));
             this.$router.push({ path: '/mtaddcontact' });
         },
+        //删除人员 0 必选 1 可选
+        delUser(type, idx) {
+            if (type === 0) {
+                if (this.userMustList[idx].id === this.currentUserData.UserEmail) {
+                    this.isShowerr = true;
+                    this.errinfo = '不可以删除发起人';
+                } else {
+                    this.userMustList.splice(idx, 1);
+                    localdata.setdata('userMustList', JSON.stringify(this.userMustList));
+                }
+            } else {
+                this.userOptionalList.splice(idx, 1);
+                localdata.setdata('userOptionalList', JSON.stringify(this.userOptionalList));
+            }
+        },
         //查看全部人员
         checkAlluser() {
             localdata.setdata('userMustList', JSON.stringify(this.userMustList));
@@ -589,53 +602,69 @@ export default {
         },
         //提交事件
         sendDataEvt() {
-            //拼接时间
-            this.sendData.Start = this.mtrSelected.dateTime + ' ' + this.mtrSelected.startTime;
-            this.sendData.End = this.mtrSelected.dateTime + ' ' + this.mtrSelected.endTime;
-            //拼接必选人
-            this.userMustList.forEach((el) => {
-                if (!el.hasOwnProperty('isMust')) {
-                    this.sendData.RequiredAttendees.push(el.id)
-                }
-            })
-            //拼接可选人
-            this.userOptionalList.forEach((el) => {
-                if (!el.hasOwnProperty('isMust')) {
-                    this.sendData.OptionalAttendees.push(el.id)
-                }
-            })
-            //拼接通过email人员
-            this.userFromEmail.forEach((el) => {
-                this.sendData.OtherAttendees.push(el.id);
-            })
             //拼接会议室
-            this.mtrSelected.mtrList.forEach((el) => {
-                this.sendData.Resources.push(el.mtrId);
-            }, this);
+            if (this.mtrSelected.isDIYResource === true) {
+                this.sendData.DIYResource = this.mtrSelected.mtrList[0].mtrName;
+                if (this.mtrSelected.isDIYResource === true && this.sendData.DIYResource === '') {
+                    this.isShowerr = true;
+                    this.errinfo = '请选择会议室';
+                }
+            } else {
+                this.mtrSelected.mtrList.forEach((el) => {
+                    this.sendData.Resources.push(el.mtrId);
+                }, this);
+                if (this.sendData.Resources.length === 0) {
+                    this.isShowerr = true;
+                    this.errinfo = '请选择会议室';
+                }
+            }
             if (this.sendData.Subject === '') {
                 this.isShowerr = true;
                 this.errinfo = '主题不能为空';
-            } else if (this.sendData.Resources.length === 0) {
-                this.isShowerr = true;
-                this.errinfo = '请选择会议室';
-            } else if (this.sendData.RequiredAttendees.length < 2) {
+            } else if (this.userMustList.length < 2) {
                 this.isShowerr = true;
                 this.errinfo = '请选择参会人';
             } else {
+                //拼接时间
+                this.sendData.Start = this.mtrSelected.dateTime + ' ' + this.mtrSelected.startTime;
+                this.sendData.End = this.mtrSelected.dateTime + ' ' + this.mtrSelected.endTime;
+                //组织者
+                this.sendData.OrganizerEmailAndAvatarUrl = { Email: this.currentUserData.UserEmail, AvatarUrl: this.currentUserData.AvatarUrl }
+                //拼接必选人
+                this.userMustList.forEach((el) => {
+                    if (el.hasOwnProperty('isMust')) {
+                        this.sendData.RequiredAttendees.push({ Email: el.id, AvatarUrl: el.url })
+                    }
+                })
+                //拼接可选人
+                this.userOptionalList.forEach((el) => {
+                    if (!el.hasOwnProperty('isMust')) {
+                        this.sendData.OptionalAttendees.push({ Email: el.id, AvatarUrl: el.url })
+                    }
+                })
+                //拼接通过email人员
+                this.userFromEmail.forEach((el) => {
+                    this.sendData.OtherAttendees.push(el.id);
+                })
+
                 this.pageloading = true;
                 // this.$http.post('/mt/CreateMeeting', this.sendData).then(res => {
-                this.$http.post(urldata.basePath + urldata.CreateMeeting).then(res => {
-                    if (res.status === 200) {
-                        localdata.cleardata();
-                        console.log(this.sendData)
-                        this.$router.push({ path: '/' });
+                this.$http.post(urldata.basePath + urldata.CreateMeeting, this.sendData).then(res => {
+                    if (res.body.status === 200) {
                         this.pageloading = false;
                         this.isShowerr = true;
                         this.errinfo = '提交成功';
+                        //清除本地存储已存在的数据
+                        this.clearStorage();
+                        // console.log(this.sendData)
+                        this.$router.push({ path: '/' });
                     }
                 })
             }
-
+        },
+        //清除本地存储已存在的数据
+        clearStorage() {
+            localdata.removedata(storageList);
         },
         //关闭错误提示
         closeShowerr() {

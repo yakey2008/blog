@@ -1,8 +1,8 @@
 <style lang="scss" scoped>
 //区域弹出 Start
-// .css-curregion {
-//     color: #308ee3;
-// }
+.css-curregion {
+    color: #308ee3;
+}
 .css-selector-container {
     .css-mask {
         position: fixed;
@@ -42,6 +42,9 @@
                 transform-origin: 0 100%;
                 -webkit-transform: scaleY(0.5);
                 transform: scaleY(0.5);
+            }
+            &.css-curregion {
+                color: #308ee3;
             }
         }
     }
@@ -210,8 +213,9 @@ $col9b:#9b9b9b;
         <div class="weui-tab__panel">
             <div class="weui-tab">
                 <div class="weui-navbar css-nav-container">
-                    <div class="weui-navbar__item select-btn" v-on:click="showtime()">
-                        <date-picker :date="startTime" :option="option" :limit="limit"></date-picker>
+                    <div class="weui-navbar__item select-btn">
+                        <date-picker :date="startTime" :option="option" :limit="limit" v-on:showpicker="showtime()" v-if="isPicker"></date-picker>
+                        <div v-if="!isPicker" v-on:click="showtime()">{{formatToWeek(startTime.time)}}</div>
                         <i class="css-arrow" :class="{drop:isShowtime}"></i>
                     </div>
                     <div class="weui-navbar__item select-btn" v-on:click="showregion()" :class="{'css-curregion':isShowregion}">
@@ -303,28 +307,46 @@ $col9b:#9b9b9b;
     </div>
 </template>
 <script>
-import myDatepicker from 'vue-datepicker';
+import loading from '../loading/loading.vue';
+import notice from '../popNotice/popNotice.vue';
+import myDatepicker from '../vue-datepicker/vue-datepicker.vue';
 import moment from 'moment';
 import VueTimepicker from 'vue2-timepicker';
+import localdata from '../../js/localdata.js';
 import urldata from '../../config/urldata.js';
+
 export default {
     name: 'mtLocationSearch',
     components: {
+        loading,
+        notice,
         VueTimepicker,
         'date-picker': myDatepicker
     },
     mounted() {
+        this.$moaapi.hideNavMenu();
+
+        // this.weekDate = moment(this.startTime.time).format('MM-DD dddd');
         // this.$http.get('/mt/GetAllPosition').then(response => {
         this.$http.get(urldata.basePath + urldata.GetAllPosition).then(response => {
             if (response.status === 200) {
                 this.tabVal = response.body.data;
             }
         })
-        this.curRegion = 'Webex-云会议室列表';
-        this.curRegionId = 'WebexCloudMeeting-room@vipshop.com';
+        if (localdata.getdata('curRegion')) {
+            this.curRegion = localdata.getdata('curRegion');
+            this.curRegionId = localdata.getdata('curRegionId');
+        }
+    
     },
     data() {
         return {
+            isShowerr: false,//错误提示关闭
+            errtitle: "提示",
+            errinfo: "请稍后再试",
+            pageloading: false,
+            // weekDate: '',
+
             startTime: {
                 time: moment().format('YYYY-MM-DD')
             },
@@ -356,14 +378,21 @@ export default {
 
             isShowregion: false,
             isShowtime: false,
-            curRegion: '广州广新大厦',
+            curRegion: '请选择',
             curRegionId: '',
             val_start: '09:00:00',
             val_end: '15:00:00',
             tabVal: [],
+            isPicker: true,//是否使用时间组件
         }
     },
     methods: {
+        formatToWeek(val) {
+            return moment(val).format('MM-DD dddd');
+        },
+        swichTimeDom() {
+            this.isPicker = true;
+        },
         //时间下拉并处理
         showtime() {
             this.isShowregion = false;
@@ -373,14 +402,22 @@ export default {
                 this.isShowtime = true;
             }
         },
-        //处理区域显示及选择
+        //处理区域显示
         showregion() {
-            this.isShowtime = false;
+            this.isPicker = true;
             if (this.isShowregion) {
                 this.isShowregion = false;
             } else {
+                if (this.isShowtime) {
+                    this.isPicker = false;
+                }
+                let _this = this;
+                setTimeout(() => {
+                    _this.isPicker = true;
+                }, 100)
                 this.isShowregion = true;
             }
+            this.isShowtime = false;
         },
         regionEvt(item) {
             this.curRegion = item.Name;
@@ -392,6 +429,11 @@ export default {
             this.val_end = this.startTime.time + ' ' + this.val_end;
             // this.$router.push({ path: `/mtlocationselect/${this.curRegionId}/${this.val_start}/${this.val_end}` });
             this.$router.push({ path: '/mtlocationselect', query: { searchregionid: this.curRegionId, starttime: this.val_start, endtime: this.val_end } });
+            this.showregion();
+        },
+        //关闭错误提示
+        closeShowerr() {
+            this.isShowerr = false;
         }
     }
 }
