@@ -6,7 +6,7 @@
   position: fixed;
   width: 100%;
   height: 100%;
-  z-index: 998;
+  z-index: 501;
   top: 50px;
   left: 0;
   background-color: rgba(0, 0, 0, 0.5);
@@ -593,7 +593,7 @@ exports.default = {
 
   methods: {
     formatToWeek(val){
-      return _moment(val).format('MM-DD dddd');
+      return _moment(val).format('M月D日 ddd');
     },
     showhide() {
       return this.$emit();

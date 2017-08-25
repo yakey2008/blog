@@ -1,3 +1,4 @@
+import 'es6-promise/auto';
 import 'weui';
 import Vue from 'vue';
 import App from './app.vue';
@@ -12,8 +13,8 @@ import vueEventCalendar from './js';
 Vue.use(vueEventCalendar, {locale: 'zh'}) //可以设置语言，支持中文和英文
 
 Vue.use(API);
-Vue.use(VueRouter)
-Vue.use(VueResource)
+Vue.use(VueRouter);
+Vue.use(VueResource);
 
 const router = new VueRouter({
     routes

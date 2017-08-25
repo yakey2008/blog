@@ -191,79 +191,60 @@ $col9b:#9b9b9b;
         <div class="weui-tab__panel">
             <div class="weui-tab">
                 <div class="weui-navbar">
-                    <div class="css-top-btn css-selected" v-on:click="switchBtn('all')">
-                        <span>全部</span>
+                    <div class="css-top-btn" :class="{'css-selected':isHoverClass===0}" v-on:click="switchBtn(0)">
+                        <span>全部({{userLen}})</span>
                     </div>
-                    <div class="css-top-btn" v-on:click="switchBtn()">
+                    <div class="css-top-btn" :class="{'css-selected':isHoverClass===1}" v-on:click="switchBtn(1)">
                         <span>已接受({{mtrSelected.AttentdeesStat.Accept}})</span>
                     </div>
-                    <div class="css-top-btn" v-on:click="switchBtn()">
+                    <div class="css-top-btn" :class="{'css-selected':isHoverClass===2}" v-on:click="switchBtn(2)">
                         <span>已谢绝({{mtrSelected.AttentdeesStat.Decline}})</span>
                     </div>
-                    <div class="css-top-btn" v-on:click="switchBtn()">
-                        <span>未接受({{mtrSelected.AttentdeesStat.NoResponseReceived}})</span>
+                    <div class="css-top-btn" :class="{'css-selected':isHoverClass===3}" v-on:click="switchBtn(3)">
+                        <span>未接受({{mtrSelected.AttentdeesStat.NoResponseReceived+userFromEmailLen}})</span>
                     </div>
                 </div>
-    
+
                 <div class="css-main-container weui-tab__panel">
                     <div class="hr-div"></div>
                     <section class="css-pageinfo">
-                        <div class="weui-cell css-pageinfoBox" v-for="(must,index) in userMustList" :key="must.id">
+                        <div class="weui-cell css-pageinfoBox" v-for="(must,index) in userMustList" :key="must.id" v-if="must.isShow">
                             <div class="css-avarar-box">
                                 <div class="weui-cell__hd css-picBox" v-bind:style="{backgroundImage:'url('+must.url+')'}" v-if="must.url"></div>
                                 <div class="weui-cell__hd css-picBox" v-bind:style="{backgroundImage:'url('+noavatar+')'}" v-else></div>
                                 <span class="css-delIcon" v-bind:style="{backgroundImage:'url('+deluserIcon+')'}" v-on:click="delUser(0,index)" v-if="index!==0"></span>
                             </div>
                             <div class="weui-cell__bd">
-                                <div class="css-username">{{must.name}}</div>
+                                <div class="css-username">{{must.Name}}</div>
                                 <div class="css-useractor" v-if="must.isInitiator">
                                     <span class="css-label">会议组织者</span>
                                 </div>
                                 <div class="clearfix"></div>
-                                <p class="css-userposition" v-if="!must.hasOwnProperty('isMust')">{{must.isInitiator?must.dept:'职位'}}</p>
-                                <p class="css-userposition" v-if="must.hasOwnProperty('isMust')">通过邮件邀请的人员</p>
+                                <p class="css-userposition" v-if="!must.hasOwnProperty('isEmail')">{{must.isInitiator?must.dept:must.job}}</p>
+                                <p class="css-userposition" v-if="must.hasOwnProperty('isEmail')">通过邮件邀请的人员</p>
                             </div>
                         </div>
                     </section>
-    
+
                     <section class="css-pageinfo" v-if="userOptionalList.length>0">
-                        <div class="weui-cell css-pageinfoBox" v-for="(optional,index) in userOptionalList" :key="optional.id">
+                        <div class="weui-cell css-pageinfoBox" v-for="(optional,index) in userOptionalList" :key="optional.id" v-if="optional.isShow">
                             <div class="css-avarar-box">
                                 <div class="weui-cell__hd css-picBox" v-bind:style="{backgroundImage:'url('+optional.url+')'}" v-if="optional.url"></div>
                                 <div class="weui-cell__hd css-picBox" v-bind:style="{backgroundImage:'url('+noavatar+')'}" v-else></div>
                                 <span class="css-delIcon" v-bind:style="{backgroundImage:'url('+deluserIcon+')'}" v-on:click="delUser(0,index)"></span>
                             </div>
-    
+
                             <div class="weui-cell__bd">
-                                <div class="css-username">{{optional.name}}</div>
+                                <div class="css-username">{{optional.Name}}</div>
                                 <div class="css-useractor">
                                     <span class="css-label gray">可选参会者</span>
                                 </div>
                                 <div class="clearfix"></div>
-                                <p class="css-userposition" v-if="!optional.hasOwnProperty('isMust')">职位</p>
-                                <p class="css-userposition" v-if="optional.hasOwnProperty('isMust')">通过邮件邀请的人员</p>
+                                <p class="css-userposition">{{optional.job}}</p>
+                                <!-- <p class="css-userposition" v-if="optional.hasOwnProperty('isMust')">通过邮件邀请的人员</p> -->
                             </div>
                         </div>
                     </section>
-    
-                    <!-- <section class="css-pageinfo">
-                                <div class="weui-cell css-pageinfoBox" style="">
-                                    <div class="weui-cell__hd css-picBox">
-                                        <div class="css-pic">
-                                            <img src="./../../images/user.jpg">
-                                            <span class="weui-badge css-delIcon">一</span>
-                                        </div>
-                                    </div>
-                                    <div class="weui-cell__bd">
-                                        <div class="css-username">小小蓝</div>
-                                        <div class="css-useractor">
-                                            <span class="css-label none">可选参会者</span>
-                                        </div>
-                                        <div class="clearfix"></div>
-                                        <p class="css-userposition">前端-初级前端工程师</p>
-                                    </div>
-                                </div>
-                            </section> -->
                 </div>
             </div>
         </div>
@@ -273,39 +254,116 @@ $col9b:#9b9b9b;
 import weui from '../../lib/js/weui.min.js';
 import moment from 'moment';
 import localdata from '../../js/localdata.js';
-import noavatar from '../../images/noavatar.jpg';
+import noavatar from '../../images/noavatar.png';
 import deluserIcon from '../../images/deluser.png';
 
 export default {
     name: 'mtParticipantsListSet',
-    created(){
+    created() {
         this.mtrSelected = JSON.parse(localdata.getdata('mtrSelected'));
     },
     mounted() {
+        let arr = [];
         this.currentUserData = JSON.parse(localdata.getdata('currentUserData'));
 
         if (localdata.getdata('userFromEmail')) {
             this.userFromEmail = JSON.parse(localdata.getdata('userFromEmail'));
+            this.userLen = this.userFromEmail.length;
         }
         this.userMustList = JSON.parse(localdata.getdata('userMustList'));
         this.userOptionalList = JSON.parse(localdata.getdata('userOptionalList'));
+        this.userMustList.forEach(function (el) {
+            if(el.isEmail){
+                arr.push(el);
+            }
+            el.isShow = true;
+        }, this);
+        this.userOptionalList.forEach(function (el) {
+            el.isShow = true;
+        }, this);
+
+        this.userFromEmailLen = arr.length;
+        this.userLen = this.userLen+this.userFromEmailLen;
+        this.userLen = this.userMustList.length + this.userOptionalList.length;
+        this.$moaapi.updateNavTitle('参与人员');
     },
     data() {
         return {
             noavatar,//无头像显示
             deluserIcon,//删除人员icon
 
-            currentUserData:{},//当前登录用户信息
+            currentUserData: {},//当前登录用户信息
             mtrSelected: {},//选择的会议室
             userFromEmail: [],
             userMustList: [],
-            userOptionalList: []
+            userOptionalList: [],
+            userFromEmailLen :0,//来自回填email人数
+            isHoverClass: 0,
+            userLen:0//全部人员人数
         }
     },
     methods: {
         switchBtn(type) {
-            if(type === 'all'){
-                
+            //全部
+            if (type === 0) {
+                this.isHoverClass = 0;
+                this.userMustList.forEach(function (el) {
+                    el.isShow = true;
+                }, this);
+                this.userOptionalList.forEach(function (el) {
+                    el.isShow = true;
+                }, this);
+            //已接受
+            } else if (type === 1) {
+                this.isHoverClass = 1;
+                this.userMustList.forEach(function (el) {
+                    if (el.ResponseType === 3) {
+                        el.isShow = true;
+                    } else {
+                        el.isShow = false;
+                    }
+                }, this);
+                this.userOptionalList.forEach(function (el) {
+                    if (el.ResponseType === 3) {
+                        el.isShow = true;
+                    } else {
+                        el.isShow = false;
+                    }
+                }, this);
+            //已拒绝
+            } else if (type === 2) {
+                this.isHoverClass = 2;
+                this.userMustList.forEach(function (el) {
+                    if (el.ResponseType === 4) {
+                        el.isShow = true;
+                    } else {
+                        el.isShow = false;
+                    }
+                }, this);
+                this.userOptionalList.forEach(function (el) {
+                    if (el.ResponseType === 4) {
+                        el.isShow = true;
+                    } else {
+                        el.isShow = false;
+                    }
+                }, this);
+            //未接受
+            } else if (type === 3) {
+                this.isHoverClass = 3;
+                this.userMustList.forEach(function (el) {
+                    if (el.ResponseType === 0 || el.ResponseType === 2 || el.ResponseType === 5 || el.ResponseType === null) {
+                        el.isShow = true;
+                    } else {
+                        el.isShow = false;
+                    }
+                }, this);
+                this.userOptionalList.forEach(function (el) {
+                    if (el.ResponseType === 0 || el.ResponseType === 2 || el.ResponseType === 5 || el.ResponseType === null) {
+                        el.isShow = true;
+                    } else {
+                        el.isShow = false;
+                    }
+                }, this);
             }
         },
         //删除人员 0 必选 1 可选

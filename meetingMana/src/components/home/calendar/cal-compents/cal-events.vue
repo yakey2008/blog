@@ -18,6 +18,8 @@
 import i18n from '../../../../js/i18n.js';
 import { dateTimeFormatter } from '../../../../js/tools.js';
 import calEventItem from './cal-event-item.vue';
+import utils from '../../../../js/utils.js';
+
 export default {
   name: 'cal-events',
   data() {
@@ -47,11 +49,24 @@ export default {
       if (this.dayEvents.date !== 'all') {
         let tempDate
         if (this.dayEvents.events.length !== 0) {
-          tempDate = Date.parse(new Date(this.dayEvents.events[0].date))
-          return dateTimeFormatter(tempDate, i18n[this.locale].fullFormat)
+
+          let date = new Date(this.dayEvents.events[0].date)
+
+          let tempDate = Date.parse(date)
+     
+          let day = utils.dayFormat(date)
+
+          let week = utils.weekFormat(date)
+
+          return day + ' ' + dateTimeFormatter(tempDate, i18n[this.locale].monthDayFormat) + ' ' + week
         } else {
-          tempDate = dateTimeFormatter(Date.parse(new Date(this.dayEvents.date)), i18n[this.locale].fullFormat)
-          return `${tempDate} ${i18n[this.locale].notHaveEvents}`
+          let date = new Date(this.dayEvents.date)
+
+          tempDate = dateTimeFormatter(Date.parse(date), i18n[this.locale].monthDayFormat)
+
+          let week = utils.weekFormat(date)
+
+          return `${tempDate} ${week} ${i18n[this.locale].notHaveEvents}`
         }
       } else {
         return i18n[this.locale].dayEventsTitle

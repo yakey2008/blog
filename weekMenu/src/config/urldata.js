@@ -1,5 +1,5 @@
 export default {
-    basePath:"/",
+    basePath:"/Generic/",
     Menu: 'Menu',
     Region: 'Menu/Region',
     UploadImage: 'Menu/UploadImage',

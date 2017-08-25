@@ -42,6 +42,10 @@ const closeKeyboardManager = () => {
   window.location.href = 'vipoa://closeKeyboardManager'
   // exec('vipoa://closeKeyboardManager')
 }
+//禁用ios橡皮筋效果
+const closeWebkitSpringBack = ()=>{
+  window.location.href = 'vipoa://closeWebkitSpringBack';
+}
 
 const selUser = (type, multi) => {
   window.location.href = 'vipoa://selUser?multi=' + type + '&action=' + multi;
@@ -61,6 +65,7 @@ const plugin = {
         callUserProfile,
         openKeyboardManager,
         closeKeyboardManager,
+        closeWebkitSpringBack,
         closeWin,
         selUser
       }

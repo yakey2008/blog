@@ -247,14 +247,18 @@ $icon-border-size: 1px;
       color: #333;
       position: relative;
       .title {
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        width: 60%;
-        height: 40px;
-        line-height: 40px;
+        // overflow: hidden;
+        // white-space: nowrap;
+        // text-overflow: ellipsis;
+        // height: 40px;
+        // line-height: 40px;
+        padding: 8px 0;
+        width: 70%;
         color: #333;
         font-size: 16px;
+        @media (max-width: 365px) {
+          width: 65%;
+        }
       }
       .time {
         position: absolute;
@@ -335,12 +339,12 @@ $icon-border-size: 1px;
   </div>
 </template>
 <script>
-import { isEqualDateStr } from '../../../js/tools.js'
+import { isEqualDateStr } from '../../../js/tools.js';
 
-import calEvents from './cal-compents/cal-events.vue'
-import calPanel from './cal-compents/cal-panel.vue'
+import calEvents from './cal-compents/cal-events.vue';
+import calPanel from './cal-compents/cal-panel.vue';
 
-const inBrowser = typeof window !== 'undefined'
+const inBrowser = typeof window !== 'undefined';
 export default {
   name: 'vue-event-calendar',
   components: {
@@ -361,14 +365,14 @@ export default {
       required: true,
       default: [],
       validator(events) {
-        let validate = true
+        let validate = true;
         events.forEach((event, index) => {
           if (!event.date) {
-            console.error('Vue-Event-Calendar-Error:' + 'Prop events Wrong at index ' + index)
-            validate = false
+            console.error('Vue-Event-Calendar-Error:' + 'Prop events Wrong at index ' + index);
+            validate = false;
           }
         })
-        return validate
+        return validate;
       }
     }
   },
@@ -412,7 +416,7 @@ export default {
     }
   },
   methods: {
-    dateBacktoday(){
+    dateBacktoday() {
       this.$emit('date-back-today');
     },
     handleChangeCurDay(date) {
@@ -429,7 +433,7 @@ export default {
       })
     },
     handleMonthChanged(yearMonth) {
-      this.$emit('month-changed', yearMonth)
+      this.$emit('month-changed', yearMonth);
     }
   },
   watch: {

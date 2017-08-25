@@ -1,4 +1,4 @@
-<style lang="scss">
+<style lang="scss" scoped>
 @mixin placeholder($color) {
      ::-webkit-input-placeholder {
         // WebKit browsers
@@ -32,45 +32,55 @@
 
 @include placeholder(#9b9b9b);
 .css-mtnoticelist-page {
+    background-color: #fff;
     .col9b {
         color: #9b9b9b;
     }
-    background-color: #fff;
-    .css-searcharea {
-        position: relative;
-        margin: 20px 9px;
-        text-align: center;
-        background-color: #f3f3f3;
-        border-radius: 4px;
-        overflow: hidden;
-        .css-searcharea-icon {
-            position: absolute;
-            top: 10px;
-            left: 11px;
-            width: 15px;
-            height: 15px;
-            background-size: cover;
-            background-image: url('../../images/searchicon.png');
-        }
-        .css-clean-icon {
-            position: absolute;
-            top: 10px;
-            right: 11px;
-            width: 15px;
-            height: 15px;
-            background-size: cover;
-            background-image: url('../../images/clean-icon.png');
-        }
-        .css-searcharea-input {
-            width: 90%;
-            padding: 10px 0;
-            padding-left: 35px;
+    .css-search-container {
+        background-color: #fff;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        margin: 0 5px;
+        padding: 13px 0;
+        z-index: 502;
+        .css-searcharea {
+            position: relative; // margin: 20px 9px;
+            text-align: center;
             background-color: #f3f3f3;
-            outline: none;
-            border: none;
+            border-radius: 4px;
+            overflow: hidden;
+            .css-searcharea-icon {
+                position: absolute;
+                top: 10px;
+                left: 11px;
+                width: 15px;
+                height: 15px;
+                background-size: cover;
+                background-image: url('../../images/searchicon.png');
+            }
+            .css-clean-icon {
+                position: absolute;
+                top: 10px;
+                right: 11px;
+                width: 15px;
+                height: 15px;
+                background-size: cover;
+                background-image: url('../../images/clean-icon.png');
+            }
+            .css-searcharea-input {
+                width: 90%;
+                padding: 10px 0;
+                padding-left: 35px;
+                background-color: #f3f3f3;
+                outline: none;
+                border: none;
+            }
         }
     }
     .css-mtnoticelist-main {
+        padding-top: 62px;
         .css-main-container {
             position: relative;
             overflow: hidden;
@@ -78,7 +88,7 @@
             .css-timeline-date {
                 width: 56px;
                 margin-left: 8px;
-                @media (max-width: 340px) {
+                @media (max-width: 350px) {
                     margin-left: 2px;
                 }
                 .css-left-datetime {
@@ -110,7 +120,7 @@
                     &:after {
                         top: -3px;
                     }
-                    @media (max-width: 340px) {
+                    @media (max-width: 350px) {
                         top: 20px;
                         left: 71px;
                         &:after {
@@ -143,7 +153,7 @@
                     display: block;
                     background-color: #fff;
                 }
-                @media (max-width: 340px) {
+                @media (max-width: 350px) {
                     left: 71px;
                     &:after {
                         width: 5px;
@@ -154,15 +164,15 @@
                 }
             }
             .css-list-item {
-                @media (max-width: 340px) {
+                @media (max-width: 350px) {
                     width: 71%;
-                    margin: 0 1% 26px 30px;
+                    margin: 0 0 26px 29px;
                 }
                 @media (min-width: 425px) {
                     width: 68%;
                 }
                 width: 65%;
-                margin: 0 7% 26px 40px;
+                margin: 0 0 26px 40px;
                 position: relative;
                 .left-arrowpop {
                     position: absolute;
@@ -205,7 +215,7 @@
                         }
                     }
                     .css-list-item-main-info {
-                        @media (max-width: 340px) {
+                        @media (max-width: 350px) {
                             margin: 0 4%;
                         }
                         margin: 0 9%;
@@ -218,19 +228,25 @@
                             }
                             .leftdom {
                                 @include flexboxwidth(1);
+                                white-space: nowrap;
                             }
                             .rightdom {
-                                @include flexboxwidth(5);
-                                overflow: hidden;
-                                white-space: nowrap;
-                                text-overflow: ellipsis;
+                                @include flexboxwidth(5); // overflow: hidden;
+                                // white-space: nowrap;
+                                // text-overflow: ellipsis;
+                                word-break: break-all;
                             }
                         }
                     }
                     .css-list-item-main-title {
-                        font-size: 1.125rem;
-                        height: 50px;
-                        line-height: 50px;
+                        font-size: 1.125rem; // height: 50px;
+                        // line-height: 50px;
+                        // overflow: hidden;
+                        // white-space: nowrap;
+                        // text-overflow: ellipsis;
+                        padding: 12px 0;
+                        word-break: break-all;
+                        padding-right: 8%;
                     }
                     &.bgcolor {
                         background-color: #e7e7e7;
@@ -285,155 +301,62 @@
 </style>
 <template>
     <div class="weui-tab css-mtnoticelist-page">
-        <section class="css-searcharea">
-            <i class="css-searcharea-icon" v-on:click="excSearch()"></i>
-            <input type="text" placeholder="搜索会议主题" class="css-searcharea-input" v-model="searchSubjectKey">
-            <i class="css-clean-icon" v-if="searchSubjectKey!==''" v-on:click="cleanInput()"></i>
-        </section>
-        <div class="css-mtnoticelist-main">
-            <section class="css-main-container clearfix" :class="{'first-container':index===0,'last-container':index===mtrData.length-1}" v-for="(mtr,index) in mtrData" :key="mtr.ICalUid">
-                <div class="css-timeline-date fl-l">
-                    <div class="css-left-datetime">
-                        <p>{{mtr.MtrTimeMD}}</p>
-                        <p>{{mtr.DayOfWeek}}</p>
-                        <span class="right-arrowpop"></span>
+        <div class="css-search-container">
+            <div class="css-searcharea">
+                <i class="css-searcharea-icon" v-on:click="excSearch()"></i>
+                <input type="search" placeholder="搜索会议主题" class="css-searcharea-input" v-model="searchSubjectKey" v-on:keyup="keyExcSearch($event)">
+                <i class="css-clean-icon" v-if="searchSubjectKey!==''" v-on:click="cleanInput()"></i>
+            </div>
+        </div>
+        <scroller :on-infinite="infinite" ref="scroller" class="weui-tab css-mtnoticelist-page">
+            <div class="css-mtnoticelist-main">
+                <section class="css-main-container clearfix" :class="{'first-container':index===0,'last-container':index===mtrData.length-1}" v-for="(mtr,index) in mtrData" :key="mtr.ICalUid">
+                    <div class="css-timeline-date fl-l">
+                        <div class="css-left-datetime">
+                            <p>{{mtr.MtrTimeMD}}</p>
+                            <p>{{mtr.DayOfWeek}}</p>
+                            <span class="right-arrowpop"></span>
+                        </div>
                     </div>
-                </div>
-                <div class="css-timeline-line fl-l"></div>
-                <div class="css-list-item fl-l">
-                    <span class="left-arrowpop"></span>
-                    <div class="css-list-item-main">
-                        <span class="right-ribbon" :class="{'unaccept':mtr.mtrStatu===0||mtr.mtrStatu===2||mtr.mtrStatu===4}">{{mtr.mtrStatuText}}</span>
-                        <div class="css-list-item-main-info">
-                            <h3 class="css-list-item-main-title">{{mtr.Subject}}</h3>
-                            <div class="inside-item css-list-item-main-info-time">
-                                <span class="leftdom col9b">时间</span>
-                                <span class="rightdom">{{mtr.MtrTime}}</span>
-                            </div>
-                            <div class="inside-item">
-                                <span class="leftdom col9b">地点</span>
-                                <span class="rightdom">{{mtr.mtrListStr}}</span>
-                            </div>
-                            <div class="inside-item">
-                                <span class="leftdom col9b">人员</span>
-                                <span class="rightdom">{{mtr.UseStr}}</span>
-                            </div>
-                            <div class="css-bottombar" v-if="mtr.mtrStatu===1">
-                                <div class="weui-btn css-bottombtn" v-on:click="cancelMtr(mtr.ICalUid)">取消会议</div>
-                            </div>
-                            <div class="css-bottombar" v-if="mtr.mtrStatu===2">
-                                <div class="weui-btn css-bottombtn css-delinebtn" v-on:click="responseMeeting(mtr.ICalUid,false)">谢绝</div>
-                                <div class="weui-btn css-bottombtn css-acceptbtn" v-on:click="responseMeeting(mtr.ICalUid,true)">接受</div>
+                    <div class="css-timeline-line fl-l"></div>
+                    <div class="css-list-item fl-l">
+                        <span class="left-arrowpop"></span>
+                        <div class="css-list-item-main">
+                            <span class="right-ribbon" :class="{'unaccept':mtr.mtrStatu===0||mtr.mtrStatu===2||mtr.mtrStatu===4}">{{mtr.mtrStatuText}}</span>
+                            <div class="css-list-item-main-info">
+                                <h3 class="css-list-item-main-title">{{mtr.Subject}}</h3>
+                                <div v-on:click="toDetail(mtr.IsShowAttentdeesStat,index)">
+                                    <div class="inside-item css-list-item-main-info-time">
+                                        <span class="leftdom col9b">时间</span>
+                                        <span class="rightdom">{{mtr.MtrTime}}</span>
+                                    </div>
+                                    <div class="inside-item">
+                                        <span class="leftdom col9b">地点</span>
+                                        <span class="rightdom">{{mtr.mtrListStr}}</span>
+                                    </div>
+                                    <div class="inside-item">
+                                        <span class="leftdom col9b">人员</span>
+                                        <span class="rightdom">{{mtr.UseStr}}</span>
+                                    </div>
+                                </div>
+
+                                <div class="css-bottombar" v-if="mtr.mtrStatu===1">
+                                    <div class="weui-btn css-bottombtn" v-on:click="cancelMt(mtr.ICalUid)">取消会议</div>
+                                </div>
+
+                                <div class="css-bottombar" v-if="mtr.mtrStatu===2">
+                                    <div class="weui-btn css-bottombtn css-delinebtn" v-on:click="responseMeeting(mtr.ICalUid,false)">谢绝</div>
+                                    <div class="weui-btn css-bottombtn css-acceptbtn" v-on:click="responseMeeting(mtr.ICalUid,true)">接受</div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </section>
-            <section class="css-noresult" v-if="searchNotice">没有查询到相关会议</section>
-            <loading v-bind:pageloading="pageloading"></loading>
-            <notice v-show="isShowerr" v-bind:title="errtitle" v-bind:errinfo="errinfo" v-on:closenotice="closeShowerr()"></notice>
-    
-            <!-- <section class="css-main-container first-container clearfix">
-                                <div class="css-timeline-date fl-l">
-                                    <div class="css-left-datetime">
-                                        <p>10-10</p>
-                                        <p>星期三</p>
-                                        <span class="right-arrowpop"></span>
-                                    </div>
-                                </div>
-                                <div class="css-timeline-line fl-l"></div>
-                                <div class="css-list-item fl-l">
-                                    <span class="left-arrowpop"></span>
-                                    <div class="css-list-item-main">
-                                        <span class="right-ribbon">已接受</span>
-                                        <div class="css-list-item-main-info">
-                                            <h3 class="css-list-item-main-title">部门例会是主题</h3>
-                                            <div class="inside-item css-list-item-main-info-time">
-                                                <span class="leftdom col9b">时间</span>
-                                                <span class="rightdom">2017/6/18 12:00-15:00</span>
-                                            </div>
-                                            <div class="inside-item">
-                                                <span class="leftdom col9b">地点</span>
-                                                <span class="rightdom">广新5楼休息区</span>
-                                            </div>
-                                            <div class="inside-item">
-                                                <span class="leftdom col9b">人员</span>
-                                                <span class="rightdom">狂三/李四/张五/时六啊/超数字...</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </section>
-                            <section class="css-main-container clearfix">
-                                <div class="css-timeline-date fl-l">
-                                    <div class="css-left-datetime">
-                                        <p>6-10</p>
-                                        <p>星期三</p>
-                                        <span class="right-arrowpop"></span>
-                                    </div>
-                                </div>
-                                <div class="css-timeline-line fl-l"></div>
-                                <div class="css-list-item fl-l">
-                                    <span class="left-arrowpop"></span>
-                                    <div class="css-list-item-main">
-                                        <span class="right-ribbon">已预定</span>
-                                        <div class="css-list-item-main-info">
-                                            <h3 class="css-list-item-main-title">部门例会是主题</h3>
-                                            <div class="inside-item css-list-item-main-info-time">
-                                                <span class="leftdom col9b">时间</span>
-                                                <span class="rightdom">2017/6/18 12:00-15:00</span>
-                                            </div>
-                                            <div class="inside-item">
-                                                <span class="leftdom col9b">地点</span>
-                                                <span class="rightdom">广新5楼休息区</span>
-                                            </div>
-                                            <div class="inside-item">
-                                                <span class="leftdom col9b">人员</span>
-                                                <span class="rightdom">狂三/李四/张五/时六啊/超数字...</span>
-                                            </div>
-                                            <div class="css-bottombar">
-                                                <div class="weui-btn css-bottombtn">取消会议</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </section>
-                            <section class="css-main-container last-container clearfix">
-                                <div class="css-timeline-date fl-l">
-                                    <div class="css-left-datetime">
-                                        <p>6-10</p>
-                                        <p>星期三</p>
-                                        <span class="right-arrowpop"></span>
-                                    </div>
-                                </div>
-                                <div class="css-timeline-line fl-l"></div>
-                                <div class="css-list-item fl-l">
-                                    <span class="left-arrowpop"></span>
-                                    <div class="css-list-item-main">
-                                        <span class="right-ribbon unaccept">未接受</span>
-                                        <div class="css-list-item-main-info">
-                                            <h3 class="css-list-item-main-title">部门例会是主题</h3>
-                                            <div class="inside-item css-list-item-main-info-time">
-                                                <span class="leftdom col9b">时间</span>
-                                                <span class="rightdom">2017/6/18 12:00-15:00</span>
-                                            </div>
-                                            <div class="inside-item">
-                                                <span class="leftdom col9b">地点</span>
-                                                <span class="rightdom">广新5楼休息区</span>
-                                            </div>
-                                            <div class="inside-item">
-                                                <span class="leftdom col9b">人员</span>
-                                                <span class="rightdom">狂三/李四/张五/时六啊/超数字...</span>
-                                            </div>
-                                            <div class="css-bottombar">
-                                                <div class="weui-btn css-bottombtn css-delinebtn">谢绝</div>
-                                                <div class="weui-btn css-bottombtn css-acceptbtn">接受</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </section> -->
-        </div>
+                </section>
+                <!-- <section class="css-noresult" v-if="searchNotice">没有查询到相关会议</section> -->
+            </div>
+        </scroller>
+        <loading v-bind:pageloading="pageloading"></loading>
+        <notice v-show="isShowerr" v-bind:isShowCancel="isShowCancel" v-bind:title="errtitle" v-bind:errinfo="errinfo" v-on:cancel="nocancel()" v-on:confirm="agreeconfirm()" v-on:closenotice="closeShowerr()"></notice>
     </div>
 </template>
 <script>
@@ -455,7 +378,9 @@ export default {
         notice
     },
     mounted() {
-
+        this.$moaapi.updateNavTitle('搜索会议');
+        this.$moaapi.hideNavMenu();
+        this.currentUserInfo = JSON.parse(localdata.getdata('currentUserData'));
     },
     data() {
         return {
@@ -463,17 +388,21 @@ export default {
             errtitle: "提示",
             errinfo: "请稍后再试",
             pageloading: false,
+            isShowCancel: false,//是否取消弹出
+            isUpdateDone: false,//是否已修改成功
 
             todayTime: moment().format('YYYY-MM-DD'),//当天时间
             searchSubjectKey: '',//搜索关键字
             currentDate: '',//时间参数
-            pageSize: 1000,//一页返回条数
+            pageSize: 10,//一页返回条数
             offset: 0,//下页返回的第一个索引
-            searchDirection: 0,//显示方向1 从上到下顺序 0从下到上倒序
+            searchDirection: 1,//显示方向1 从上到下顺序 0从下到上倒序
             getMineMtr: urldata.basePath + urldata.SearchMyMeeting,
             currentUserInfo: {},//当前用户信息
             mtrData: [],//会议室信息
             searchNotice: false,
+            curICalUid: '',//点击条的ICalUid
+            isSearched: false//是否已搜索
         }
     },
     methods: {
@@ -481,16 +410,23 @@ export default {
             //el.mtrStatu 0(已取消) 1(已预订) 2(未接受) 3(已接受) 4(已拒绝)
             this.$http.get(url, { params: obj }).then(res => {
                 if (res.body.status === 200) {
-                    if (type === 'reload') {
+                    if (type === 'search') {
                         this.mtrData = res.body.data.Meetings;
+                        this.isSearched = true;
                     } else {
                         this.mtrData = this.mtrData.concat(res.body.data.Meetings);
                     }
-
+                    // this.mtrData = res.body.data.Meetings;
                     this.mtrData.forEach(function (el) {
                         //时间
                         el.MtrTime = el.Start.split(' ')[0] + ' ' + el.Start.split(' ')[1].substr(0, el.Start.split(' ')[1].length - 3) + '-' + el.End.split(' ')[1].substr(0, el.End.split(' ')[1].length - 3);
                         el.MtrTimeMD = el.Start.split(' ')[0].substr(5);
+                        //无会议地点
+                        if (el.Resources.length === 0) {
+                            el.Location.split('; ').forEach((elLocal) => {
+                                el.Resources.push({ Name: elLocal });
+                            })
+                        }
                         //会议地点
                         el.Resources.forEach(function (elMtr) {
                             if (!el.mtrListStr) {
@@ -500,57 +436,85 @@ export default {
                             }
                         }, this);
                         //拼接全部人
-                        el.UseStr = el.Organizer.Name;
-                        this.currentUserInfo.UserEmail = 'eric.hu@vipshop.com'
+                        // el.UseStr = el.Organizer.Name;
+                        if (!el.UseStr) {
+                            el.RequiredAttendees.forEach(function (elreA) {
+                                if (el.UseStr) {
+                                    el.UseStr = el.UseStr + '/' + elreA.Name;
+                                } else {
+                                    el.UseStr = elreA.Name;
+                                }
+                            }, this);
+                            el.OptionalAttendees.forEach(function (elreA) {
+                                if (el.UseStr) {
+                                    el.UseStr = el.UseStr + '/' + elreA.Name;
+                                } else {
+                                    el.UseStr = elreA.Name;
+                                }
+                            }, this);
+                        }
+                        // this.currentUserInfo.UserEmail = 'eric.hu@vipshop.com'
                         // this.currentUserInfo.UserEmail = 'city-test@vipshop.com';
                         //判断当前登录是否组织者
-                        if (el.Organizer.Address === this.currentUserInfo.UserEmail) {
+                        // if (el.Organizer.Address === this.currentUserInfo.UserEmail) {
+                        //     el.mtrStatu = 1;
+                        //     el.mtrStatuText = '已预订';
+                        //     return false;
+                        // }
+                        // //判断当前登录是否必选人
+                        // el.RequiredAttendees.forEach(function (elreA) {
+                        //     el.UseStr = el.UseStr + '/' + elreA.Name;
+                        //     if (elreA.Address === this.currentUserInfo.UserEmail) {
+                        //         if (elreA.ResponseType === 0 || elreA.ResponseType === 2 || elreA.ResponseType === 5) {
+                        //             el.mtrStatu = 2;
+                        //             el.mtrStatuText = '未接受';
+                        //         }
+                        //         if (elreA.ResponseType === 3) {
+                        //             el.mtrStatu = 3;
+                        //             el.mtrStatuText = '已接受';
+                        //         }
+                        //         if (elreA.ResponseType === 4) {
+                        //             el.mtrStatu = 4;
+                        //             el.mtrStatuText = '已拒绝';
+                        //         }
+                        //     }
+                        // }, this);
+                        // //判断当前登录是否可选人
+                        // el.OptionalAttendees.forEach(function (elreA) {
+                        //     el.UseStr = el.UseStr + '/' + elreA.Name;
+                        //     if (elreA.Address === this.currentUserInfo.UserEmail) {
+                        //         if (elreA.ResponseType === 0 || elreA.ResponseType === 2 || elreA.ResponseType === 5) {
+                        //             el.mtrStatu = 2;
+                        //             el.mtrStatuText = '未接受';
+                        //         }
+                        //         if (elreA.ResponseType === 3) {
+                        //             el.mtrStatu = 3;
+                        //             el.mtrStatuText = '已接受';
+                        //         }
+                        //         if (elreA.ResponseType === 4) {
+                        //             el.mtrStatu = 4;
+                        //             el.mtrStatuText = '已拒绝';
+                        //         }
+                        //     }
+                        // }, this);
+                        if (el.MyResponseType === 1) {
                             el.mtrStatu = 1;
                             el.mtrStatuText = '已预订';
+                        } else if (el.MyResponseType === 3) {
+                            el.mtrStatu = 3;
+                            el.mtrStatuText = '已接受';
+                        } else if (el.MyResponseType === 4) {
+                            el.mtrStatu = 4;
+                            el.mtrStatuText = '已谢绝';
+                        } else {
+                            el.mtrStatu = 2;
+                            el.mtrStatuText = '未接受';
                         }
-                        //判断当前登录是否必选人
-                        el.RequiredAttendees.forEach(function (elreA) {
-                            el.UseStr = el.UseStr + '/' + elreA.Name;
-                            if (elreA.Address === this.currentUserInfo.UserEmail) {
-                                if (elreA.ResponseType === 0 || elreA.ResponseType === 2 || elreA.ResponseType === 5) {
-                                    el.mtrStatu = 2;
-                                    el.mtrStatuText = '未接受';
-                                }
-                                if (elreA.ResponseType === 3) {
-                                    el.mtrStatu = 3;
-                                    el.mtrStatuText = '已接受';
-                                }
-                                if (elreA.ResponseType === 4) {
-                                    el.mtrStatu = 4;
-                                    el.mtrStatuText = '已拒绝';
-                                }
-                            }
-                        }, this);
-                        //判断当前登录是否可选人
-                        el.OptionalAttendees.forEach(function (elopeA) {
-                            el.UseStr = el.UseStr + '/' + elopeA.Name;
-                            if (elopeA.Address === this.currentUserInfo.UserEmail) {
-                                if (elopeA.ResponseType === 0 || elopeA.ResponseType === 2 || elopeA.ResponseType === 5) {
-                                    el.mtrStatu = 2;
-                                    el.mtrStatuText = '未接受';
-                                }
-                                if (elreA.ResponseType === 3) {
-                                    el.mtrStatu = 3;
-                                    el.mtrStatuText = '已接受';
-                                }
-                                if (elreA.ResponseType === 4) {
-                                    el.mtrStatu = 4;
-                                    el.mtrStatuText = '已拒绝';
-                                }
-                            }
-                        }, this);
                         if (el.IsCancelled) {
                             el.mtrStatu = 0;
                             el.mtrStatuText = '已取消';
                         } else {
-
                             this.currentUserInfo.UserEmail;
-
                         }
                     }, this);
                     if (this.mtrData.length === 0) {
@@ -558,53 +522,114 @@ export default {
                     } else {
                         this.searchNotice = false;
                     }
-                    // this.$refs.scroller.finishInfinite(true)
+                    this.$refs.scroller.finishInfinite(true)
                     // this.mtrData.MtrTime = this.mtrData.Start.split(' ')[0]+' '+this.mtrData.Start.split(' ')[1]+'-'+this.mtrData.End.split(' ')[1]
+                    this.pageloading = false;
                 }
                 //获取当前月的数据
                 // this.initData(this.datetoday, res.body.data.UserEmail);
                 // this.currentUserData = res.body.data;
                 // localdata.setdata('currentUserData', JSON.stringify(res.body.data));
+            }, error => {
+                alert(error.body.errorMessage);
             })
         },
-        // infinite() {
-        //     setTimeout(() => {
-        //         if (this.mtrData.length !== 0) {
-        //             this.offset = this.offset + this.pageSize;
-        //         }
-        //         let obj = { searchSubjectKey: this.searchSubjectKey, currentDate: this.todayTime, pageSize: this.pageSize, offset: this.offset, searchDirection: this.searchDirection };
-        //         this.initData(this.getMineMtr, obj);
-        //     }, 500)
-        // },
+        infinite() {
+            if (this.isSearched) {
+                setTimeout(() => {
+                    if (this.mtrData.length !== 0) {
+                        this.offset = this.offset + this.pageSize;
+                    }
+                    let obj = { searchSubjectKey: this.searchSubjectKey.trim(), currentDate: this.todayTime, pageSize: this.pageSize, offset: this.offset, searchDirection: this.searchDirection };
+                    this.initData(this.getMineMtr, obj);
+                }, 500)
+            }else{
+                 this.$refs.scroller.finishInfinite(false);
+            }
+        },
         //发起搜索
         excSearch() {
-            let obj = { searchSubjectKey: this.searchSubjectKey, currentDate: this.todayTime, pageSize: this.pageSize, offset: this.offset, searchDirection: this.searchDirection };
-            this.initData(this.getMineMtr, obj);
+            this.offset = 0;
+            let obj = { searchSubjectKey: this.searchSubjectKey.trim(), currentDate: this.todayTime, pageSize: this.pageSize, offset: this.offset, searchDirection: this.searchDirection };
+            this.pageloading = true;
+            this.initData(this.getMineMtr, obj, 'search');
+
+        },
+        keyExcSearch(evt) {
+            if (evt.keyCode === 13) {
+                this.offset = 0;
+                let obj = { searchSubjectKey: this.searchSubjectKey.trim(), currentDate: this.todayTime, pageSize: this.pageSize, offset: this.offset, searchDirection: this.searchDirection };
+                this.pageloading = true;
+                this.initData(this.getMineMtr, obj, 'search');
+            }
+        },
+        //跳转到详情
+        toDetail(isInvite, index) {
+            localdata.setdata('meetDetailView', JSON.stringify(this.mtrData[index]));
+            if (isInvite) {
+                this.$router.push({ path: '/mtmeetdetailinvite' });
+            } else {
+                this.$router.push({ path: '/mtmeetdetailaccept' });
+            }
         },
         //取消会议
-        cancelMtr(ICalUid) {
-            this.$http.post(urldata.basePath + urldata.CancelMeeting, { "ICalUid": ICalUid }).then(res => {
+        cancelMt(ICalUid) {
+            this.curICalUid = ICalUid;
+            this.isShowCancel = true;
+            this.isShowerr = true;
+            this.errinfo = '是否取消此次会议？';
+        },
+        //不取消
+        nocancel() {
+            this.isShowerr = false;
+        },
+        //取消后处理
+        agreeconfirm() {
+            this.isShowerr = false;
+            this.pageloading = true;
+            let ICalUid = { "ICalUid": this.curICalUid };
+            this.$http.post(urldata.basePath + urldata.CancelMeeting, ICalUid).then(res => {
                 if (res.body.status === 200) {
-                    // this.pageloading = false;
-                    // this.isShowerr = true;
-                    // this.errinfo = '取消成功';
-                    //清除本地存储已存在的数据
-                    this.clearStorage();
-                    this.$router.push({ path: '/' });
+                    this.pageloading = false;
+                    window.location.reload();
+                    // this.$router.push({ path: '/' });
                 } else {
                     this.isShowerr = true;
                     this.errinfo = res.body.errorMessage;
                 }
-            }, response => {
-                // error
+            }, error => {
+                this.isShowCancel = false;
+                this.isShowerr = true;
+                this.errinfo = error.body.errorMessage;
             })
         },
+
+        //取消会议
+        // cancelMtr(ICalUid) {
+        //     this.$http.post(urldata.basePath + urldata.CancelMeeting, { "ICalUid": ICalUid }).then(res => {
+        //         if (res.body.status === 200) {
+        //             // this.pageloading = false;
+        //             // this.isShowerr = true;
+        //             // this.errinfo = '取消成功';
+        //             //清除本地存储已存在的数据
+        //             this.clearStorage();
+        //             this.$router.push({ path: '/' });
+        //         } else {
+        //             this.isShowerr = true;
+        //             this.errinfo = res.body.errorMessage;
+        //         }
+        //     }, error => {
+        //         alert(error.body.errorMessage);
+        //     })
+        // },
         //接受谢绝会议
         responseMeeting(ICalUid, accept) {
             let sendData = {
                 "ICalUid": ICalUid,
                 "IsAccept": accept
             }
+            this.pageloading = true;
+            this.isShowCancel = false;
             // this.$http.post('/mt/ResponseMeeting', this.sendData).then(res => {
             this.$http.post(urldata.basePath + urldata.ResponseMeeting, sendData).then(res => {
                 if (res.status === 200) {
@@ -617,11 +642,12 @@ export default {
                     } else {
                         this.errinfo = '谢绝成功';
                     }
-                    this.$router.push({ path: '/' });
                 } else {
                     this.isShowerr = true;
                     this.errinfo = res.body.errorMessage;
                 }
+            }, error => {
+                alert(error.body.errorMessage);
             })
         },
         //清空搜索
@@ -635,6 +661,9 @@ export default {
         //关闭错误提示
         closeShowerr() {
             this.isShowerr = false;
+            this.pageloading = false;
+            window.location.reload();
+            // this.$router.push({ path: '/' });
         }
     }
 }

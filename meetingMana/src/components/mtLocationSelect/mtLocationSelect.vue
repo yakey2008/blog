@@ -16,7 +16,7 @@
         right: 0;
         left: 0;
         bottom: 0;
-        background: rgba(0, 0, 0, 0.6);
+        background: rgba(0, 0, 0, 0.5);
     }
     .css-selector-list {
         width: 100%;
@@ -145,7 +145,7 @@ $col9b:#9b9b9b;
                 background-color: #fff;
                 .css-middlescore {
                     border-top: 1px solid #ddd;
-                    width: 30px;
+                    width: 10%;
                     margin-top: 28px;
                 }
                 .css-status {
@@ -197,7 +197,7 @@ $col9b:#9b9b9b;
                     background-color: #fff;
                     height: 80px;
                     .css-meetingroom-name {
-                        width: 30%;
+                        width: 25%;
                         height: 60px;
                         padding: 0 5%;
                         margin: 10px 0;
@@ -205,7 +205,7 @@ $col9b:#9b9b9b;
                         overflow: hidden;
                     }
                     .css-meetingroom-timeline {
-                        width: 60%;
+                        width: 61%;
                         height: 100%;
                         .css-meetingroom-timeline-box {
                             height: 100%;
@@ -224,10 +224,15 @@ $col9b:#9b9b9b;
                     }
                 }
             }
+            .css-noUserMtr {
+                padding-top: 50px;
+                text-align: center;
+            }
         }
     } //底部bar
     .css-bottombar {
         background-color: #fff;
+        z-index: 400;
         &.weui-tabbar:before {
             border: none;
             @include boxshadow(0, -7, 49, 0);
@@ -267,8 +272,8 @@ $col9b:#9b9b9b;
                     </div>
                 </div>
                 <!-- <div v-on:click="showtime()">
-                                                                        <date-picker :date="startTime" :option="option" :limit="limit"></date-picker>
-                                                                    </div> -->
+                                                                                                                                                                                    <date-picker :date="startTime" :option="option" :limit="limit"></date-picker>
+                                                                                                                                                                                </div> -->
                 <div class="weui-tab__panel css-main-container">
                     <section>
                         <div class="css-pageinfo-container">
@@ -281,16 +286,18 @@ $col9b:#9b9b9b;
                                     </p>
                                     <p class="css-explantime">(每格30分钟)</p>
                                 </div>
-                                <div class="css-datetime fl-l">
-                                    <span>09:00</span>
-                                </div>
-                                <div class="css-middlescore fl-l"></div>
-                                <div class="css-datetime fl-l">
-                                    <span>13:00</span>
-                                </div>
-                                <div class="css-middlescore fl-l"></div>
-                                <div class="css-datetime fl-l">
-                                    <span>18:00</span>
+                                <div>
+                                    <div class="css-datetime fl-l">
+                                        <span>09:00</span>
+                                    </div>
+                                    <div class="css-middlescore fl-l"></div>
+                                    <div class="css-datetime fl-l">
+                                        <span>13:00</span>
+                                    </div>
+                                    <div class="css-middlescore fl-l"></div>
+                                    <div class="css-datetime fl-l">
+                                        <span>18:00</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -308,25 +315,27 @@ $col9b:#9b9b9b;
                                 </div>
                                 <!-- </router-link> -->
                             </div>
+                            <div class="css-noUserMtr" v-if="ordered.length===0">{{noUserMtrText}}</div>
                         </div>
                     </section>
                 </div>
             </div>
-        </div>
-        <div class="weui-tabbar css-bottombar">
-            <div class="weui-cell css-maxwidth">
-                <div class="weui-cell__bd">
-                    <i class="css-inputinco" v-on:click="addCustomMtr()"></i>
-                    <input class="weui-input" type="text" placeholder="其它地点" v-model="customMtr">
+
+            <div class="weui-tabbar css-bottombar">
+                <div class="weui-cell css-maxwidth">
+                    <div class="weui-cell__bd">
+                        <i class="css-inputinco" v-on:click="addCustomMtr()"></i>
+                        <input class="weui-input" type="text" placeholder="其它地点" v-model="customMtr" v-on:keyup="keyAddCustomMtr($event)">
+                    </div>
                 </div>
             </div>
-        </div>
-    
-        <!-- 区域弹出 End -->
-        <div class="css-selector-container" v-if="isShowregion">
-            <div class="css-mask" v-on:click="showregion()"></div>
-            <div class="css-selector-list">
-                <div class="css-selector-item" v-for="item in tabVal" :key="item.Address" v-on:click="regionEvt(item)" :class="{'css-curregion':curRegionId===item.Address}" :curregionid="item.Address">{{item.Name}}</div>
+
+            <!-- 区域弹出 End -->
+            <div class="css-selector-container" v-if="isShowregion">
+                <div class="css-mask" v-on:click="showregion()"></div>
+                <div class="css-selector-list">
+                    <div class="css-selector-item" v-for="item in tabVal" :key="item.Address" v-on:click="regionEvt(item)" :class="{'css-curregion':curRegionId===item.Address}" :curregionid="item.Address">{{item.Name}}</div>
+                </div>
             </div>
         </div>
         <!-- 区域弹出 Start -->
@@ -339,7 +348,7 @@ $col9b:#9b9b9b;
 import loading from '../loading/loading.vue';
 import notice from '../popNotice/popNotice.vue';
 import moment from 'moment';
-import myDatepicker from 'vue-datepicker';
+import myDatepicker from '../vue-datepicker/vue-datepicker.vue';
 import localdata from '../../js/localdata.js';
 import urldata from '../../config/urldata.js';
 import searchicon from '../../images/searchicon.png';
@@ -351,63 +360,91 @@ export default {
         notice,
         'date-picker': myDatepicker
     },
-    mounted() {
+    created() {
+
+        this.$moaapi.resetNavTitle();
+        this.$moaapi.updateNavTitle('选择地点');
         this.$moaapi.hideNavMenu();
+        // setTimeout(() => {
+        // this.$moaapi.hideNavMenu();
+        // }, 100)
+        
         window.rightHeaderEvent = function () {
             window.location.href = '#/mtlocationsearch';
         }
         setTimeout(() => {
             this.$moaapi.showNavMenu(searchicon);
-        }, 100)
-
+        }, 200)
+    },
+    mounted() {
+        this.today = +new Date(moment().format('YYYY/MM/DD'));
         let getParams = this.$route.query;
-
+        
         // this.weekDate = moment(this.startTime.time).format('MM-DD dddd');
 
         if (getParams.searchregionid) {
             // let searchurl = decodeURIComponent('/mt/SearchRooms?begin=' + getParams.starttime + '&end=' + getParams.endtime + '&roomListAddress=' + getParams.searchregionid);
-            let searchurl = decodeURIComponent(urldata.basePath + urldata.SearchRooms + '?begin=' + getParams.starttime + '&end=' + getParams.endtime + '&roomListAddress=' + getParams.searchregionid);
+            this.curRegion = localdata.getdata('curRegion');
+            this.curRegionId = localdata.getdata('curRegionId');
+            let searchurl = decodeURIComponent(urldata.basePath + urldata.SearchRooms + '?begin=' + getParams.starttime + '&end=' + getParams.endtime + '&roomListAddress=' + getParams.searchregionid + '&roomName=' + getParams.roomName);
+            this.startTime.time = getParams.starttime.split(' ')[0];
             this.ajaxMtrStatu(searchurl);
-            return false;
+        } else if (localdata.getdata('isFromModified')) {
+            this.mtrSelected = JSON.parse(localdata.getdata('mtrSelected'));
+            this.startTime.time = this.mtrSelected.dateTime;
+            if (localdata.getdata('curRegion')) {
+                this.curRegion = localdata.getdata('curRegion');
+                this.curRegionId = localdata.getdata('curRegionId');
+                this.ajaxMtrStatu(urldata.basePath + urldata.GetRoomsStatus + '?date=' + this.startTime.time + '&roomListAddress=' + this.curRegionId);
+            }
+        } else {
+            if (localdata.getdata('curRegion')) {
+                this.curRegion = localdata.getdata('curRegion');
+                this.curRegionId = localdata.getdata('curRegionId');
+                this.ajaxMtrStatu(urldata.basePath + urldata.GetRoomsStatus + '?date=' + this.startTime.time + '&roomListAddress=' + this.curRegionId);
+            }
         }
+
         for (let i = 0; i < this.initTimenum; i++) {
             this.initTimeitem.push({ value: i })
         }
 
         // this.$http.get('/mt/GetAllPosition').then(response => {
-        this.$http.get(urldata.basePath + urldata.GetAllPosition).then(response => {
-            if (response.status === 200) {
-                this.tabVal = response.body.data;
+        this.$http.get(urldata.basePath + urldata.GetAllPosition).then(res => {
+            if (res.body.status === 200) {
+                this.tabVal = res.body.data;
+            } else {
+                this.isShowerr = true;
+                this.errinfo = res.body.errorMessage;
             }
+        }, error => {
+            this.isShowerr = true;
+            this.errinfo = error.body.errorMessage;
         })
         // this.curRegion = '广州-广新办公区会议室列表';
         // this.curRegionId = 'gd2wpds-room@vipshop.com';
         // this.ajaxMtrStatu('/mt/GetRoomsStatus?date=' + this.startTime.time + '&roomListAddress=' + this.curRegionId);
-        if (localdata.getdata('curRegion')) {
-            this.curRegion = localdata.getdata('curRegion');
-            this.curRegionId = localdata.getdata('curRegionId');
-            this.ajaxMtrStatu(urldata.basePath + urldata.GetRoomsStatus + '?date=' + this.startTime.time + '&roomListAddress=' + this.curRegionId);
-        }
+
     },
     updated() {
         this.dompadding = document.querySelector('.css-nav-container').offsetHeight;
     },
     data() {
         return {
-            searchicon,
 
             isShowerr: false,//错误提示关闭
             errtitle: "提示",
             errinfo: "请稍后再试",
             pageloading: false,
             // weekDate: '',
+            today: '',//当天
 
-            // startTime: {
-            //     time: moment().format('YYYY-MM-DD')
-            // },
             startTime: {
-                time: '2017-07-31'
+                time: moment().format('YYYY-MM-DD')
             },
+            // startTime: {
+            //     time: '2017-08-26'
+            // },
             endtime: {
                 time: ''
             },
@@ -419,18 +456,18 @@ export default {
                 overlayOpacity: 0.5, // 0.5 as default
                 dismissible: true // as true as default
             },
-            timeoption: {
-                type: 'min',
-                week: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
-                month: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-                format: 'YYYY-MM-DD HH:mm'
-            },
-            multiOption: {
-                type: 'multi-day',
-                week: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
-                month: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-                format: "YYYY-MM-DD HH:mm"
-            },
+            // timeoption: {
+            //     type: 'min',
+            //     week: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
+            //     month: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            //     format: 'YYYY-MM-DD HH:mm'
+            // },
+            // multiOption: {
+            //     type: 'multi-day',
+            //     week: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
+            //     month: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            //     format: "YYYY-MM-DD HH:mm"
+            // },
             limit: [],
 
             isCurRegion: false,
@@ -451,12 +488,13 @@ export default {
             customMtr: '',//自定义会议室
             tabVal: [],
             //会议室信息
-            ordered: []
+            ordered: [],
+            noUserMtrText: ''//无会议室提示
         }
     },
     methods: {
         formatToWeek(val) {
-            return moment(val).format('MM-DD dddd');
+            return moment(val).format('M月D日 ddd');
         },
         //根据会议室Id获取会议室方法
         ajaxMtrStatu(url) {
@@ -471,10 +509,13 @@ export default {
                         let arrNextpage = [];
                         //会议地点数据初始化
                         _this.ordered = res.body.data;
+                        if (_this.ordered.length === 0) {
+                            _this.noUserMtrText = '该区域暂无可用会议室';
+                        }
                         //遍历会议数据
                         _this.ordered.forEach((el) => {
                             //取到会议室状态处理
-                            arr = [];
+                            // arr = [];
                             let objNextpage = {};
                             objNextpage.Id = el.Address;
                             objNextpage.selectedTime = [];
@@ -483,18 +524,20 @@ export default {
                                 let obj = {};
                                 let timeobg = {}
                                 //已选中开始结束时间
-                                let st = elrmstatu.Start.split(' ')[1];
-                                let ed = elrmstatu.End.split(' ')[1];
+                                let date = elrmstatu.Start.split(' ')[0];
+                                let st = elrmstatu.Start.substr(0, elrmstatu.Start.length - 3);
+                                let ed = elrmstatu.End.substr(0, elrmstatu.End.length - 3);
                                 //存储选中会议室时间格式
+                                timeobg.date = date;
                                 timeobg.st = st;
                                 timeobg.ed = ed;
                                 objNextpage.selectedTime.push(timeobg);
-                                //已选中开始结束时间索引
-                                obj.stidx = _this.timelist.indexOf(st.substr(st, st.length - 3));
-                                obj.edidx = _this.timelist.indexOf(ed.substr(ed, ed.length - 3));
-                                if (obj.stidx !== -1) {
-                                    arr.push(obj);
-                                }
+                                // //已选中开始结束时间索引
+                                // obj.stidx = _this.timelist.indexOf(st.substr(st, st.length - 3));
+                                // obj.edidx = _this.timelist.indexOf(ed.substr(ed, ed.length - 3));
+                                // if (obj.stidx !== -1) {
+                                //     arr.push(obj);
+                                // }
                             }, _this)
 
                             //存储选中会议室时间
@@ -504,10 +547,56 @@ export default {
                             _this.timeorder = [
                                 false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
                             ];
+                            let spliceInde = [];
+                            objNextpage.selectedTime.forEach((el, index) => {
+                                let stStemp = (new Date(el.st).getTime());
+                                let edStemp = (new Date(el.ed).getTime());
+                                let firstList = (new Date(el.date + ' ' + _this.timelist[0]).getTime());
+                                let lastList = (new Date(el.date + ' ' + _this.timelist[_this.timelist.length - 1]).getTime());
+
+                                if (stStemp < firstList && edStemp < firstList) {
+                                    spliceInde.push(index);
+                                } else if (stStemp > lastList && edStemp > lastList) {
+                                    spliceInde.push(index);
+                                }
+
+                                // if ((new Date(el.st).getTime()) < (new Date(el.date + ' ' + _this.timelist[0]).getTime()) && (new Date(el.ed).getTime()) > (new Date(el.date + ' ' + _this.timelist[_this.timelist.length - 1]).getTime())) {
+                                //     objNextpage.selectedTime.splice(index, 1);
+                                // }
+                            }, _this)
+                            //去掉开始结束时间在范围外的项
+                            spliceInde.reverse().forEach((el, index) => {
+                                objNextpage.selectedTime.splice(el, 1)
+                            }, _this)
+
+                            _this.timelist.forEach((el, idx) => {
+                                objNextpage.selectedTime.forEach((elinside) => {
+                                    let stStemp = (new Date(elinside.st).getTime());
+                                    let edStemp = (new Date(elinside.ed).getTime());
+                                    let curListtime = (new Date(elinside.date + ' ' + el).getTime());
+                                    if (stStemp < curListtime && edStemp >= curListtime) {
+                                        _this.timeorder[idx] = true;
+                                    } else if (stStemp > curListtime) {
+                                        if (!_this.timeorder[idx]) {
+                                            _this.timeorder[idx] = false;
+                                        }
+                                    } else if (stStemp < curListtime && edStemp > curListtime) {
+                                        _this.timeorder[idx] = true;
+                                    } else if (edStemp > curListtime) {
+                                        if (edStemp - stStemp >= 1800000) {
+                                            _this.timeorder[idx] = false;
+                                        } else {
+                                            _this.timeorder[idx] = true;
+                                        }
+                                    }
+                                }, _this)
+                            }, _this)
+
                             //遍历选中时间索引匹配选中时间数组
                             arr.forEach((timecheck) => {
                                 let sttime = timecheck.stidx;
                                 let edtime = timecheck.edidx;
+
                                 _this.timelist.forEach((elinside, idx) => {
                                     if (_this.timeorder[idx]) {
                                         return false;
@@ -523,6 +612,9 @@ export default {
                     })(res, this)
                 }
                 this.pageloading = false;
+            }, error => {
+                this.isShowerr = true;
+                this.errinfo = error.body.errorMessage;
             })
         },
         swichTimeDom() {
@@ -569,77 +661,72 @@ export default {
         },
         //选择会议室
         totimeselect(meetingroom, index) {
-            // this.$router.push({ name: 'mttimeselect',params:{meetingroom:JSON.stringify(meetingroom),dateTime:this.startTime.time,listindex:index} });
-            let saveLocaldata = {}
-            let mtrinfo = {};
-            if (localdata.getdata('mtrSelected') && JSON.parse(localdata.getdata('mtrSelected')).mtrList.length === 1 && !JSON.parse(localdata.getdata('mtrSelected')).mtrList[0].isAdded) {
-                localdata.removedata('mtrSelected');
-            }
-            if (localdata.getdata('mtrSelected')) {
-                let pass = true;
-                let isAddedPass = true;
-                saveLocaldata = JSON.parse(localdata.getdata('mtrSelected'));
-                // saveLocaldata.mtrList.every((el) => {
-                //     if (meetingroom.Address === el.mtrId && el.isAdded) {
-                //         alert('不可重复添加会议室');
-                //         pass = false;
-                //         return false;
-                //     // } else if (meetingroom.Address === el.mtrId) {
-                //     //     isAddedPass = false;
-                //     //     return false;
-                //     } else {
-                //         pass = true;
-                //     }
-                // })
-                //是否来自修改
-                if (localdata.getdata('isFromModified')) {
-                    for (let i = 0, len = saveLocaldata.mtrList.length; i < len; i++) {
-                        if (saveLocaldata.mtrList[i].mtrId === meetingroom.Address) {
+            let selectedTime = +new Date(this.startTime.time);
+            if (selectedTime < this.today) {
+                this.isShowerr = true;
+                this.errinfo = '不可以选择今天之前的日期';
+            } else {
+                // this.$router.push({ name: 'mttimeselect',params:{meetingroom:JSON.stringify(meetingroom),dateTime:this.startTime.time,listindex:index} });
+                let saveLocaldata = {}
+                let mtrinfo = {};
+                if (localdata.getdata('mtrSelected') && JSON.parse(localdata.getdata('mtrSelected')).mtrList.length === 1 && !JSON.parse(localdata.getdata('mtrSelected')).mtrList[0].isAdded) {
+                    localdata.removedata('mtrSelected');
+                }
+                if (localdata.getdata('mtrSelected')) {
+                    let pass = true;
+                    let isAddedPass = true;
+                    saveLocaldata = JSON.parse(localdata.getdata('mtrSelected'));
+                    saveLocaldata.isDIYResource = false;
+                    //是否来自修改
+                    if (localdata.getdata('isFromModified')) {
+                        for (let i = 0, len = saveLocaldata.mtrList.length; i < len; i++) {
+                            if (saveLocaldata.mtrList[i].mtrId === meetingroom.Address) {
+                                this.isShowerr = true;
+                                this.errinfo = '不可重复添加会议室';
+                                return false;
+                            }
+                        }
+                    } else {
+                        if (saveLocaldata.mtrList[index] && meetingroom.Address === saveLocaldata.mtrList[index].mtrId && saveLocaldata.mtrList[index].isAdded) {
                             this.isShowerr = true;
                             this.errinfo = '不可重复添加会议室';
                             return false;
                         }
                     }
+                    // if (isAddedPass) {
+                    mtrinfo.mtrId = meetingroom.Address;
+                    mtrinfo.mtrName = meetingroom.Location;
+                    mtrinfo.isAdded = true;
+                    saveLocaldata.mtrList.push(mtrinfo)
+                    // }
+
                 } else {
-                    if (saveLocaldata.mtrList[index] && meetingroom.Address === saveLocaldata.mtrList[index].mtrId && saveLocaldata.mtrList[index].isAdded) {
-                        this.isShowerr = true;
-                        this.errinfo = '不可重复添加会议室';
-                        return false;
+                    saveLocaldata.listindex = index;
+                    saveLocaldata.dateTime = this.startTime.time;
+                    saveLocaldata.regionId = this.curRegionId;
+                    saveLocaldata.mtrList = [];
+                    mtrinfo.mtrId = meetingroom.Address;
+                    mtrinfo.mtrName = meetingroom.Location;
+                    mtrinfo.isAdded = false;
+                    saveLocaldata.mtrList.push(mtrinfo)
+                }
+                //来自详情修改
+                if (localdata.getdata('isFromModified')) {
+                    localdata.setdata('mtrSelected', JSON.stringify(saveLocaldata));
+                    this.$router.push({ path: '/mtmeetdetailinvite' });
+                } else {
+                    if (localdata.getdata('mtrSelected')) {
+                        // this.mtrSelected.mtrList[this.mtrSelected.mtrList.length - 1].isAdded = true;
+                        localdata.setdata('mtrSelected', JSON.stringify(saveLocaldata));
+                        this.$router.push({ path: '/mtlaunchmeet' });
+                    } else {
+                        localdata.setdata('mtrSelected', JSON.stringify(saveLocaldata));
+                        this.$router.push({ path: '/mttimeselect' });
                     }
                 }
-                // if (isAddedPass) {
-                mtrinfo.mtrId = meetingroom.Address;
-                mtrinfo.mtrName = meetingroom.Location;
-                mtrinfo.isAdded = true;
-                saveLocaldata.mtrList.push(mtrinfo)
-                // }
 
-            } else {
-                saveLocaldata.listindex = index;
-                saveLocaldata.dateTime = this.startTime.time;
-                saveLocaldata.regionId = this.curRegionId;
-                saveLocaldata.mtrList = [];
-                mtrinfo.mtrId = meetingroom.Address;
-                mtrinfo.mtrName = meetingroom.Location;
-                mtrinfo.isAdded = false;
-                saveLocaldata.mtrList.push(mtrinfo)
+                localdata.setdata('curRegionId', this.curRegionId);
             }
-            //来自详情修改
-            if (localdata.getdata('isFromModified')) {
-                localdata.setdata('mtrSelected', JSON.stringify(saveLocaldata));
-                this.$router.push({ path: '/mtmeetdetailinvite' });
-            } else {
-                if (localdata.getdata('mtrSelected')) {
-                    // this.mtrSelected.mtrList[this.mtrSelected.mtrList.length - 1].isAdded = true;
-                    localdata.setdata('mtrSelected', JSON.stringify(saveLocaldata));
-                    this.$router.push({ path: '/mtlaunchmeet' });
-                } else {
-                    localdata.setdata('mtrSelected', JSON.stringify(saveLocaldata));
-                    this.$router.push({ path: '/mttimeselect' });
-                }
-            }
-
-            localdata.setdata('curRegionId', this.curRegionId);
         },
         //添加其它地点
         addCustomMtr() {
@@ -655,6 +742,22 @@ export default {
                     this.$router.push({ path: '/mttimeselect' });
                 }
 
+            }
+        },
+        keyAddCustomMtr(evt) {
+            if (this.customMtr !== '') {
+                if (evt.keyCode === 13) {
+                    if (localdata.getdata('mtrSelected') && !JSON.parse(localdata.getdata('mtrSelected')).DIYResource && JSON.parse(localdata.getdata('mtrSelected')).isAdded) {
+                        this.isShowerr = true;
+                        this.errinfo = '已选择会议室，不可再添加其它地点';
+                        // localdata.setdata('mtrSelected', JSON.stringify(saveLocaldata));
+                        // this.$router.push({ path: '/mtlaunchmeet' });
+                    } else {
+                        localdata.removedata('mtrSelected');
+                        localdata.setdata('mtrSelected', JSON.stringify({ "listindex": 0, "mtrList": [{ "isAdded": false, "mtrId": "", "mtrName": this.customMtr }], "dateTime": this.startTime.time, "isDIYResource": true }));
+                        this.$router.push({ path: '/mttimeselect' });
+                    }
+                }
             }
         },
         //关闭错误提示

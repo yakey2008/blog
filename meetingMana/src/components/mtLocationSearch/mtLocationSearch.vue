@@ -3,6 +3,7 @@
 .css-curregion {
     color: #308ee3;
 }
+
 .css-selector-container {
     .css-mask {
         position: fixed;
@@ -105,6 +106,18 @@
     -o-box-shadow: $hs $vs $blur $spread $color;
 }
 
+@mixin flexbox() {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+}
+
+@mixin flexboxwidth($w) {
+    -webkit-box-flex: $w;
+    -webkit-flex: $w;
+    flex: $w;
+}
+
 $col9b:#9b9b9b;
 
 @include placeholder(#ccc);
@@ -127,6 +140,15 @@ $col9b:#9b9b9b;
         white-space: normal;
     }
     .css-nav-container {
+        .weui-navbar__item {
+            width: 50%; // padding: 0;
+            // margin: 13px 0;
+            &:active {
+                background-color: #fff; // .cov-datepicker {
+                //     background-color: #EDEDED!important;
+                // }
+            }
+        }
         .select-btn {
             .css-arrow {
                 position: absolute;
@@ -205,6 +227,17 @@ $col9b:#9b9b9b;
                 }
             }
         }
+    } //timepicker
+    .css-timepicker {
+        @include flexbox();
+        .css-timepicker-box {
+            @include flexboxwidth(1);
+
+            ul {
+                height: 100px;
+                overflow-y: scroll;
+            }
+        }
     }
 }
 </style>
@@ -230,53 +263,34 @@ $col9b:#9b9b9b;
                             <section class="css-pagesetting css-bottom-line">
                                 <div class="weui-cell css-setting">
                                     <div class="weui-cell__hd">开始时间</div>
-                                    <div class="weui-cell__bd">
-                                        <input v-model="val_start" class="weui-input css-settime" pattern="[0-9]*" placeholder="请输入时间（时：分）">
+                                    <div class="weui-cell__bd" v-on:click="takeStartTime(1)">
+                                        <input v-model="hourVal" class="weui-input css-settime" pattern="[0-9]*" placeholder="请选择开始时间" readonly="readonly">
                                     </div>
-                                    <div :class="{'arrow-right':val_start.length>0}"></div>
+                                    <div :class="{'arrow-right':hourVal.length>0}"></div>
                                 </div>
                             </section>
                             <section class="css-pagesetting">
                                 <div class="weui-cell css-setting">
                                     <div class="weui-cell__hd">结束时间</div>
-                                    <div class="weui-cell__bd">
-                                        <input v-model="val_end" class="weui-input css-settime" pattern="[0-9]*" placeholder="请输入时间（时：分）">
+                                    <div class="weui-cell__bd" v-on:click="takeStartTime(2)">
+                                        <input v-model="minuteVal" class="weui-input css-settime" pattern="[0-9]*" placeholder="请选择结束时间" readonly="readonly">
                                     </div>
-                                    <div :class="{'arrow-right':val_end.length>0}"></div>
+                                    <div :class="{'arrow-right':minuteVal.length>0}"></div>
                                 </div>
                             </section>
-                            <!-- <section class="css-pagesetting">
-                                                                                <div class="weui-cell weui-cell_switch css-setting weui-cell_access">
-                                                                                    <div class="weui-cell__hd ">开始时间</div>
-                                                                                    <div class="weui-cell__bd">
-                                                                                        <input v-model="val_start" class="weui-input css-settime" pattern="[0-9]*" placeholder="请输入时间（时：分）">
-                                                                                    </div>
-                                                                                    <div :class="val_start.length>0?'weui-cell__ft':''"></div>
-                                                                                </div>
-                                                                            </section>
-                                                                            <section class="css-pagesetting">
-                                                                                <div class="weui-cell weui-cell_switch  css-setting weui-cell_access">
-                                                                                    <div class="weui-cell__hd">结束时间</div>
-                                                                                    <div class="weui-cell__bd">
-                                                                                        <input v-model="val_end" class="weui-input css-settime" pattern="[0-9]*" placeholder="请输入时间（时：分）">
-                                                                                    </div>
-                                                    
-                                                                                    <div :class="val_end.length>0?'weui-cell__ft':''"></div>
-                                                                                </div>
-                                                                            </section> -->
                             <div class="hr-div"></div>
                             <section class="css-pagesetting">
                                 <div class="weui-cell css-setting">
                                     <div class="weui-cell__hd">会议室名称</div>
                                     <div class="weui-cell__bd">
-                                        <input class="weui-input css-setname" pattern="[0-9]*" placeholder="请输入会议室名称">
+                                        <input class="weui-input css-setname" placeholder="请输入会议室名称" v-model="MtrName">
                                     </div>
                                 </div>
                             </section>
                             <div class="hr-div"></div>
-    
+
                         </div>
-    
+
                     </section>
                     <section class="css-tip">
                         <p class="weui-footer__text">搜索帮助：</p>
@@ -285,25 +299,45 @@ $col9b:#9b9b9b;
                     </section>
                 </div>
             </div>
-        </div>
-    
-        <div class="weui-tabbar css-bottombar" v-on:click="searchEvt()">
-            <div class="weui-cell css-maxwidth">
-                <div class="weui-cell__bd">
-                    <p class="weui-footer__btn">开始搜索</p>
+
+            <div class="weui-tabbar css-bottombar" v-on:click="searchEvt()">
+                <div class="weui-cell css-maxwidth">
+                    <div class="weui-cell__bd">
+                        <p class="weui-footer__btn">开始搜索</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 区域弹出 End -->
+            <div class="css-selector-container" v-if="isShowregion">
+                <div class="css-mask" v-on:click="showregion()"></div>
+                <div class="css-selector-list">
+                    <div class="css-selector-item" v-for="item in tabVal" :key="item.Address" v-on:click="regionEvt(item)" :class="{'css-curregion':curRegionId===item.Address}" :curregionid="item.Address">{{item.Name}}</div>
                 </div>
             </div>
         </div>
-    
-        <!-- 区域弹出 End -->
-        <div class="css-selector-container" v-if="isShowregion">
-            <div class="css-mask" v-on:click="showregion()"></div>
-            <div class="css-selector-list">
-                <div class="css-selector-item" v-for="item in tabVal" :key="item.Address" v-on:click="regionEvt(item)" :class="{'css-curregion':curRegionId===item.Address}" :curregionid="item.Address">{{item.Name}}</div>
+        <!-- 区域弹出 Start -->
+        <!-- time picker pop -->
+        <div v-if="isShowTimepicker">
+            <div class="weui-mask" v-on:click="closeTimpicker()"></div>
+            <div class="weui-dialog css-timepicker">
+                <div class="css-timepicker-box">
+                    <div>小时</div>
+                    <ul>
+                        <li v-for="hours in timepickerArr.hours" :key="hours" v-on:click="takehour(hours)">{{hours}}</li>
+                    </ul>
+                </div>
+                <div class="css-timepicker-box">
+                    <div>分钟</div>
+                    <ul>
+                        <li v-for="minutes in timepickerArr.minutes" :key="minutes" v-on:click="takeminute(minutes)">{{minutes}}</li>
+                    </ul>
+                </div>
             </div>
         </div>
-        <!-- 区域弹出 Start -->
-        <vue-timepicker></vue-timepicker>
+        <!-- time picker pop -->
+        <loading v-bind:pageloading="pageloading"></loading>
+        <notice v-show="isShowerr" v-bind:title="errtitle" v-bind:errinfo="errinfo" v-on:closenotice="closeShowerr()"></notice>
     </div>
 </template>
 <script>
@@ -311,7 +345,6 @@ import loading from '../loading/loading.vue';
 import notice from '../popNotice/popNotice.vue';
 import myDatepicker from '../vue-datepicker/vue-datepicker.vue';
 import moment from 'moment';
-import VueTimepicker from 'vue2-timepicker';
 import localdata from '../../js/localdata.js';
 import urldata from '../../config/urldata.js';
 
@@ -320,12 +353,16 @@ export default {
     components: {
         loading,
         notice,
-        VueTimepicker,
         'date-picker': myDatepicker
     },
     mounted() {
-        this.$moaapi.hideNavMenu();
+        setTimeout(() => {
+            this.$moaapi.resetNavTitle();
+            this.$moaapi.updateNavTitle('搜索会议室');
+            this.$moaapi.hideNavMenu();
+        }, 100)
 
+        this.today = +new Date(moment().format('YYYY/MM/DD'));
         // this.weekDate = moment(this.startTime.time).format('MM-DD dddd');
         // this.$http.get('/mt/GetAllPosition').then(response => {
         this.$http.get(urldata.basePath + urldata.GetAllPosition).then(response => {
@@ -337,7 +374,7 @@ export default {
             this.curRegion = localdata.getdata('curRegion');
             this.curRegionId = localdata.getdata('curRegionId');
         }
-    
+
     },
     data() {
         return {
@@ -345,6 +382,7 @@ export default {
             errtitle: "提示",
             errinfo: "请稍后再试",
             pageloading: false,
+            today: '',//当天
             // weekDate: '',
 
             startTime: {
@@ -361,18 +399,18 @@ export default {
                 overlayOpacity: 0.5, // 0.5 as default
                 dismissible: true // as true as default
             },
-            timeoption: {
-                type: 'min',
-                week: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
-                month: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-                format: 'YYYY-MM-DD HH:mm'
-            },
-            multiOption: {
-                type: 'multi-day',
-                week: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
-                month: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-                format: "YYYY-MM-DD HH:mm"
-            },
+            // timeoption: {
+            //     type: 'min',
+            //     week: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
+            //     month: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            //     format: 'YYYY-MM-DD HH:mm'
+            // },
+            // multiOption: {
+            //     type: 'multi-day',
+            //     week: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
+            //     month: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            //     format: "YYYY-MM-DD HH:mm"
+            // },
             limit: [],
 
 
@@ -380,15 +418,26 @@ export default {
             isShowtime: false,
             curRegion: '请选择',
             curRegionId: '',
-            val_start: '09:00:00',
-            val_end: '15:00:00',
+            isShowTimepicker: false,//是否显示时间选择
+            timePickerType: undefined,//选择时间开始 还是结束
+            timepickerArr: {
+                hours: ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"],
+                minutes: ["00", "15", "30", "45"]
+            },//时间选择数据
+            startHour: '00',
+            startMinute: '00',
+            endHour: '00',
+            endMinute: '00',
+            hourVal: '00:00',
+            minuteVal: '00:00',
+            MtrName: '',//会议室名称
             tabVal: [],
             isPicker: true,//是否使用时间组件
         }
     },
     methods: {
         formatToWeek(val) {
-            return moment(val).format('MM-DD dddd');
+            return moment(val).format('M月D日 ddd');
         },
         swichTimeDom() {
             this.isPicker = true;
@@ -424,12 +473,67 @@ export default {
             this.curRegionId = item.Address;
             this.showregion();
         },
+        //选择开始时间
+        takeStartTime(type) {
+            this.isShowTimepicker = true;
+            //type 1 开始 2结束
+            this.timePickerType = type;
+
+        },
+        takehour(val) {
+            if (this.timePickerType === 1) {
+                this.startHour = val;
+                this.hourVal = this.startHour + ':' + this.startMinute;
+            } else {
+                this.endHour = val;
+                this.minuteVal = this.endHour + ':' + this.endMinute;
+            }
+        },
+        takeminute(val) {
+            if (this.timePickerType === 1) {
+                this.startMinute = val;
+                this.hourVal = this.startHour + ':' + this.startMinute;
+            } else {
+                this.endMinute = val;
+                this.minuteVal = this.endHour + ':' + this.endMinute;
+            }
+            this.isShowTimepicker = false;
+        },
+        //发起搜索
         searchEvt() {
-            this.val_start = this.startTime.time + ' ' + this.val_start;
-            this.val_end = this.startTime.time + ' ' + this.val_end;
-            // this.$router.push({ path: `/mtlocationselect/${this.curRegionId}/${this.val_start}/${this.val_end}` });
-            this.$router.push({ path: '/mtlocationselect', query: { searchregionid: this.curRegionId, starttime: this.val_start, endtime: this.val_end } });
-            this.showregion();
+            let now = +new Date();
+            let selectedTime = +new Date(this.startTime.time);
+            if (selectedTime < this.today) {
+                this.isShowerr = true;
+                this.errinfo = '不可以选择今天之前的日期';
+            } else {
+                let stTime = this.startTime.time + ' ' + this.hourVal;
+                let edTime = this.startTime.time + ' ' + this.minuteVal;
+
+                if (+new Date(stTime) > +new Date(edTime)) {
+                    this.isShowerr = true;
+                    this.errinfo = '开始时间不可晚于结束时间';
+                } else if (+new Date(stTime) === +new Date(edTime)) {
+                    this.isShowerr = true;
+                    this.errinfo = '不可选择相同时间';
+                } else if ((+moment(edTime)) - (+moment(stTime)) <= 60 * 15 * 1000) {
+                    this.isShowerr = true;
+                    this.errinfo = '查询时间段最小为30分钟';
+                }else if (+new Date(stTime) < now) {
+                    this.isShowerr = true;
+                    this.errinfo = '不可选择当前时间之前的时间';
+                } else if (+new Date(edTime) < now) {
+                    this.isShowerr = true;
+                    this.errinfo = '不可选择当前时间之前的时间';
+                } else {
+                    // this.$router.push({ path: `/mtlocationselect/${this.curRegionId}/${this.val_start}/${this.val_end}` });
+                    this.$router.push({ path: '/mtlocationselect', query: { searchregionid: this.curRegionId, starttime: stTime, endtime: edTime, roomName: this.MtrName } });
+                    this.showregion();
+                }
+            }
+        },
+        closeTimpicker() {
+            this.isShowTimepicker = false;
         },
         //关闭错误提示
         closeShowerr() {

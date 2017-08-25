@@ -366,6 +366,9 @@ export default {
     },
     mounted() {
         this.$moaapi.resetNavTitle();
+        window.rightHeaderEvent = function(){
+			window.location.href = '#/Feedback';
+		}
         setTimeout(() => {
             this.$moaapi.showNavMenu(feedbackImg);
         }, 100)

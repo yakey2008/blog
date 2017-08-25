@@ -14,15 +14,15 @@
         <div class="arrow-right icon">&nbsp</div>
       </div>
       <!-- <div class="css-searchbtn">
-        <router-link :to="'/mtlocationsearch'" tag="div">
-          <img v-bind:src="searchbtn">
-        </router-link>
-  
-      </div>
-      <router-link :to="'/mtlocationselect'" tag="section">
-        <div class="css-viewlocation">
-        </div>
-      </router-link> -->
+                <router-link :to="'/mtlocationsearch'" tag="div">
+                  <img v-bind:src="searchbtn">
+                </router-link>
+          
+              </div>
+              <router-link :to="'/mtlocationselect'" tag="section">
+                <div class="css-viewlocation">
+                </div>
+              </router-link> -->
     </div>
     <div class="cal-body">
       <div class="weeks">
@@ -30,14 +30,14 @@
       </div>
       <div class="dates">
         <div v-for="date in dayList" class="item" :class="{
-                    today: date.status ? (today == date.date) : false,
-                    event: date.status ? (date.title != undefined) : false,
-                    [calendar.options.className] : (date.date == selectedDay ||date.date ===curday)
-                  }" :key="date" v-on:click="removecls()">
+                            today: date.status ? (today == date.date) : false,
+                            event: date.status ? (date.title != undefined) : false,
+                            [calendar.options.className] : (date.date == selectedDay ||date.date ===curday)
+                          }" :key="date" v-on:click="removecls()">
           <p class="date-num" @click="handleChangeCurday(date)" :style="{color: date.title != undefined ? ((date.date == selectedDay) ? ((date.status===0) ?'#ccc':colfff):((date.status===0) ?'#ccc':'inherit')) :((date.status===0) ?'#ccc':'inherit')}">
             {{date.date.split('/')[2]}}</p>
           <span v-if="date.status ? (date.title != undefined) : false" class="has-event" :style="{backgroundColor: (date.date == selectedDay) ? colfff : eventsubcolor}"></span>
-          <span v-if="date.status ? (date.title != undefined) : false" class="is-event" :style="{borderColor: customColor, backgroundColor: (date.date == selectedDay) ? customColor : 'inherit'}"></span>
+          <span class="is-event" :style="{borderColor: customColor, backgroundColor: (date.date == selectedDay||date.date ===curday) ? customColor : 'inherit'}"></span>
         </div>
       </div>
     </div>
@@ -56,7 +56,7 @@ export default {
   name: 'cal-panel',
   data() {
     return {
-      curday:`${dateObj.getFullYear()}/${dateObj.getMonth() + 1}/${dateObj.getDate()}`,
+      curday: `${dateObj.getFullYear()}/${dateObj.getMonth() + 1}/${dateObj.getDate()}`,
       colfff: '#fff',
       eventsubcolor: '#4c8afe',
       todaybg,
@@ -118,30 +118,52 @@ export default {
   },
   methods: {
     nextMonth() {
-      this.$EventCalendar.nextMonth()
-      this.$emit('month-changed', this.curYearMonth)
+      this.$EventCalendar.nextMonth();
+      //判断是否存在当天日期
+      this.$emit('month-changed', this.curYearMonth);
+      if ((+this.today.split('/')[1]) === +(+this.curYearMonth.split('年')[1].substr(0, this.curYearMonth.split('年')[1].length - 1))) {
+        this.curday = this.today;
+      } else {
+        this.curday = this.curYearMonth.split('年')[0] + '/' + (+this.curYearMonth.split('年')[1].substr(0, this.curYearMonth.split('年')[1].length - 1)) + '/1';
+      }
     },
     preMonth() {
-      this.$EventCalendar.preMonth()
-      this.$emit('month-changed', this.curYearMonth)
+      this.$EventCalendar.preMonth();
+      this.$emit('month-changed', this.curYearMonth);
+      if ((+this.today.split('/')[1]) === +(+this.curYearMonth.split('年')[1].substr(0, this.curYearMonth.split('年')[1].length - 1))) {
+        this.curday = this.today;
+      } else {
+        this.curday = this.curYearMonth.split('年')[0] + '/' + (+this.curYearMonth.split('年')[1].substr(0, this.curYearMonth.split('年')[1].length - 1)) + '/1';
+      }
+      // console.log(this.curday)
     },
     handleChangeCurday(date) {
-      let str = date.date.substr(date.date.length-2,2);
-      if(date.status===0&&str.substr(0,1)!=='/'){
-        this.preMonth()
+      let str = date.date.substr(date.date.length - 2, 2);
+      if (date.status === 0 && str.substr(0, 1) !== '/') {
+        this.$EventCalendar.preMonth();
       }
-      if(date.status===0&&str.substr(0,1)==='/'){
-        this.nextMonth()
+      if (date.status === 0 && str.substr(0, 1) === '/') {
+        this.$EventCalendar.nextMonth();
       }
       this.$emit('cur-day-changed', date.date);
+      this.curday = date.date;
+      // this.$EventCalendar.toDate(this.curday);
+      // console.log(this.curday);
     },
     backtoday() {
-       this.$EventCalendar.toDate(this.today);
-       this.$emit('back-today');
+      // this.$EventCalendar.toDate(this.today);
+      this.curday = this.today;
+      this.$emit('back-today');
     },
-    removecls(){
+    removecls() {
       this.curday = false;
     }
   }
 }
 </script>
+
+<style  scoped>
+.today .is-event {
+  border: 1px solid #88b1ff;
+}
+</style>

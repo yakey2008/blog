@@ -44,12 +44,12 @@
                         <textarea class="weui-textarea" placeholder="请输入参会人邮箱" rows="3" v-model="inputemail"></textarea>
                     </div>
                 </div>
-                <div class="weui-cell weui-cell_switch">
-                    <div class="weui-cell__bd">是否添加必选</div>
-                    <div class="weui-cell__ft">
-                        <input class="weui-switch" type="checkbox" checked="checked" v-model="isMust">
-                    </div>
-                </div>
+                <!-- <div class="weui-cell weui-cell_switch">
+                        <div class="weui-cell__bd">是否添加必选</div>
+                        <div class="weui-cell__ft">
+                            <input class="weui-switch" type="checkbox" checked="checked" v-model="isMust">
+                        </div>
+                    </div> -->
             </div>
     
         </div>
@@ -78,7 +78,7 @@ export default {
             errinfo: "请稍后再试",
             pageloading: false,
 
-            isMust: true,
+            isEmail: true,
             inputemail: '',
             userFromEmail: [],
             userMustList: [],
@@ -86,6 +86,7 @@ export default {
         }
     },
     mounted() {
+        this.$moaapi.updateNavTitle('添加参会人');
         if (localdata.getdata('userFromEmail') !== "undefined") {
             this.userFromEmail = JSON.parse(localdata.getdata('userFromEmail'));
         }
@@ -98,35 +99,46 @@ export default {
     },
     methods: {
         setEmail() {
-            // if (this.checkEmail(this.inputemail)) {
+            this.inputemail = this.inputemail.trim();
+            if (this.checkEmail(this.inputemail)) {
+                let isNotAdd = true;
                 let obj = {};
+                //适应原生 与后端返回字段
                 obj.name = this.inputemail;
+                obj.Name = this.inputemail;
                 obj.id = this.inputemail;
-                obj.isMust = this.isMust;
-                this.userFromEmail.push(obj);
-                if (this.isMust) {
+                obj.isEmail = true;
+                this.userMustList.forEach(function (el) {
+                    if (el.name === obj.name) {
+                        this.isShowerr = true;
+                        this.errinfo = '不可添加已添加邮箱';
+                        isNotAdd = false;
+                        return false;
+                    }
+                }, this);
+                if (isNotAdd) {
+                    this.userFromEmail.push(obj);
                     this.userMustList.push(obj);
-                } else {
-                    this.userOptionalList.push(obj);
+                    localdata.setdata('userMustList', JSON.stringify(this.userMustList));
+                    // localdata.setdata('userOptionalList', JSON.stringify(this.userOptionalList));
+                    localdata.setdata('userFromEmail', JSON.stringify(this.userFromEmail));
+                    if (localdata.getdata('isFromModified')) {
+                        this.$router.push({ path: '/mtmeetdetailinvite' });
+                    } else {
+                        this.$router.push({ path: '/mtlaunchmeet' });
+                    }
                 }
-                localdata.setdata('userMustList', JSON.stringify(this.userMustList));
-                localdata.setdata('userOptionalList', JSON.stringify(this.userOptionalList));
-                localdata.setdata('userFromEmail', JSON.stringify(this.userFromEmail));
-                if (localdata.getdata('isFromModified')) {
-                    this.$router.push({ path: '/mtmeetdetailinvite' });
-                } else {
-                    this.$router.push({ path: '/mtlaunchmeet' });
-                }
-            // } else {
-            //     this.isShowerr = true;
-            //     this.errinfo = '请输入正确的邮箱';
-            // }
+
+            } else {
+                this.isShowerr = true;
+                this.errinfo = '请输入正确的邮箱';
+            }
         },
         checkEmail(email_address) {
             var regex = /^([0-9A-Za-z\-_\.]+)@([0-9a-z]+\.[a-z]{2,3}(\.[a-z]{2})?)$/g;
             if (regex.test(email_address)) {
                 return true;
-            }else {
+            } else {
                 return false;
             }
         },

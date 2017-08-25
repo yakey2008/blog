@@ -1,1 +1,1 @@
-var webUrl = '/';
+var webUrl = '/EWS.RestAPI/';
