@@ -41,8 +41,9 @@ $col9b:#9b9b9b;
     background-color: #f6f7f8; //文本框
     .css-mtmeetdetailinvite-textarea {
         .weui-textarea {
-            height: 35px;
-            resize: vertical;
+            resize: none;
+            overflow: hidden;
+            min-height: 35px;
             color: #333;
         }
     } //更换单选区的颜色
@@ -79,8 +80,9 @@ $col9b:#9b9b9b;
                 padding-top: 17px;
                 padding-left: 22px;
                 .weui-textarea {
-                    height: 33px;
-                    resize: vertical;
+                    resize: none;
+                    overflow: hidden;
+                    min-height: 33px;
                 }
             }
         }
@@ -193,8 +195,9 @@ $col9b:#9b9b9b;
             .weui-cell {
                 padding-left: 22px;
                 .weui-textarea {
-                    height: 36px;
-                    resize: vertical;
+                    resize: none;
+                    overflow: hidden;
+                    min-height: 36px;
                 }
             }
         }
@@ -384,10 +387,10 @@ $col9b:#9b9b9b;
                                 <span>会议主题</span>
                             </div>
                             <div class="css-mtmeetdetailinvite-textarea weui-cell_access">
-                                <textarea class="weui-textarea" placeholder="请输入文本" rows="3" maxlength="30" v-model="sendData.Subject"></textarea>
+                                <textarea class="weui-textarea" placeholder="请输入文本" rows="3" maxlength="30" v-model="sendData.Subject" v-on:keyup="auto_grow($event)" id="js-mtrSubject"></textarea>
                                 <!-- <div class="weui-cell__ft">
-                                    
-                                </div> -->
+                                                                            
+                                                                        </div> -->
                             </div>
                         </div>
                         <i class="css-meet-statu">{{mtrStatuText}}</i>
@@ -400,8 +403,7 @@ $col9b:#9b9b9b;
                             <div class="weui-cell__bd">
                                 <p>会议时间</p>
                             </div>
-                            <div class="weui-cell__ft">
-                                {{formatDate(mtrSelected.timeInterval)}}
+                            <div class="weui-cell__ft" v-html="formatDate(mtrSelected.timeInterval)">
                             </div>
                         </div>
                     </div>
@@ -419,7 +421,7 @@ $col9b:#9b9b9b;
                             </div>
                         </div>
                         <div v-if="!mtrSelected.isDIYResource">
-                            <div class="css-mtlaunchmeet-mtl-location-container" v-for="(mtr,index) in mtrSelected.mtrList" :key="mtr" v-show="index<showMore">
+                            <div class="css-mtlaunchmeet-mtl-location-container" v-for="(mtr,index) in mtrSelected.mtrList" :key="index" v-show="index<showMore">
                                 <div class="css-mtlaunchmeet-mtl-location-info">
                                     <p>{{mtr.mtrName}}</p>
                                 </div>
@@ -448,10 +450,10 @@ $col9b:#9b9b9b;
                                 <span>会议内容</span>
                             </div>
                             <div class="css-mtmeetdetailinvite-textarea weui-cell_access">
-                                <textarea class="weui-textarea" placeholder="请输入会议内容（可选）" rows="3" maxlength="30" v-model="sendData.Body"></textarea>
+                                <textarea class="weui-textarea" placeholder="请输入会议内容（可选）" rows="3" maxlength="500" v-model="sendData.Body" v-on:keyup="auto_grow($event)" id="js-mtrContent"></textarea>
                                 <!-- <div class="weui-cell__ft">
-                                    <textarea class="weui-textarea" placeholder="请输入会议内容（可选）" rows="3" maxlength="30" v-model="sendData.Body"></textarea>
-                                </div> -->
+                                                                            <textarea class="weui-textarea" placeholder="请输入会议内容（可选）" rows="3" maxlength="30" v-model="sendData.Body"></textarea>
+                                                                        </div> -->
                             </div>
                         </div>
                     </div>
@@ -461,7 +463,7 @@ $col9b:#9b9b9b;
                     <div class="css-mtlaunchmeet-participate-container">
                         <div class="css-mtlaunchmeet-mtl-infoadd-container">
                             <div class="css-mtlaunchmeet-mtl-info">
-                                <p>参会人员（{{mtrSelected.RequiredAttendees.length+mtrSelected.OptionalAttendees.length}}）</p>
+                                <p>参会人员（{{userAllLen}}）</p>
                             </div>
                             <div class="css-mtlaunchmeet-mtl-addbtn" v-on:click="addWithEmail()">
                                 <!-- <router-link :to="'/mtaddcontact'" tag="div"> -->
@@ -473,12 +475,12 @@ $col9b:#9b9b9b;
                             <div class="css-invited-statu-btn">全部</div>
                             <div class="css-invited-statu-btn">已接收({{mtrSelected.AttentdeesStat.Accept}})</div>
                             <div class="css-invited-statu-btn">已谢绝({{mtrSelected.AttentdeesStat.Decline}})</div>
-                            <div class="css-invited-statu-btn mgr0">未接收({{mtrSelected.AttentdeesStat.NoResponseReceived+userFromEmailLen}})</div>
+                            <div class="css-invited-statu-btn mgr0">未接受({{unAcceptLen}})</div>
                         </div>
                         <div class="css-mtlaunchmeet-mtl-participate-items">
                             <div class="weui-uploader__bd">
                                 <div class="weui-uploader__files css-invite-container">
-                                    <div class="fl-l css-must-in" v-for="(mustuser,index) in noDeptMustList" :key="mustuser.Address" v-if="index<4">
+                                    <div class="fl-l css-must-in" v-for="(mustuser,index) in noDeptMustList" :key="index" v-if="index<4">
                                         <div v-on:click="viewUserInfo(mustuser.id)">
                                             <div class="css-must-in-item" v-bind:style="{backgroundImage:'url('+mustuser.url+')'}" v-if="mustuser.url"></div>
                                             <div class="css-must-in-item" v-bind:style="{backgroundImage:'url('+noavatar+')'}" v-else></div>
@@ -498,7 +500,7 @@ $col9b:#9b9b9b;
                         <div class="css-mtlaunchmeet-mtl-participate-items">
                             <div class="weui-uploader__bd">
                                 <div class="weui-uploader__files css-invite-container">
-                                    <div class="fl-l css-must-in" v-for="(optional,index) in noDeptOptionalList" :key="optional.Address" v-if="index<4">
+                                    <div class="fl-l css-must-in" v-for="(optional,index) in noDeptOptionalList" :key="index" v-if="index<4">
                                         <div v-on:click="viewUserInfo(optional.id)">
                                             <div class="css-must-in-item" v-bind:style="{backgroundImage:'url('+optional.url+')'}" v-if="optional.url"></div>
                                             <div class="css-must-in-item" v-bind:style="{backgroundImage:'url('+noavatar+')'}" v-else></div>
@@ -588,81 +590,70 @@ export default {
             this.sendData.Body = localStorage.getItem('content');
         }
     },
-    // beforeRouteEnter(to, from, next) {
-    //     next(app => {
-
-    //         if (localdata.getdata('mtrSelected')!=='undefined') {
-    //             app.mtrSelected = JSON.parse(localdata.getdata('mtrSelected'));
-    //         }
-    //         if (localdata.getdata('userMustList')) {
-    //             app.userMustList = JSON.parse(localdata.getdata('userMustList'));
-    //         }
-    //         if (localdata.getdata('userOptionalList')) {
-    //             app.userOptionalList = JSON.parse(localdata.getdata('userOptionalList'));
-    //         }
-    //         if (localdata.getdata('userFromEmail')) {
-    //             app.userFromEmail = JSON.parse(localdata.getdata('userFromEmail'));
-    //         }
-    //     })
-    // },
-    // activated() {
-    //     if (localdata.getdata('mtrSelected')) {
-    //         this.mtrSelected = JSON.parse(localdata.getdata('mtrSelected'));
-    //     }
-    //     if (localdata.getdata('userMustList')) {
-    //         this.userMustList = JSON.parse(localdata.getdata('userMustList'));
-    //     }
-    //     if (localdata.getdata('userOptionalList')) {
-    //         this.userOptionalList = JSON.parse(localdata.getdata('userOptionalList'));
-    //     }
-    //     if (localdata.getdata('userFromEmail')) {
-    //         this.userFromEmail = JSON.parse(localdata.getdata('userFromEmail'));
-    //     }
-    //     if (localStorage.getItem('themeTitle')) {
-    //         this.sendData.Subject = localStorage.getItem('themeTitle');
-    //     }
-    //     if (localStorage.getItem('content')) {
-    //         this.sendData.Body = localStorage.getItem('content');
-    //     }
-    // },
-    // deactivated() {
-    //     localStorage.setItem('themeTitle', JSON.stringify(this.sendData.Subject));
-    //     localStorage.setItem('content', JSON.stringify(this.sendData.Body));
-    // },
     mounted() {
         this.$moaapi.updateNavTitle('会议详情');
         this.$moaapi.hideNavMenu();
+
+        this.auto_grow('init');
         //引用类型数组去重
-        let objUnique = function (arr) {
+        let objUnique = function(arr) {
             var hash = {};
-            let arr2 = arr.reduce(function (item, next) {
-                hash[next.id] ? '' : hash[next.id] = true && item.push(next);
+            let arr2 = arr.reduce(function(item, next) {
+                hash[next.email] ? '' : hash[next.email] = true && item.push(next);
                 return item;
             }, [])
             return arr2;
         }
         //原生选择人
         let _this = this;
-        window.excMustUser = function (userList) {
+        window.excMustUser = function(userList) {
             if (_this.userMustList.length > 0) {
                 _this.userMustList = _this.userMustList.concat(JSON.parse(userList));
-                _this.userMustList = objUnique(_this.userMustList);
             } else {
                 _this.userMustList = JSON.parse(userList);
             }
+
+            //禁止添加已存在的人员
+            let splitArr = [];
+            _this.userMustList.forEach((el, index) => {
+                _this.userOptionalList.forEach((eloptional) => {
+                    if (el.email === eloptional.email) {
+                        splitArr.push(index);
+                    }
+                }, _this)
+            }, _this)
+            splitArr.reverse().forEach((el) => {
+                _this.userMustList.splice(el, 1);
+            })
+
+            _this.userMustList = objUnique(_this.userMustList);
             _this.noDeptMustList = _this.userMustList;
             _this.eachSplit(_this.noDeptMustList);
             window.localStorage.setItem('userMustList', JSON.stringify(_this.userMustList));
         }
-        window.excOptionalUser = function (userList) {
+        window.excOptionalUser = function(userList) {
             if (_this.userOptionalList.length > 0) {
                 _this.userOptionalList = _this.userOptionalList.concat(JSON.parse(userList));
-                _this.userOptionalList = objUnique(_this.userOptionalList);
             } else {
                 _this.userOptionalList = JSON.parse(userList);
             }
+            //禁止添加已存在的人员
+            let splitArr = [];
+            _this.userOptionalList.forEach((el, index) => {
+                _this.userMustList.forEach((elmust) => {
+                    if (el.email === elmust.email) {
+                        splitArr.push(index);
+                    }
+                }, _this)
+            }, _this)
+            splitArr.reverse().forEach((el) => {
+                _this.userOptionalList.splice(el, 1);
+            })
+
+            _this.userOptionalList = objUnique(_this.userOptionalList);
             _this.noDeptOptionalList = _this.userOptionalList;
             _this.eachSplit(_this.noDeptOptionalList);
+
             window.localStorage.setItem('userOptionalList', JSON.stringify(_this.userOptionalList));
         }
 
@@ -710,6 +701,8 @@ export default {
             GetAllRoomListAndRoom: {},//所有会议相关信息
             mtrStatu: undefined,//审批状态
             mtrStatuText: '',//审批状态名称
+            userAllLen: 0,//参会人数
+            unAcceptLen: 0,//未接受人数
             isShowCtrlBtn: true//是否显示操作按钮
         }
     },
@@ -726,6 +719,39 @@ export default {
         setCache() {
             localStorage.setItem('themeTitle', this.sendData.Subject);
             localStorage.setItem('content', this.sendData.Body);
+        },
+        //文本框自适应高度
+        auto_grow(element) {
+            let el, el2;
+            if (element === 'init') {
+                el = document.getElementById('js-mtrSubject');
+                el2 = document.getElementById('js-mtrContent');
+
+                el2.style.height = "5px";
+                el2.style.height = (el2.scrollHeight) + "px";
+            } else {
+                el = element.currentTarget;
+            }
+            el.style.height = "5px";
+            el.style.height = (el.scrollHeight) + "px";
+        },
+        countUserLen() {
+            //人数操作渲染
+            // this.unAcceptLen = this.mtrSelected.AttentdeesStat.NoResponseReceived+this.mtrSelected.AttentdeesStat.Tentative+this.mtrSelected.AttentdeesStat.Unknown+this.userFromEmailLen;
+            this.userMustList.forEach((el) => {
+                if (el.ResponseType === 0 || el.ResponseType === 2 || el.ResponseType === 5||el.isEmail) {
+                    this.unAcceptLen = this.unAcceptLen + 1;
+                }
+            })
+
+            this.userOptionalList.forEach((el) => {
+                if (el.ResponseType === 0 || el.ResponseType === 2 || el.ResponseType === 5) {
+                    this.unAcceptLen = this.unAcceptLen + 1;
+                }
+            })
+            this.unAcceptLen = this.unAcceptLen + this.userFromEmailLen;
+
+            this.userAllLen = this.userMustList.length + this.userOptionalList.length + this.userFromEmailLen;
         },
         initPage() {
             if (localdata.getdata('mtrSelected')) {
@@ -810,6 +836,7 @@ export default {
                 this.mtrSelected.Organizer.name = this.mtrSelected.Organizer.Name;
                 this.mtrSelected.Organizer.url = this.mtrSelected.Organizer.AvatarUrl;
                 this.mtrSelected.Organizer.id = this.mtrSelected.Organizer.Address;
+                this.mtrSelected.Organizer.email = this.mtrSelected.Organizer.Address;
                 this.mtrSelected.Organizer.ResponseType = 1;
                 this.userMustList.unshift(this.mtrSelected.Organizer);
 
@@ -830,12 +857,20 @@ export default {
                 localdata.setdata('userMustList', JSON.stringify(this.userMustList));
                 localdata.setdata('userOptionalList', JSON.stringify(this.userOptionalList));
             }
+
+            this.countUserLen();
+
+
             this.mtrStatu = this.mtrSelected.ApprovedStatus;
             //无状态为自定义
             if (this.mtrStatu === 1) {
                 this.mtrStatuText = '会议待审批';
             } else if (this.mtrStatu === 2) {
-                this.mtrStatuText = '会议审批通过';
+                if (this.mtrSelected.MyResponseType === 1) {
+                    this.mtrStatuText = '已预订';
+                } else {
+                    this.mtrStatuText = '会议审批通过';
+                }
             } else if (this.mtrStatu === 3) {
                 this.mtrStatuText = '会议审批不通过';
             } else {
@@ -849,6 +884,11 @@ export default {
                 this.isShowCtrlBtn = false;
             }
 
+            if (this.mtrSelected.IsCancelled) {
+                this.mtrStatuText = '已取消';
+                this.isShowCtrlBtn = false;
+            }
+
             this.sendData.Subject = this.mtrSelected.Subject;
             this.sendData.Body = this.mtrSelected.Body;
             this.sendData.IsResponseRequested = this.mtrSelected.IsResponseRequested;
@@ -858,7 +898,7 @@ export default {
         formatDate(val) {
             let date = moment(val.split(' ')[0]).format('YYYY年MM月DD日 ddd');
             let time = val.split(' ')[1];
-            return date + ' ' + time;
+            return date + '<br>' + time;
         },
         //取得第一个会议室的id
         getRegionId() {
@@ -939,6 +979,7 @@ export default {
             } else {
                 this.$moaapi.selUser(1, 'excOptionalUser');
             }
+            this.unAcceptLen= this.unAcceptLen+1;
         },
         //通过邮箱添加
         addWithEmail() {
@@ -968,6 +1009,11 @@ export default {
                 this.eachSplit(this.noDeptOptionalList);
                 localdata.setdata('userOptionalList', JSON.stringify(this.userOptionalList));
             }
+
+            //人数操作渲染
+            this.userAllLen = 0;
+            this.unAcceptLen = 0;
+            this.countUserLen();
         },
         //查看全部人员
         checkAlluser() {
@@ -1068,6 +1114,10 @@ export default {
                         this.isShowerr = true;
                         this.errinfo = '修改成功';
                         this.isUpdateDone = true;
+                    } else {
+                        this.pageloading = false;
+                        this.isShowerr = true;
+                        this.errinfo = res.body.errorMessage;
                     }
                 }, error => {
                     this.isShowCancel = false;
@@ -1113,9 +1163,13 @@ export default {
         //关闭错误提示
         closeShowerr() {
             if (this.isUpdateDone) {
+                if (localdata.getdata('isFromMintMtr')) {
+                    this.$router.push({ path: '/mtminemeeting' });
+                } else {
+                    this.$router.push({ path: '/' });
+                }
                 //清除本地存储已存在的数据
                 this.clearStorage();
-                this.$router.push({ path: '/' });
             }
             this.isShowerr = false;
         }

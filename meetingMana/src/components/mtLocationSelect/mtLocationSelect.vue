@@ -272,8 +272,8 @@ $col9b:#9b9b9b;
                     </div>
                 </div>
                 <!-- <div v-on:click="showtime()">
-                                                                                                                                                                                    <date-picker :date="startTime" :option="option" :limit="limit"></date-picker>
-                                                                                                                                                                                </div> -->
+                                                                                                                                                                                        <date-picker :date="startTime" :option="option" :limit="limit"></date-picker>
+                                                                                                                                                                                    </div> -->
                 <div class="weui-tab__panel css-main-container">
                     <section>
                         <div class="css-pageinfo-container">
@@ -304,13 +304,13 @@ $col9b:#9b9b9b;
                     </section>
                     <section>
                         <div class="css-locationdatetime-container">
-                            <div class="css-locationdatetime" v-for="(meetingroom,index) in ordered" :key="meetingroom">
+                            <div class="css-locationdatetime" v-for="(meetingroom,index) in ordered" :key="index">
                                 <div class="hr-div"></div>
                                 <!-- <router-link :to="{path:'/mttimeselect',query:{meetingroom:meetingroom,listindex:index}}" tag="div"> -->
                                 <div class="css-meetingroom-item clearfix" v-on:click="totimeselect(meetingroom,index)">
                                     <div class="css-meetingroom-name fl-l">{{meetingroom.Location}}</div>
                                     <div class="css-meetingroom-timeline fl-l">
-                                        <div class="css-meetingroom-timeline-box fl-l" v-for="(ordered,index) in meetingroom.timeorder" :key="ordered" :class="[ordered?'room-ordered':'',index===0?'border-l2':'',index===17?'border-r2':'']"></div>
+                                        <div class="css-meetingroom-timeline-box fl-l" v-for="(ordered,index) in meetingroom.timeorder" :key="index" :class="[ordered?'room-ordered':'',index===0?'border-l2':'',index===17?'border-r2':'']"></div>
                                     </div>
                                 </div>
                                 <!-- </router-link> -->
@@ -334,7 +334,7 @@ $col9b:#9b9b9b;
             <div class="css-selector-container" v-if="isShowregion">
                 <div class="css-mask" v-on:click="showregion()"></div>
                 <div class="css-selector-list">
-                    <div class="css-selector-item" v-for="item in tabVal" :key="item.Address" v-on:click="regionEvt(item)" :class="{'css-curregion':curRegionId===item.Address}" :curregionid="item.Address">{{item.Name}}</div>
+                    <div class="css-selector-item" v-for="(item,index) in tabVal" :key="index" v-on:click="regionEvt(item)" :class="{'css-curregion':curRegionId===item.Address}" :curregionid="item.Address">{{item.Name}}</div>
                 </div>
             </div>
         </div>
@@ -368,18 +368,18 @@ export default {
         // setTimeout(() => {
         // this.$moaapi.hideNavMenu();
         // }, 100)
-        
-        window.rightHeaderEvent = function () {
+
+        window.rightHeaderEvent = function() {
             window.location.href = '#/mtlocationsearch';
         }
         setTimeout(() => {
             this.$moaapi.showNavMenu(searchicon);
-        }, 200)
+        }, 100)
     },
     mounted() {
         this.today = +new Date(moment().format('YYYY/MM/DD'));
         let getParams = this.$route.query;
-        
+
         // this.weekDate = moment(this.startTime.time).format('MM-DD dddd');
 
         if (getParams.searchregionid) {
@@ -502,7 +502,7 @@ export default {
             this.$http.get(url).then(res => {
                 if (res.status === 200) {
 
-                    (function (res, _this) {
+                    (function(res, _this) {
                         // let _this = this;
                         //时间区域索引数组
                         let arr = [];
@@ -528,9 +528,9 @@ export default {
                                 let st = elrmstatu.Start.substr(0, elrmstatu.Start.length - 3);
                                 let ed = elrmstatu.End.substr(0, elrmstatu.End.length - 3);
                                 //存储选中会议室时间格式
-                                timeobg.date = date;
-                                timeobg.st = st;
-                                timeobg.ed = ed;
+                                timeobg.date = date.replace(/-/g, '/');
+                                timeobg.st = st.replace(/-/g, '/');
+                                timeobg.ed = ed.replace(/-/g, '/');
                                 objNextpage.selectedTime.push(timeobg);
                                 // //已选中开始结束时间索引
                                 // obj.stidx = _this.timelist.indexOf(st.substr(st, st.length - 3));
@@ -549,10 +549,10 @@ export default {
                             ];
                             let spliceInde = [];
                             objNextpage.selectedTime.forEach((el, index) => {
-                                let stStemp = (new Date(el.st).getTime());
-                                let edStemp = (new Date(el.ed).getTime());
-                                let firstList = (new Date(el.date + ' ' + _this.timelist[0]).getTime());
-                                let lastList = (new Date(el.date + ' ' + _this.timelist[_this.timelist.length - 1]).getTime());
+                                let stStemp = +new Date(el.st);
+                                let edStemp = +new Date(el.ed);
+                                let firstList = +new Date(el.date + ' ' + _this.timelist[0]);
+                                let lastList = +new Date(el.date + ' ' + _this.timelist[_this.timelist.length - 1]);
 
                                 if (stStemp < firstList && edStemp < firstList) {
                                     spliceInde.push(index);
@@ -571,11 +571,11 @@ export default {
 
                             _this.timelist.forEach((el, idx) => {
                                 objNextpage.selectedTime.forEach((elinside) => {
-                                    let stStemp = (new Date(elinside.st).getTime());
-                                    let edStemp = (new Date(elinside.ed).getTime());
-                                    let curListtime = (new Date(elinside.date + ' ' + el).getTime());
+                                    let stStemp = +new Date(elinside.st);
+                                    let edStemp = +new Date(elinside.ed);
+                                    let curListtime = +new Date(elinside.date + ' ' + el);
                                     if (stStemp < curListtime && edStemp >= curListtime) {
-                                        _this.timeorder[idx] = true;
+                                        _this.timeorder[idx - 1] = true;
                                     } else if (stStemp > curListtime) {
                                         if (!_this.timeorder[idx]) {
                                             _this.timeorder[idx] = false;
@@ -687,11 +687,25 @@ export default {
                             }
                         }
                     } else {
-                        if (saveLocaldata.mtrList[index] && meetingroom.Address === saveLocaldata.mtrList[index].mtrId && saveLocaldata.mtrList[index].isAdded) {
-                            this.isShowerr = true;
-                            this.errinfo = '不可重复添加会议室';
-                            return false;
+                        for(let i=0,len=saveLocaldata.mtrList.length;i<len;i++){
+                            if(saveLocaldata.mtrList[i].mtrId === meetingroom.Address && saveLocaldata.mtrList[i].isAdded){
+                                this.isShowerr = true;
+                                this.errinfo = '不可重复添加会议室';
+                                return false;
+                            }
                         }
+                        // saveLocaldata.mtrList.some((el) => {
+                        //     if (el.mtrId === meetingroom.Address && el.isAdded) {
+                        //         this.isShowerr = true;
+                        //         this.errinfo = '不可重复添加会议室';
+                        //         return true;
+                        //     }
+                        // }, this)
+                        // if (saveLocaldata.mtrList[index] && meetingroom.Address === saveLocaldata.mtrList[index].mtrId && saveLocaldata.mtrList[index].isAdded) {
+                        //     this.isShowerr = true;
+                        //     this.errinfo = '不可重复添加会议室';
+                        //     return false;
+                        // }
                     }
                     // if (isAddedPass) {
                     mtrinfo.mtrId = meetingroom.Address;

@@ -4,6 +4,10 @@ const exec = (url) => {
   }, 10)
 }
 
+const getUserInfo = (method)=>{
+  exec('vipoa://oneselfUser?action='+method);
+}
+
 const updateNavTitle = (title) => {
   if (title && typeof title === 'string') exec('vipoa://updateTitleBar?' + encodeURI(title))
 }
@@ -57,6 +61,7 @@ const plugin = {
     if (!vue.$moaapi) {
       vue.$moaapi = {
         exec,
+        getUserInfo,
         updateNavTitle,
         resetNavTitle,
         showNavMenu,

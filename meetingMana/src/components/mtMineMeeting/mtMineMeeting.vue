@@ -36,7 +36,7 @@
         text-align: center;
         color: #4c8afe;
         padding: 10px 0;
-        font-size: 1rem;
+        font-size: .875rem;
     }
     .col9b {
         color: #9b9b9b;
@@ -285,10 +285,10 @@
     <div>
         <scroller :on-refresh="refresh" :on-infinite="infinite" ref="scroller" class="weui-tab css-mtnoticelist-page">
             <section class="css-loadmore-text">
-                上拉查看以前会议，下拉查看以后会议
+                {{moreText}}
             </section>
             <div class="css-mtnoticelist-main">
-                <section class="css-main-container clearfix" :class="{'first-container':index===0,'last-container':index===mtrData.length-1}" v-for="(mtr,index) in mtrData" :key="mtr.ICalUid">
+                <section class="css-main-container clearfix" :class="{'first-container':index===0,'last-container':index===mtrData.length-1}" v-for="(mtr,index) in mtrData" :key="index">
                     <div class="css-timeline-date fl-l">
                         <div class="css-left-datetime">
                             <p>{{mtr.MtrTimeMD}}</p>
@@ -354,25 +354,29 @@ export default {
         notice
     },
     mounted() {
-        this.$moaapi.updateNavTitle('会议日程');
+        this.$moaapi.updateNavTitle('我的会议');
         //原生右上角菜单
         let _this = this;
-        window.orderMtr = function () {
+        window.orderMtr = function() {
             _this.$router.push({ path: '/mtlocationselect' });
         }
-        window.mineMtr = function () {
-            _this.$router.push({ path: '/mtminemeeting' });
+        window.mineMtr = function() {
+            _this.$router.push({ path: '/' });
         }
-        window.searchMtr = function () {
+        window.searchMtr = function() {
             _this.$router.push({ path: '/mtsearchmtr' });
         }
-        window.noticeSet = function () {
+        window.noticeSet = function() {
             _this.$router.push({ path: '/mtnoticeset' });
         }
         let list = '[{ "name": "预定会议", "action": "orderMtr()" }, { "name": "会议日程", "action": "mineMtr()" },{ "name": "搜索会议", "action": "searchMtr()" }, { "name": "会议通知设置", "action": "noticeSet()" }]';
         this.$moaapi.showListNavMenu(list);
 
         this.currentUserInfo = JSON.parse(localdata.getdata('currentUserData'));
+
+        //清除详情页缓存
+        localdata.removedata('mtrSelected');
+        localdata.removedata('meetDetailView');
         // service.get(this.getMineMtr, this.$http, { currentDate: '2017-7-19', pageSize: 5, offset: 0, searchDirection: 1 }).then(data => {
         //     this.data = data.list
         //     this.$refs.scroller.finishInfinite(!data.hasMore)
@@ -398,7 +402,9 @@ export default {
             searchDirection: 1,//显示方向1 从上到下顺序 0从下到上倒序
             getMineMtr: urldata.basePath + urldata.SearchMyMeeting,//我的会议接口
             currentUserInfo: {},//当前用户信息
-            mtrData: []//会议室信息
+            mtrData: [],//会议室信息
+            resultLen: 0,//会议室信息的长度
+            moreText: '下拉查看以前会议'
         }
     },
     methods: {
@@ -406,14 +412,29 @@ export default {
             //el.mtrStatu 0(已取消) 1(已预订) 2(未接受) 3(已接受) 4(已拒绝)
             this.$http.get(url, { params: obj }).then(res => {
                 if (res.body.status === 200) {
+                    this.resultLen = res.body.data.Meetings.length;
+
                     // this.pageloading = false;
                     if (type === 'reload') {
-                        this.mtrData = res.body.data.Meetings.concat(this.mtrData);
+                        if (this.resultLen > 0) {
+                            this.mtrData = res.body.data.Meetings.concat(this.mtrData);
+                        } else {
+                            this.$refs.scroller.finishPullToRefresh();
+                            this.moreText = '没有更多了'
+                        }
                     } else {
-                        this.mtrData = this.mtrData.concat(res.body.data.Meetings);
+                        if (this.resultLen > 0) {
+                            this.mtrData = this.mtrData.concat(res.body.data.Meetings);
+                        }
                     }
 
-                    this.mtrData.forEach(function (el) {
+                    if (this.resultLen === 0) {
+                        this.$refs.scroller.finishInfinite(true)
+                    } else {
+                        this.$refs.scroller.finishInfinite(false)
+                    }
+
+                    this.mtrData.forEach(function(el) {
                         //时间
                         el.MtrTime = el.Start.split(' ')[0] + ' ' + el.Start.split(' ')[1].substr(0, el.Start.split(' ')[1].length - 3) + '-' + el.End.split(' ')[1].substr(0, el.End.split(' ')[1].length - 3);
                         el.MtrTimeMD = el.Start.split(' ')[0].substr(5);
@@ -424,99 +445,110 @@ export default {
                             })
                         }
                         //会议地点
-                        el.Resources.forEach(function (elMtr) {
-                            if (!el.mtrListStr) {
-                                el.mtrListStr = elMtr.Name;
-                            } else {
-                                el.mtrListStr = el.mtrListStr + '/' + elMtr.Name;
-                            }
-                        }, this);
-                        //拼接全部人
-                        // el.UseStr = el.Organizer.Name;
+                        if (!el.mtrListStr) {
+                            el.Resources.forEach(function(elMtr) {
+                                if (!el.mtrListStr) {
+                                    el.mtrListStr = elMtr.Name;
+                                } else {
+                                    el.mtrListStr = el.mtrListStr + '/' + elMtr.Name;
+                                }
+                            }, this);
+                        }
                         if (!el.UseStr) {
-                            el.RequiredAttendees.forEach(function (elreA) {
-                                if (el.UseStr) {
-                                    el.UseStr = el.UseStr + '/' + elreA.Name;
-                                } else {
-                                    el.UseStr = elreA.Name;
-                                }
-                            }, this);
-                            el.OptionalAttendees.forEach(function (elreA) {
-                                if (el.UseStr) {
-                                    el.UseStr = el.UseStr + '/' + elreA.Name;
-                                } else {
-                                    el.UseStr = elreA.Name;
-                                }
-                            }, this);
-                        }
+                            //拼接全部人
+                            if (el.MyResponseType === 1) {
+                                el.UseStr = el.Organizer.Name.split('[')[0];
+                            }
+                            if (!el.UseStr) {
+                                el.RequiredAttendees.forEach(function(elreA) {
 
-                        // this.currentUserInfo.UserEmail = 'eric.hu@vipshop.com';
-                        // this.currentUserInfo.UserEmail = 'city-test@vipshop.com';
-                        //判断当前登录是否组织者
-                        // if (el.Organizer.Address === this.currentUserInfo.UserEmail) {
-                        //     el.mtrStatu = 1;
-                        //     el.mtrStatuText = '已预订';
-                        //     return false;
-                        // }
-                        //判断当前登录是否必选人
-                        // el.RequiredAttendees.forEach(function (elreA) {
-                        //     el.UseStr = el.UseStr + '/' + elreA.Name;
-                        //     if (elreA.Address === this.currentUserInfo.UserEmail) {
-                        //         if (elreA.ResponseType === 0 || elreA.ResponseType === 2 || elreA.ResponseType === 5) {
-                        //             el.mtrStatu = 2;
-                        //             el.mtrStatuText = '未接受';
-                        //         }
-                        //         if (elreA.ResponseType === 3) {
-                        //             el.mtrStatu = 3;
-                        //             el.mtrStatuText = '已接受';
-                        //         }
-                        //         if (elreA.ResponseType === 4) {
-                        //             el.mtrStatu = 4;
-                        //             el.mtrStatuText = '已拒绝';
-                        //         }
-                        //     }
-                        // }, this);
-                        // //判断当前登录是否可选人
-                        // el.OptionalAttendees.forEach(function (elreA) {
-                        //     el.UseStr = el.UseStr + '/' + elreA.Name;
-                        //     if (elreA.Address === this.currentUserInfo.UserEmail) {
-                        //         if (elreA.ResponseType === 0 || elreA.ResponseType === 2 || elreA.ResponseType === 5) {
-                        //             el.mtrStatu = 2;
-                        //             el.mtrStatuText = '未接受';
-                        //         }
-                        //         if (elreA.ResponseType === 3) {
-                        //             el.mtrStatu = 3;
-                        //             el.mtrStatuText = '已接受';
-                        //         }
-                        //         if (elreA.ResponseType === 4) {
-                        //             el.mtrStatu = 4;
-                        //             el.mtrStatuText = '已拒绝';
-                        //         }
-                        //     }
-                        // }, this);
-                        if (el.MyResponseType === 1) {
-                            el.mtrStatu = 1;
-                            el.mtrStatuText = '已预订';
-                        } else if (el.MyResponseType === 3) {
-                            el.mtrStatu = 3;
-                            el.mtrStatuText = '已接受';
-                        } else if (el.MyResponseType === 4) {
-                            el.mtrStatu = 4;
-                            el.mtrStatuText = '已谢绝';
-                        } else {
-                            el.mtrStatu = 2;
-                            el.mtrStatuText = '未接受';
-                        }
-                        if (el.IsCancelled) {
-                            el.mtrStatu = 0;
-                            el.mtrStatuText = '已取消';
-                        } else {
-                            this.currentUserInfo.UserEmail;
+                                    if (elreA.ResponseType === null) {
+                                        //判断是否来自email
+                                        if (JSON.parse(elreA.Name).length !== 0) {
+                                            JSON.parse(elreA.Name).forEach((elemail) => {
+                                                el.UseStr = el.UseStr + '/' + elemail
+                                            }, this)
+                                        }
+                                    } else {
+                                        if (el.UseStr) {
+                                            el.UseStr = el.UseStr + '/' + elreA.Name.split('[')[0];
+                                        } else {
+                                            el.UseStr = elreA.Name.split('[')[0];
+                                        }
+                                    }
+                                }, this);
+                                el.OptionalAttendees.forEach(function(elreA) {
+                                    if (el.UseStr) {
+                                        el.UseStr = el.UseStr + '/' + elreA.Name.split('[')[0];
+                                    } else {
+                                        el.UseStr = elreA.Name.split('[')[0];
+                                    }
+                                }, this);
+                            } else {
+                                el.RequiredAttendees.forEach(function(elreA) {
+
+                                    if (elreA.ResponseType === null) {
+                                        //判断是否来自email
+                                        if (JSON.parse(elreA.Name).length !== 0) {
+                                            JSON.parse(elreA.Name).forEach((elemail) => {
+                                                el.UseStr = el.UseStr + '/' + elemail
+                                            }, this)
+                                        }
+                                    } else {
+                                        if (el.UseStr) {
+                                            el.UseStr = el.UseStr + '/' + elreA.Name.split('[')[0];
+                                        } else {
+                                            el.UseStr = elreA.Name.split('[')[0];
+                                        }
+                                    }
+                                }, this);
+                                el.OptionalAttendees.forEach(function(elreA) {
+                                    if (el.UseStr) {
+                                        el.UseStr = el.UseStr + '/' + elreA.Name.split('[')[0];
+                                    } else {
+                                        el.UseStr = elreA.Name.split('[')[0];
+                                    }
+                                }, this);
+                            }
+
+                            if (el.MyResponseType === 1) {
+                                el.mtrStatu = 1;
+                                el.mtrStatuText = '已预订';
+                            } else if (el.MyResponseType === 3) {
+                                el.mtrStatu = 3;
+                                el.mtrStatuText = '已接受';
+                            } else if (el.MyResponseType === 4) {
+                                el.mtrStatu = 4;
+                                el.mtrStatuText = '已谢绝';
+                            } else {
+                                el.mtrStatu = 2;
+                                el.mtrStatuText = '未接受';
+                            }
+
+                            if (!el.IsCancelled && el.Processing === 2) {
+                                if (el.MyResponseType === 3 || el.MyResponseType === 4) {
+                                    el.mtrStatu = 6;
+                                } else {
+                                    el.mtrStatuText = '进行中';
+                                }
+
+                            } else if (!el.IsCancelled && el.Processing === 3) {
+                                el.mtrStatu = 6;
+                                el.mtrStatuText = '已结束';
+                            }
+
+                            if (el.IsCancelled) {
+                                el.mtrStatu = 0;
+                                el.mtrStatuText = '已取消';
+                            }
+
                         }
                     }, this);
-                    this.$refs.scroller.finishPullToRefresh();
-                    this.$refs.scroller.finishInfinite(true)
                     // this.mtrData.MtrTime = this.mtrData.Start.split(' ')[0]+' '+this.mtrData.Start.split(' ')[1]+'-'+this.mtrData.End.split(' ')[1]
+                } else {
+                    this.isShowerr = true;
+                    this.errinfo = res.body.errorMessage;
+                    this.pageloading = false;
                 }
                 //获取当前月的数据
                 // this.initData(this.datetoday, res.body.data.UserEmail);
@@ -550,6 +582,7 @@ export default {
         //跳转到详情
         toDetail(isInvite, index) {
             localdata.setdata('meetDetailView', JSON.stringify(this.mtrData[index]));
+            localdata.setdata('isFromMintMtr', true);
             if (isInvite) {
                 this.$router.push({ path: '/mtmeetdetailinvite' });
             } else {

@@ -2,7 +2,7 @@ const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const path = require('path');
 module.exports = {
-    entry: "./src/main.js",
+    entry: ["babel-polyfill","./src/main.js"],
     devServer: {
         port: 3000,
         compress: false,
@@ -17,9 +17,9 @@ module.exports = {
             // },
             '/api/Meeting': {
                 // target: 'http://eric-hu-1:40000',
-                target: 'http://10.100.69.232:40000',
+                // target: 'http://10.100.69.232:40000',
                 // target: 'http://10.100.69.209:40000',
-                // target:'http://gzoaweb04.sit.vipshop.com:9000/EWS.RestAPI',
+                target:'http://gzoaweb04.sit.vipshop.com:9000/EWS.RestAPI',
                 changeOrigin: true
             }
         }

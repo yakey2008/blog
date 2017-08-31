@@ -60,22 +60,30 @@
                 background-size: cover;
                 background-image: url('../../images/searchicon.png');
             }
-            .css-clean-icon {
+            .css-clean-btn {
                 position: absolute;
-                top: 10px;
-                right: 11px;
-                width: 15px;
-                height: 15px;
-                background-size: cover;
-                background-image: url('../../images/clean-icon.png');
+                top: 0;
+                right: 0;
+                padding: 10px;
+                -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+                .css-clean-icon {
+                    width: 15px;
+                    height: 15px;
+                    display: block;
+                    background-size: cover;
+                    background-image: url('../../images/clean-icon.png');
+                    -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+                }
             }
+
             .css-searcharea-input {
-                width: 90%;
+                width: 80%;
                 padding: 10px 0;
-                padding-left: 35px;
+                padding-left: 5px;
                 background-color: #f3f3f3;
                 outline: none;
                 border: none;
+                -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
             }
         }
     }
@@ -302,15 +310,17 @@
 <template>
     <div class="weui-tab css-mtnoticelist-page">
         <div class="css-search-container">
-            <div class="css-searcharea">
+            <form class="css-searcharea">
                 <i class="css-searcharea-icon" v-on:click="excSearch()"></i>
                 <input type="search" placeholder="搜索会议主题" class="css-searcharea-input" v-model="searchSubjectKey" v-on:keyup="keyExcSearch($event)">
-                <i class="css-clean-icon" v-if="searchSubjectKey!==''" v-on:click="cleanInput()"></i>
-            </div>
+                <div class="css-clean-btn" v-if="searchSubjectKey!==''" v-on:click="cleanInput()">
+                    <i class="css-clean-icon"></i>
+                </div>
+            </form>
         </div>
         <scroller :on-infinite="infinite" ref="scroller" class="weui-tab css-mtnoticelist-page">
             <div class="css-mtnoticelist-main">
-                <section class="css-main-container clearfix" :class="{'first-container':index===0,'last-container':index===mtrData.length-1}" v-for="(mtr,index) in mtrData" :key="mtr.ICalUid">
+                <section class="css-main-container clearfix" :class="{'first-container':index===0,'last-container':index===mtrData.length-1}" v-for="(mtr,index) in mtrData" :key="index">
                     <div class="css-timeline-date fl-l">
                         <div class="css-left-datetime">
                             <p>{{mtr.MtrTimeMD}}</p>
@@ -381,6 +391,10 @@ export default {
         this.$moaapi.updateNavTitle('搜索会议');
         this.$moaapi.hideNavMenu();
         this.currentUserInfo = JSON.parse(localdata.getdata('currentUserData'));
+
+        //清除详情页缓存
+        localdata.removedata('mtrSelected');
+        localdata.removedata('meetDetailView');
     },
     data() {
         return {
@@ -400,6 +414,7 @@ export default {
             getMineMtr: urldata.basePath + urldata.SearchMyMeeting,
             currentUserInfo: {},//当前用户信息
             mtrData: [],//会议室信息
+            resultLen: 0,//会议室信息的长度
             searchNotice: false,
             curICalUid: '',//点击条的ICalUid
             isSearched: false//是否已搜索
@@ -410,14 +425,30 @@ export default {
             //el.mtrStatu 0(已取消) 1(已预订) 2(未接受) 3(已接受) 4(已拒绝)
             this.$http.get(url, { params: obj }).then(res => {
                 if (res.body.status === 200) {
+                    this.resultLen = res.body.data.Meetings.length;
+
                     if (type === 'search') {
                         this.mtrData = res.body.data.Meetings;
+                        if (this.resultLen === 0) {
+                            document.querySelector('.no-data-text').innerHTML = '没有查询到相关会议';
+                        } else {
+                            document.querySelector('.no-data-text').innerHTML = '没有更多了'
+                        }
                         this.isSearched = true;
                     } else {
-                        this.mtrData = this.mtrData.concat(res.body.data.Meetings);
+                        if (this.resultLen > 0) {
+                            this.mtrData = this.mtrData.concat(res.body.data.Meetings);
+                        }
                     }
+
+                    if (this.resultLen === 0) {
+                        this.$refs.scroller.finishInfinite(true)
+                    } else {
+                        this.$refs.scroller.finishInfinite(false)
+                    }
+
                     // this.mtrData = res.body.data.Meetings;
-                    this.mtrData.forEach(function (el) {
+                    this.mtrData.forEach(function(el) {
                         //时间
                         el.MtrTime = el.Start.split(' ')[0] + ' ' + el.Start.split(' ')[1].substr(0, el.Start.split(' ')[1].length - 3) + '-' + el.End.split(' ')[1].substr(0, el.End.split(' ')[1].length - 3);
                         el.MtrTimeMD = el.Start.split(' ')[0].substr(5);
@@ -428,93 +459,138 @@ export default {
                             })
                         }
                         //会议地点
-                        el.Resources.forEach(function (elMtr) {
-                            if (!el.mtrListStr) {
-                                el.mtrListStr = elMtr.Name;
-                            } else {
-                                el.mtrListStr = el.mtrListStr + '/' + elMtr.Name;
-                            }
-                        }, this);
-                        //拼接全部人
-                        // el.UseStr = el.Organizer.Name;
+                        if (!el.mtrListStr) {
+                            el.Resources.forEach(function(elMtr) {
+                                if (!el.mtrListStr) {
+                                    el.mtrListStr = elMtr.Name;
+                                } else {
+                                    el.mtrListStr = el.mtrListStr + '/' + elMtr.Name;
+                                }
+                            }, this);
+                        }
                         if (!el.UseStr) {
-                            el.RequiredAttendees.forEach(function (elreA) {
-                                if (el.UseStr) {
-                                    el.UseStr = el.UseStr + '/' + elreA.Name;
+                            //拼接全部人
+                            if (el.MyResponseType === 1) {
+                                el.UseStr = el.Organizer.Name.split('[')[0];
+                            }
+                            if (!el.UseStr) {
+                                el.RequiredAttendees.forEach(function(elreA) {
+                                    if (el.UseStr) {
+                                        el.UseStr = el.UseStr + '/' + elreA.Name.split('[')[0];
+                                    } else {
+                                        el.UseStr = elreA.Name.split('[')[0];
+                                    }
+                                }, this);
+                                el.OptionalAttendees.forEach(function(elreA) {
+                                    if (el.UseStr) {
+                                        el.UseStr = el.UseStr + '/' + elreA.Name.split('[')[0];
+                                    } else {
+                                        el.UseStr = elreA.Name.split('[')[0];
+                                    }
+                                }, this);
+                            } else {
+                                el.RequiredAttendees.forEach(function(elreA) {
+
+                                    if (elreA.ResponseType === null) {
+                                        //判断是否来自email
+                                        if (JSON.parse(elreA.Name).length !== 0) {
+                                            JSON.parse(elreA.Name).forEach((elemail) => {
+                                                el.UseStr = el.UseStr + '/' + elemail
+                                            }, this)
+                                        }
+                                    } else {
+                                        if (el.UseStr) {
+                                            el.UseStr = el.UseStr + '/' + elreA.Name.split('[')[0];
+                                        } else {
+                                            el.UseStr = elreA.Name.split('[')[0];
+                                        }
+                                    }
+                                }, this);
+                                el.OptionalAttendees.forEach(function(elreA) {
+                                    if (el.UseStr) {
+                                        el.UseStr = el.UseStr + '/' + elreA.Name.split('[')[0];
+                                    } else {
+                                        el.UseStr = elreA.Name.split('[')[0];
+                                    }
+                                }, this);
+                            }
+
+                            // this.currentUserInfo.UserEmail = 'eric.hu@vipshop.com'
+                            // this.currentUserInfo.UserEmail = 'city-test@vipshop.com';
+                            //判断当前登录是否组织者
+                            // if (el.Organizer.Address === this.currentUserInfo.UserEmail) {
+                            //     el.mtrStatu = 1;
+                            //     el.mtrStatuText = '已预订';
+                            //     return false;
+                            // }
+                            // //判断当前登录是否必选人
+                            // el.RequiredAttendees.forEach(function (elreA) {
+                            //     el.UseStr = el.UseStr + '/' + elreA.Name;
+                            //     if (elreA.Address === this.currentUserInfo.UserEmail) {
+                            //         if (elreA.ResponseType === 0 || elreA.ResponseType === 2 || elreA.ResponseType === 5) {
+                            //             el.mtrStatu = 2;
+                            //             el.mtrStatuText = '未接受';
+                            //         }
+                            //         if (elreA.ResponseType === 3) {
+                            //             el.mtrStatu = 3;
+                            //             el.mtrStatuText = '已接受';
+                            //         }
+                            //         if (elreA.ResponseType === 4) {
+                            //             el.mtrStatu = 4;
+                            //             el.mtrStatuText = '已拒绝';
+                            //         }
+                            //     }
+                            // }, this);
+                            // //判断当前登录是否可选人
+                            // el.OptionalAttendees.forEach(function (elreA) {
+                            //     el.UseStr = el.UseStr + '/' + elreA.Name;
+                            //     if (elreA.Address === this.currentUserInfo.UserEmail) {
+                            //         if (elreA.ResponseType === 0 || elreA.ResponseType === 2 || elreA.ResponseType === 5) {
+                            //             el.mtrStatu = 2;
+                            //             el.mtrStatuText = '未接受';
+                            //         }
+                            //         if (elreA.ResponseType === 3) {
+                            //             el.mtrStatu = 3;
+                            //             el.mtrStatuText = '已接受';
+                            //         }
+                            //         if (elreA.ResponseType === 4) {
+                            //             el.mtrStatu = 4;
+                            //             el.mtrStatuText = '已拒绝';
+                            //         }
+                            //     }
+                            // }, this);
+                            if (el.MyResponseType === 1) {
+                                el.mtrStatu = 1;
+                                el.mtrStatuText = '已预订';
+                            } else if (el.MyResponseType === 3) {
+                                el.mtrStatu = 3;
+                                el.mtrStatuText = '已接受';
+                            } else if (el.MyResponseType === 4) {
+                                el.mtrStatu = 4;
+                                el.mtrStatuText = '已谢绝';
+                            } else {
+                                el.mtrStatu = 2;
+                                el.mtrStatuText = '未接受';
+                            }
+
+                            if (!el.IsCancelled && el.Processing === 2) {
+                                if (el.MyResponseType === 3 || el.MyResponseType === 4) {
+                                    el.mtrStatu = 6;
                                 } else {
-                                    el.UseStr = elreA.Name;
+                                    el.mtrStatuText = '进行中';
                                 }
-                            }, this);
-                            el.OptionalAttendees.forEach(function (elreA) {
-                                if (el.UseStr) {
-                                    el.UseStr = el.UseStr + '/' + elreA.Name;
-                                } else {
-                                    el.UseStr = elreA.Name;
-                                }
-                            }, this);
-                        }
-                        // this.currentUserInfo.UserEmail = 'eric.hu@vipshop.com'
-                        // this.currentUserInfo.UserEmail = 'city-test@vipshop.com';
-                        //判断当前登录是否组织者
-                        // if (el.Organizer.Address === this.currentUserInfo.UserEmail) {
-                        //     el.mtrStatu = 1;
-                        //     el.mtrStatuText = '已预订';
-                        //     return false;
-                        // }
-                        // //判断当前登录是否必选人
-                        // el.RequiredAttendees.forEach(function (elreA) {
-                        //     el.UseStr = el.UseStr + '/' + elreA.Name;
-                        //     if (elreA.Address === this.currentUserInfo.UserEmail) {
-                        //         if (elreA.ResponseType === 0 || elreA.ResponseType === 2 || elreA.ResponseType === 5) {
-                        //             el.mtrStatu = 2;
-                        //             el.mtrStatuText = '未接受';
-                        //         }
-                        //         if (elreA.ResponseType === 3) {
-                        //             el.mtrStatu = 3;
-                        //             el.mtrStatuText = '已接受';
-                        //         }
-                        //         if (elreA.ResponseType === 4) {
-                        //             el.mtrStatu = 4;
-                        //             el.mtrStatuText = '已拒绝';
-                        //         }
-                        //     }
-                        // }, this);
-                        // //判断当前登录是否可选人
-                        // el.OptionalAttendees.forEach(function (elreA) {
-                        //     el.UseStr = el.UseStr + '/' + elreA.Name;
-                        //     if (elreA.Address === this.currentUserInfo.UserEmail) {
-                        //         if (elreA.ResponseType === 0 || elreA.ResponseType === 2 || elreA.ResponseType === 5) {
-                        //             el.mtrStatu = 2;
-                        //             el.mtrStatuText = '未接受';
-                        //         }
-                        //         if (elreA.ResponseType === 3) {
-                        //             el.mtrStatu = 3;
-                        //             el.mtrStatuText = '已接受';
-                        //         }
-                        //         if (elreA.ResponseType === 4) {
-                        //             el.mtrStatu = 4;
-                        //             el.mtrStatuText = '已拒绝';
-                        //         }
-                        //     }
-                        // }, this);
-                        if (el.MyResponseType === 1) {
-                            el.mtrStatu = 1;
-                            el.mtrStatuText = '已预订';
-                        } else if (el.MyResponseType === 3) {
-                            el.mtrStatu = 3;
-                            el.mtrStatuText = '已接受';
-                        } else if (el.MyResponseType === 4) {
-                            el.mtrStatu = 4;
-                            el.mtrStatuText = '已谢绝';
-                        } else {
-                            el.mtrStatu = 2;
-                            el.mtrStatuText = '未接受';
-                        }
-                        if (el.IsCancelled) {
-                            el.mtrStatu = 0;
-                            el.mtrStatuText = '已取消';
-                        } else {
-                            this.currentUserInfo.UserEmail;
+                            } else if (!el.IsCancelled && el.Processing === 3) {
+                                el.mtrStatu = 6;
+                                el.mtrStatuText = '已结束';
+                            }
+
+                            if (el.IsCancelled) {
+                                el.mtrStatu = 0;
+                                el.mtrStatuText = '已取消';
+                            } else {
+                                this.currentUserInfo.UserEmail;
+                            }
+
                         }
                     }, this);
                     if (this.mtrData.length === 0) {
@@ -522,8 +598,12 @@ export default {
                     } else {
                         this.searchNotice = false;
                     }
-                    this.$refs.scroller.finishInfinite(true)
+
                     // this.mtrData.MtrTime = this.mtrData.Start.split(' ')[0]+' '+this.mtrData.Start.split(' ')[1]+'-'+this.mtrData.End.split(' ')[1]
+                    this.pageloading = false;
+                } else {
+                    this.isShowerr = true;
+                    this.errinfo = res.body.errorMessage;
                     this.pageloading = false;
                 }
                 //获取当前月的数据
@@ -543,8 +623,8 @@ export default {
                     let obj = { searchSubjectKey: this.searchSubjectKey.trim(), currentDate: this.todayTime, pageSize: this.pageSize, offset: this.offset, searchDirection: this.searchDirection };
                     this.initData(this.getMineMtr, obj);
                 }, 500)
-            }else{
-                 this.$refs.scroller.finishInfinite(false);
+            } else {
+                this.$refs.scroller.finishInfinite(false);
             }
         },
         //发起搜索
@@ -553,7 +633,7 @@ export default {
             let obj = { searchSubjectKey: this.searchSubjectKey.trim(), currentDate: this.todayTime, pageSize: this.pageSize, offset: this.offset, searchDirection: this.searchDirection };
             this.pageloading = true;
             this.initData(this.getMineMtr, obj, 'search');
-
+            // localdata('searchKey',this.searchSubjectKey.trim());
         },
         keyExcSearch(evt) {
             if (evt.keyCode === 13) {
@@ -561,6 +641,7 @@ export default {
                 let obj = { searchSubjectKey: this.searchSubjectKey.trim(), currentDate: this.todayTime, pageSize: this.pageSize, offset: this.offset, searchDirection: this.searchDirection };
                 this.pageloading = true;
                 this.initData(this.getMineMtr, obj, 'search');
+                // localdata('searchKey',this.searchSubjectKey.trim());
             }
         },
         //跳转到详情
@@ -591,7 +672,11 @@ export default {
             this.$http.post(urldata.basePath + urldata.CancelMeeting, ICalUid).then(res => {
                 if (res.body.status === 200) {
                     this.pageloading = false;
-                    window.location.reload();
+                    //操作后重新获取数据
+                    this.offset = 0;
+                    let obj = { searchSubjectKey: this.searchSubjectKey.trim(), currentDate: this.todayTime, pageSize: this.pageSize, offset: this.offset, searchDirection: this.searchDirection };
+                    this.initData(this.getMineMtr, obj, 'search');
+                    // window.location.reload();
                     // this.$router.push({ path: '/' });
                 } else {
                     this.isShowerr = true;
@@ -662,7 +747,11 @@ export default {
         closeShowerr() {
             this.isShowerr = false;
             this.pageloading = false;
-            window.location.reload();
+            //操作后重新获取数据
+            this.offset = 0;
+            let obj = { searchSubjectKey: this.searchSubjectKey.trim(), currentDate: this.todayTime, pageSize: this.pageSize, offset: this.offset, searchDirection: this.searchDirection };
+            this.initData(this.getMineMtr, obj, 'search');
+            // window.location.reload();
             // this.$router.push({ path: '/' });
         }
     }

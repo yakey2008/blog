@@ -126,8 +126,8 @@
 <template>
     <div>
         <scroller :on-refresh="refresh" :on-infinite="infinite" ref="scroller" class="css-mtnoticelist-page">
-            <div v-for="(item,index) in data" :key="item.ID">
-                <div v-if="item.DisplayType == 1 && item.MeetingResponseType == 3" class="css-list-item">
+            <div v-for="(item,index) in data" :key="index">
+                <div v-if="item.DisplayType !== 2 && item.MeetingResponseType == 3" class="css-list-item">
                     <p class="css-list-item-time col9b">{{item.CreateTime}}</p>
                     <div class="css-list-item-main bgcolor modify-title" v-if="item.DisplayType ===3">
                         <div class="css-list-item-main-info">{{item.Title}}</div>
@@ -153,7 +153,7 @@
                         </div>
                     </div>
                 </div>
-                <div v-if="item.DisplayType == 1 && item.MeetingResponseType == 4" class="css-list-item">
+                <div v-if="item.DisplayType !== 2 && item.MeetingResponseType == 4" class="css-list-item">
                     <p class="css-list-item-time col9b">{{item.CreateTime}}</p>
                     <div class="css-list-item-main bgcolor modify-title" v-if="item.DisplayType ===3">
                         <div class="css-list-item-main-info">{{item.Title}}</div>
@@ -179,7 +179,7 @@
                         </div>
                     </div>
                 </div>
-                <div v-if="item.DisplayType == 1 && item.MeetingResponseType == 0" class="css-list-item">
+                <div v-if="item.DisplayType !== 2 && item.MeetingResponseType == 0" class="css-list-item">
                     <p class="css-list-item-time col9b">{{item.CreateTime}}</p>
                     <div class="css-list-item-main bgcolor modify-title" v-if="item.DisplayType ===3">
                         <div class="css-list-item-main-info">{{item.Title}}</div>
@@ -210,6 +210,12 @@
                     </div>
                 </div>
                 <div v-if="item.DisplayType == 2" class="css-list-item">
+                    <p class="css-list-item-time col9b">{{item.CreateTime}}</p>
+                    <div class="css-list-item-main bgcolor">
+                        <div class="css-list-item-main-info">{{item.Subject}}</div>
+                    </div>
+                </div>
+                <div v-if="item.DisplayType == 4" class="css-list-item" v-on:click="toDetail(item.IsShowAttentdeesStat,item.ICalUid)">
                     <p class="css-list-item-time col9b">{{item.CreateTime}}</p>
                     <div class="css-list-item-main bgcolor">
                         <div class="css-list-item-main-info">{{item.Subject}}</div>
@@ -293,8 +299,15 @@ export default {
                     this.page = this.page + 1;
                 }
                 this.$http.get(this.getNoticeList + '?page=' + this.page + '&pageSize=' + this.pageSize).then(res => {
-                    this.data = this.data.concat(res.body.data.list);
-                    this.$refs.scroller.finishInfinite(true);
+                    let len = res.body.data.list.length;
+                    if (len === 0) {
+                        this.$refs.scroller.finishInfinite(true);
+                    } else {
+                        this.data = this.data.concat(res.body.data.list);
+                        this.$refs.scroller.finishInfinite(false);
+                    }
+
+                    
                 }, error => {
                     // this.$refs.scroller.finishInfinite(true);
                 })

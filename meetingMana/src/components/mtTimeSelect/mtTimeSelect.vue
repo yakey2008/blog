@@ -198,14 +198,14 @@ div {
                     </section>
                     <div class="css-timeline">
                         <aside class="css-timeline-datetime">
-                            <div class="css-timeline-hours" v-for="(time,index) in initDatetime" :key="time" :class="[index===0?'margint26':'',index===initDatetime.length-1?'height26':'']">
+                            <div class="css-timeline-hours" v-for="(time,index) in initDatetime" :key="index" :class="[index===0?'margint26':'',index===initDatetime.length-1?'height26':'']">
                                 <span class="css-timeline-hours-text">{{time}}</span>
                             </div>
                         </aside>
                         <section class="css-timeline-ordered">
                             <div class="css-pageinfo">
                                 <div class="selected-box passed"></div>
-                                <div class="selected-box" v-for="(item,index) in matchAllTimezone" :key="item" v-on:click="selectedevent(index)" :class="[item.selected?'selected':'',item.ordered?'ordered':'',item.passed?'passed':'',index%4===0?'bordertw2':'']">{{item.Name}}</div>
+                                <div class="selected-box" v-for="(item,index) in matchAllTimezone" :key="index" v-on:click="selectedevent(index)" :class="[item.selected?'selected':'',item.ordered?'ordered':'',item.passed?'passed':'',index%4===0?'bordertw2':'']">{{item.Name}}</div>
                                 <div class="selected-box bordertw2 passed"></div>
                             </div>
                         </section>
@@ -255,7 +255,7 @@ export default {
     },
     created() {
         //数组去重
-        Array.prototype.unique = function () {
+        Array.prototype.unique = function() {
             var res = [];
             var json = {};
             for (var i = 0; i < this.length; i++) {
@@ -286,7 +286,7 @@ export default {
             this.$moaapi.updateNavTitle('选择时间');
             this.$moaapi.hideNavMenu();
         }, 100)
-        
+
         this.today = +new Date(moment().format('YYYY/MM/DD'));
 
         this.initTimeSatus(this.mtrSelected.dateTime);
@@ -294,6 +294,12 @@ export default {
             // this.ajaxMtrStatu(urldata.basePath + urldata.GetRoomsStatus + '?date=2017-08-10&roomListAddress=' + localdata.getdata('curRegionId'));
             this.ajaxMtrStatu(urldata.basePath + urldata.GetRoomsStatus + '?date=' + this.mtrSelected.dateTime + '&roomListAddress=' + localdata.getdata('curRegionId'));
         }
+        this.matchAllTimezone.forEach((el, index) => {
+            if (el.value === moment().format('HH') + ':00') {
+                document.querySelector('#js-mainheight').scrollTop = 25*index;
+            }
+        },this)
+
     },
     data() {
         return {
@@ -334,6 +340,7 @@ export default {
                 this.matchAllTimezone.forEach((el, i) => {
                     if (now > +moment(time + ' ' + el.value)) {
                         el.passed = true;
+                        el.selected = false;
                     } else {
                         el.passed = false;
                     }
@@ -342,6 +349,7 @@ export default {
                 this.matchAllTimezone.forEach((el, i) => {
                     if (now > +moment(time + ' ' + el.value)) {
                         el.passed = true;
+                        el.selected = false;
                     } else {
                         el.passed = false;
                     }
@@ -350,6 +358,7 @@ export default {
                 this.matchAllTimezone.forEach((el, i) => {
                     if (now > +moment(time + ' ' + el.value)) {
                         el.passed = true;
+                        el.selected = false;
                     } else {
                         el.passed = false;
                     }
@@ -370,7 +379,7 @@ export default {
             this.$http.get(url).then(res => {
                 if (res.body.status === 200) {
                     if (res.body.data.length > 0) {
-                        (function (res, _this) {
+                        (function(res, _this) {
                             //时间区域索引数组
                             let arr = [];
                             let arrNextpage = [];
@@ -403,6 +412,7 @@ export default {
                                     //存储选中会议室时间
                                     arrNextpage.push(objNextpage);
                                     localdata.setdata('selectedTime', JSON.stringify(arrNextpage));
+                                    isNostatus = false;
                                     arrNostatus.push(isNostatus);
                                 } else {
                                     arrNextpage.push(objNextpage);
@@ -411,12 +421,12 @@ export default {
                                     arrNostatus.push(isNostatus);
                                 }
                             }, _this)
-
                             //恢复到默认无选中状态
                             if (arrNostatus[_this.mtrSelected.listindex]) {
                                 _this.matchAllTimezone.forEach((el2, index) => {
                                     if (now > +moment(_this.mtrSelected.dateTime + ' ' + el2.value)) {
                                         el2.passed = true;
+                                        el2.selected = false;
                                     } else {
                                         el2.passed = false;
                                     }
@@ -460,6 +470,7 @@ export default {
                                     _this.matchAllTimezone.forEach((el2, index) => {
                                         if (now > +moment(_this.mtrSelected.dateTime + ' ' + el2.value)) {
                                             el2.passed = true;
+                                            el2.selected = false;
                                         } else {
                                             el2.passed = false;
                                         }
@@ -500,12 +511,11 @@ export default {
                                             el2index = undefined;
                                         }
 
-                                        if (typeof el2index !=='undefined') {
+                                        if (typeof el2index !== 'undefined') {
                                             el2.ordered = true;
                                         }
                                     }, _this)
                                 }, _this)
-
                             }
                             //来自修改 将已预定时间修改为 选中
                             if (localdata.getdata('isFromModified')) {
@@ -518,14 +528,22 @@ export default {
                                     if (el.value === st) {
                                         modifyFirstIndex = index;
                                         _this.firstIndex = index;
+                                        if (el.passed) {
+                                            el.selected = false;
+                                        } else {
+                                            el.selected = true;
+                                        }
                                         el.ordered = false;
-                                        el.selected = true;
                                     } else if (el.value === ed) {
                                         modifyFirstIndex = undefined;
                                     }
-                                    if (typeof modifyFirstIndex !=='undefined') {
+                                    if (typeof modifyFirstIndex !== 'undefined') {
                                         el.ordered = false;
-                                        el.selected = true;
+                                        if (el.passed) {
+                                            el.selected = false;
+                                        } else {
+                                            el.selected = true;
+                                        }
                                     }
                                 }, _this)
 
@@ -534,6 +552,10 @@ export default {
                     } else {
                         this.initTimeSatus(this.mtrSelected.dateTime);
                     }
+                    this.pageloading = false;
+                } else {
+                    this.isShowerr = true;
+                    this.errinfo = res.body.errorMessage;
                     this.pageloading = false;
                 }
             }, error => {
@@ -585,14 +607,14 @@ export default {
             if (this.matchAllTimezone[index].selected === true) {
                 this.matchAllTimezone[index].selected = false;
                 if (this.firstIndex === index) {
-                    this.matchAllTimezone.forEach(function (element) {
+                    this.matchAllTimezone.forEach(function(element) {
                         element.selected = false;
                     }, this);
                     this.startTime = '--:--';
                     this.endTime = '--:--';
                 } else if (this.firstIndex > index) {
                     if (index === this.matchAllTimezone.length - 1) {
-                        this.endTime = "24:00";
+                        this.endTime = "23:59";
                     } else {
                         this.startTime = this.matchAllTimezone[index + 1].value;
                     }
@@ -606,7 +628,7 @@ export default {
 
             } else if (!this.matchAllTimezone[index].ordered && !this.matchAllTimezone[index].passed && this.matchAllTimezone[index].selected === false) {
                 //是否存在选中
-                this.matchAllTimezone.forEach(function (element) {
+                this.matchAllTimezone.forEach(function(element) {
                     if (element.selected === true) {
                         cango = false;
                     }
@@ -617,11 +639,10 @@ export default {
                     this.firstIndex = index;
                     this.startTime = this.matchAllTimezone[index].value;
                     if (index === this.matchAllTimezone.length - 1) {
-                        this.endTime = "24:00";
+                        this.endTime = "23:59";
                     } else {
                         this.endTime = this.matchAllTimezone[index + 1].value;
                     }
-
                 }
             }
 
@@ -640,17 +661,20 @@ export default {
                     }
                     if (!isHasOrdered) {
                         for (let i = this.firstIndex, end = index; i < end; i++) {
-                            this.matchAllTimezone[i].selected = true;
+                            //已过时间就不再标记为选中
+                            if (!this.matchAllTimezone[i].passed) {
+                                this.matchAllTimezone[i].selected = true;
+                            }
                         }
                         //取消选中大于二次选中的索引
-                        this.matchAllTimezone.forEach(function (el, idx) {
+                        this.matchAllTimezone.forEach(function(el, idx) {
                             if (idx > index) {
                                 el.selected = false;
                             }
                         })
                         if (this.matchAllTimezone[index].selected) {
                             if (index === this.matchAllTimezone.length - 1) {
-                                this.endTime = "24:00";
+                                this.endTime = "23:59";
                             } else {
                                 this.endTime = this.matchAllTimezone[index + 1].value;
                             }
@@ -674,7 +698,7 @@ export default {
                             this.matchAllTimezone[i].selected = true;
                         }
                         //取消选中小于二次选中的索引
-                        this.matchAllTimezone.forEach(function (el, idx) {
+                        this.matchAllTimezone.forEach(function(el, idx) {
                             if (idx < index) {
                                 el.selected = false;
                             }
@@ -734,7 +758,11 @@ export default {
                 // this.$router.push({ name: 'mtlaunchmeet',params:this.mtrSelected});
                 //来自详情修改
                 if (localdata.getdata('isFromModified')) {
-                    this.$router.push({ path: '/mtmeetdetailinvite' });
+                    if (localdata.getdata('isFromTimeModify')) {
+                        this.$router.push({ path: '/mtlaunchmeet' });
+                    } else {
+                        this.$router.push({ path: '/mtmeetdetailinvite' });
+                    }
                 } else {
                     this.$router.push({ path: '/mtlaunchmeet' });
                 }

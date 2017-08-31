@@ -3,7 +3,7 @@
     <h3 class="title">{{event.title}}</h3>
     <!--<p class="time">{{dateTimeFormatter(Date.parse(new Date(event.date)),i18n[locale].fullFormat)}}</p>-->
     <p class="time">{{event.datetime}}</p>
-    <p class="desc" v-for="mtr in event.desc" :key="mtr.Address">
+    <p class="desc" v-for="(mtr,index) in event.desc" :key="index">
       <i class="css-locaticon">
         <img v-bind:src="locaticon">
       </i>{{mtr.Name}}</p>
@@ -44,6 +44,7 @@ export default {
       if (this.event.curData.IsShowAttentdeesStat) {
         //发起者已结束跳转到预览页
         if (!this.event.curData.IsCancelled && this.event.curData.Processing === 3) {
+          localdata.setdata('isFromIvtEndMt',true)
           this.$router.push({ path: '/mtmeetdetailaccept' });
         } else {
           this.$router.push({ path: '/mtmeetdetailinvite' });

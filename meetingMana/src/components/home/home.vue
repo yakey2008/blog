@@ -51,8 +51,8 @@ export default {
   data() {
     return {
       pageloading: false,
-      curDateMonth: moment().format('YYYY/MM'),//当前月份
-      datetoday: moment().format('YYYY/MM/DD'),
+      curDateMonth: moment().format('YYYY/M'),//当前月份
+      datetoday: moment().format('YYYY/M/D'),
       currentUserData: [],//当前登录用户信息
       demoEvents: []
     }
@@ -61,19 +61,19 @@ export default {
 
     //原生右上角菜单
     let _this = this;
-    window.orderMtr = function () {
+    window.orderMtr = function() {
       _this.$router.push({ path: '/mtlocationselect' });
     }
-    window.mineMtr = function () {
+    window.mineMtr = function() {
       _this.$router.push({ path: '/mtminemeeting' });
     }
-    window.searchMtr = function () {
+    window.searchMtr = function() {
       _this.$router.push({ path: '/mtsearchmtr' });
     }
-    window.noticeSet = function () {
+    window.noticeSet = function() {
       _this.$router.push({ path: '/mtnoticeset' });
     }
-    let list = '[{ "name": "预定会议", "action": "orderMtr()" }, { "name": "会议日程", "action": "mineMtr()" },{ "name": "搜索会议", "action": "searchMtr()" }, { "name": "会议通知设置", "action": "noticeSet()" }]';
+    let list = '[{ "name": "预定会议", "action": "orderMtr()" }, { "name": "我的会议", "action": "mineMtr()" },{ "name": "搜索会议", "action": "searchMtr()" }, { "name": "会议通知设置", "action": "noticeSet()" }]';
     this.$moaapi.updateNavTitle('会易订');
     this.$moaapi.hideNavMenu();
     setTimeout(() => {
@@ -82,6 +82,13 @@ export default {
     }, 100)
 
     //获取当前登录人信息
+    // window.getUserInfo = function(info) {
+    //   alert(info)
+    //   _this.initData(this.datetoday, info.email);
+    //   localdata.setdata('currentUserData', JSON.stringify(info));
+    // }
+    // this.$moaapi.getUserInfo('getUserInfo');
+
     // this.$http.get('mt/CurrentUserInfo').then(res => {
     this.pageloading = true;
     this.$http.get(urldata.basePath + urldata.CurrentUserInfo).then(res => {
@@ -93,6 +100,10 @@ export default {
     }, error => {
       console.log(error.body.errorMessage);
     })
+
+
+
+
     //获取所有会议室列表和会议室的映射关系
     this.$http.get(urldata.basePath + urldata.GetAllRoomListAndRoom).then(res => {
       //获取当前月的数据
@@ -101,7 +112,6 @@ export default {
     }, error => {
       console.log(error.body.errorMessage);
     })
-
     //清除本地存储已存在的数据
     this.clearStorage();
   },
@@ -115,13 +125,15 @@ export default {
       this.$http.get(urldata.basePath + urldata.MyCalendar + '?date=' + date).then(response => {
         if (response.status === 200) {
           let arr = response.body.data;
-          arr.forEach(function (el) {
+          arr.forEach(function(el) {
             let obj = {};
             let strStart = el.Start.substr(11);
             let strStart2 = strStart.substr(0, strStart.length - 3);
             let strEnd = el.End.substr(11);
             let strEnd2 = strEnd.substr(0, strEnd.length - 3);
-
+            if (strEnd2 === "00:00") {
+              strEnd2 = "23:59";
+            }
             obj.curData = el;
             obj.title = el.Subject;
             if (el.Resources.length === 0) {
@@ -137,7 +149,7 @@ export default {
           this.pageloading = false;
         }
       }, error => {
-        console.log(error.body.errorMessage);
+        console.error(error.body.errorMessage);
         this.$moaapi.closeWin();
       }).then(() => {
         //更换时间
@@ -149,17 +161,6 @@ export default {
           this.$EventCalendar.toDate(date);
         }
       })
-      // .then(() => {
-      // let cur = this.datetoday.substr(this.datetoday, this.datetoday.length - 3);
-      // let evt = date.substr(date, date.length - 3);
-      // // if (this.isInit) {
-      // if (evt === cur) {
-      //   this.$EventCalendar.toDate(this.datetoday);
-      // } else {
-      //   this.$EventCalendar.toDate(date);
-      // }
-      //   this.isInit = false;
-      // });
     },
     //回到当前天
     dateBackToday() {
@@ -171,7 +172,7 @@ export default {
       }
     },
     handleDayChanged(data) {
-      let monthDate = moment(new Date(data.date)).format('YYYY/MM/DD');
+      let monthDate = moment(new Date(data.date)).format('YYYY/M/D');
       if (this.curDateMonth !== monthDate.substr(0, monthDate.length - 3)) {
         this.curDateMonth = monthDate.substr(0, monthDate.length - 3);
         this.initData(monthDate, this.currentUserData.UserEmail);

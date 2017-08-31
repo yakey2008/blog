@@ -18,6 +18,8 @@ body {
 textarea {
     font-family: "Microsoft YaHei";
 }
+//去掉ios点击触发效果
+div{-webkit-tap-highlight-color: rgba(255, 255, 255, 0);}
 
 ul,
 p {

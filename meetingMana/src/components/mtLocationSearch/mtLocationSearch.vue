@@ -312,7 +312,7 @@ $col9b:#9b9b9b;
             <div class="css-selector-container" v-if="isShowregion">
                 <div class="css-mask" v-on:click="showregion()"></div>
                 <div class="css-selector-list">
-                    <div class="css-selector-item" v-for="item in tabVal" :key="item.Address" v-on:click="regionEvt(item)" :class="{'css-curregion':curRegionId===item.Address}" :curregionid="item.Address">{{item.Name}}</div>
+                    <div class="css-selector-item" v-for="(item,index) in tabVal" :key="index" v-on:click="regionEvt(item)" :class="{'css-curregion':curRegionId===item.Address}" :curregionid="item.Address">{{item.Name}}</div>
                 </div>
             </div>
         </div>
@@ -323,14 +323,14 @@ $col9b:#9b9b9b;
             <div class="weui-dialog css-timepicker">
                 <div class="css-timepicker-box">
                     <div>小时</div>
-                    <ul>
-                        <li v-for="hours in timepickerArr.hours" :key="hours" v-on:click="takehour(hours)">{{hours}}</li>
+                    <ul id="js-hours">
+                        <li v-for="(hours,index) in timepickerArr.hours" :key="index" v-on:click="takehour(hours)">{{hours}}</li>
                     </ul>
                 </div>
                 <div class="css-timepicker-box">
                     <div>分钟</div>
                     <ul>
-                        <li v-for="minutes in timepickerArr.minutes" :key="minutes" v-on:click="takeminute(minutes)">{{minutes}}</li>
+                        <li v-for="(minutes,index) in timepickerArr.minutes" :key="index" v-on:click="takeminute(minutes)">{{minutes}}</li>
                     </ul>
                 </div>
             </div>
@@ -395,7 +395,7 @@ export default {
                 type: 'day',
                 week: ['一', '二', '三', '四', '五', '六', '日'],
                 month: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
-                format: 'YYYY-MM-DD',
+                format: 'YYYY-M-D',
                 overlayOpacity: 0.5, // 0.5 as default
                 dismissible: true // as true as default
             },
@@ -428,8 +428,8 @@ export default {
             startMinute: '00',
             endHour: '00',
             endMinute: '00',
-            hourVal: '00:00',
-            minuteVal: '00:00',
+            hourVal: moment().format('HH')+':00',
+            minuteVal:moment().format('HH')+':00',
             MtrName: '',//会议室名称
             tabVal: [],
             isPicker: true,//是否使用时间组件
@@ -473,14 +473,27 @@ export default {
             this.curRegionId = item.Address;
             this.showregion();
         },
+        //定位当前时间
+        setTimePostion() {
+            let top = 0;
+            this.timepickerArr.hours.forEach((el, index) => {
+                if (moment().format('HH') === el) {
+                    top = 25 * index;
+                }
+            }, this)
+            document.querySelector('#js-hours').scrollTop = top;
+        },
         //选择开始时间
         takeStartTime(type) {
             this.isShowTimepicker = true;
             //type 1 开始 2结束
             this.timePickerType = type;
-
+            setTimeout(() => {
+                this.setTimePostion();
+            }, 0)
         },
         takehour(val) {
+
             if (this.timePickerType === 1) {
                 this.startHour = val;
                 this.hourVal = this.startHour + ':' + this.startMinute;
@@ -501,34 +514,36 @@ export default {
         },
         //发起搜索
         searchEvt() {
-            let now = +new Date();
-            let selectedTime = +new Date(this.startTime.time);
+            let selectedTime = +moment(this.startTime.time);
             if (selectedTime < this.today) {
                 this.isShowerr = true;
                 this.errinfo = '不可以选择今天之前的日期';
             } else {
+                let now = +new Date();
                 let stTime = this.startTime.time + ' ' + this.hourVal;
                 let edTime = this.startTime.time + ' ' + this.minuteVal;
+                let stStemp = +moment(stTime);
+                let edStemp = +moment(edTime);
 
-                if (+new Date(stTime) > +new Date(edTime)) {
-                    this.isShowerr = true;
-                    this.errinfo = '开始时间不可晚于结束时间';
-                } else if (+new Date(stTime) === +new Date(edTime)) {
+                if (stStemp === edStemp) {
                     this.isShowerr = true;
                     this.errinfo = '不可选择相同时间';
+                } else if (stStemp < now) {
+                    this.isShowerr = true;
+                    this.errinfo = '不可选择当前时间之前的时间';
+                } else if (edStemp < now) {
+                    this.isShowerr = true;
+                    this.errinfo = '不可选择当前时间之前的时间';
+                } else if (stStemp > edStemp) {
+                    this.isShowerr = true;
+                    this.errinfo = '开始时间不可晚于结束时间';
                 } else if ((+moment(edTime)) - (+moment(stTime)) <= 60 * 15 * 1000) {
                     this.isShowerr = true;
                     this.errinfo = '查询时间段最小为30分钟';
-                }else if (+new Date(stTime) < now) {
-                    this.isShowerr = true;
-                    this.errinfo = '不可选择当前时间之前的时间';
-                } else if (+new Date(edTime) < now) {
-                    this.isShowerr = true;
-                    this.errinfo = '不可选择当前时间之前的时间';
                 } else {
                     // this.$router.push({ path: `/mtlocationselect/${this.curRegionId}/${this.val_start}/${this.val_end}` });
                     this.$router.push({ path: '/mtlocationselect', query: { searchregionid: this.curRegionId, starttime: stTime, endtime: edTime, roomName: this.MtrName } });
-                    this.showregion();
+                    // this.showregion();
                 }
             }
         },

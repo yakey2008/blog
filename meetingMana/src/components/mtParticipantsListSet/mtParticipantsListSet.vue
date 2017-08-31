@@ -141,42 +141,65 @@ $col9b:#9b9b9b;
                         font-size: 0.75rem;
                         color: $col9b;
                     }
-                    .css-username {
-                        float: left;
-                        margin-right: 10px;
-                        height: 25px;
-                    }
-                    .css-useractor {
-                        float: left;
-                        width: 80px;
-                        height: 25px;
-                        padding-top: 5px;
-                        .css-label {
-                            float: left;
-                            text-align: center;
-                            border-radius: 4px;
-                            width: 75px;
-                            height: 18px;
-                            color: #fff;
-                            font-size: 0.75rem;
-                            &.none {
-                                display: none;
-                            }
-                            &.purple {
-                                background-color: #989ad7;
-                            }
-                            &.gray {
-                                background-color: #cccccc;
-                            }
+                }
+                .css-username {
+                    // float: left;
+                    margin-right: 10px;
+                    height: 25px;
+                    .css-label {
+                        color: #fff;
+                        font-size: .75rem;
+                        background-color: #989ad7;
+                        padding: 2px 5px;
+                        border-radius: 4px;
+                        margin-left: 4px;
+                        &.gray {
+                            background-color: #cccccc;
                         }
                     }
-                    .css-userposition {
-                        font-size: 13px;
-                        color: #888888;
+                    .css-statutext {
+                        font-size: .875rem;
+                        &.green {
+                            color: #42bd56;
+                        }
+                        &.red {
+                            color: #ec5042;
+                        }
+                        &.grey {
+                            color: #9b9b9b;
+                        }
                     }
-                    .css-rose {
-                        width: 130px;
-                    }
+                }
+                // .css-useractor {
+                //     float: left;
+                //     width: 80px;
+                //     height: 25px;
+                //     padding-top: 5px;
+                //     .css-label {
+                //         float: left;
+                //         text-align: center;
+                //         border-radius: 4px;
+                //         width: 75px;
+                //         height: 18px;
+                //         color: #fff;
+                //         font-size: 0.75rem;
+                //         &.none {
+                //             display: none;
+                //         }
+                //         &.purple {
+                //             background-color: #989ad7;
+                //         }
+                //         &.gray {
+                //             background-color: #cccccc;
+                //         }
+                //     }
+                // }
+                .css-userposition {
+                    font-size: 13px;
+                    color: #888888;
+                }
+                .css-rose {
+                    width: 130px;
                 }
                 .weui-cell__bd {
                     padding: 0 10px;
@@ -192,7 +215,7 @@ $col9b:#9b9b9b;
             <div class="weui-tab">
                 <div class="weui-navbar">
                     <div class="css-top-btn" :class="{'css-selected':isHoverClass===0}" v-on:click="switchBtn(0)">
-                        <span>全部({{userLen}})</span>
+                        <span>全部({{userAllLen}})</span>
                     </div>
                     <div class="css-top-btn" :class="{'css-selected':isHoverClass===1}" v-on:click="switchBtn(1)">
                         <span>已接受({{mtrSelected.AttentdeesStat.Accept}})</span>
@@ -201,24 +224,27 @@ $col9b:#9b9b9b;
                         <span>已谢绝({{mtrSelected.AttentdeesStat.Decline}})</span>
                     </div>
                     <div class="css-top-btn" :class="{'css-selected':isHoverClass===3}" v-on:click="switchBtn(3)">
-                        <span>未接受({{mtrSelected.AttentdeesStat.NoResponseReceived+userFromEmailLen}})</span>
+                        <span>未接受({{unAcceptLen}})</span>
                     </div>
                 </div>
 
                 <div class="css-main-container weui-tab__panel">
                     <div class="hr-div"></div>
                     <section class="css-pageinfo">
-                        <div class="weui-cell css-pageinfoBox" v-for="(must,index) in userMustList" :key="must.id" v-if="must.isShow">
+                        <div class="weui-cell css-pageinfoBox" v-for="(must,index) in userMustList" :key="index" v-if="must.isShow">
                             <div class="css-avarar-box">
                                 <div class="weui-cell__hd css-picBox" v-bind:style="{backgroundImage:'url('+must.url+')'}" v-if="must.url"></div>
                                 <div class="weui-cell__hd css-picBox" v-bind:style="{backgroundImage:'url('+noavatar+')'}" v-else></div>
                                 <span class="css-delIcon" v-bind:style="{backgroundImage:'url('+deluserIcon+')'}" v-on:click="delUser(0,index)" v-if="index!==0"></span>
                             </div>
                             <div class="weui-cell__bd">
-                                <div class="css-username">{{must.Name}}</div>
-                                <div class="css-useractor" v-if="must.isInitiator">
-                                    <span class="css-label">会议组织者</span>
+                                <div class="css-username">{{must.Name}}
+                                    <span class="css-label" v-if="must.isInitiator">会议组织者</span>
+                                    <span class="css-statutext fl-r" :class="{'green':must.ResponseType === 1||must.ResponseType === 4,'red':must.ResponseType === 3,'grey':must.ResponseType === 0||must.ResponseType === 2||must.ResponseType === 5||must.ResponseType === null||must.isEmail}">{{must.statuText}}</span>
                                 </div>
+                                <!-- <div class="css-useractor" v-if="must.isInitiator">
+                                            <span class="css-label">会议组织者</span>
+                                        </div> -->
                                 <div class="clearfix"></div>
                                 <p class="css-userposition" v-if="!must.hasOwnProperty('isEmail')">{{must.isInitiator?must.dept:must.job}}</p>
                                 <p class="css-userposition" v-if="must.hasOwnProperty('isEmail')">通过邮件邀请的人员</p>
@@ -227,18 +253,20 @@ $col9b:#9b9b9b;
                     </section>
 
                     <section class="css-pageinfo" v-if="userOptionalList.length>0">
-                        <div class="weui-cell css-pageinfoBox" v-for="(optional,index) in userOptionalList" :key="optional.id" v-if="optional.isShow">
+                        <div class="weui-cell css-pageinfoBox" v-for="(optional,index) in userOptionalList" :key="index" v-if="optional.isShow">
                             <div class="css-avarar-box">
                                 <div class="weui-cell__hd css-picBox" v-bind:style="{backgroundImage:'url('+optional.url+')'}" v-if="optional.url"></div>
                                 <div class="weui-cell__hd css-picBox" v-bind:style="{backgroundImage:'url('+noavatar+')'}" v-else></div>
-                                <span class="css-delIcon" v-bind:style="{backgroundImage:'url('+deluserIcon+')'}" v-on:click="delUser(0,index)"></span>
+                                <span class="css-delIcon" v-bind:style="{backgroundImage:'url('+deluserIcon+')'}" v-on:click="delUser(1,index)"></span>
                             </div>
 
                             <div class="weui-cell__bd">
-                                <div class="css-username">{{optional.Name}}</div>
-                                <div class="css-useractor">
-                                    <span class="css-label gray">可选参会者</span>
+                                <div class="css-username">{{optional.Name}}<span class="css-label gray">可选参会者</span>
+                                    <span class="css-statutext fl-r" :class="{'green':optional.ResponseType === 1||optional.ResponseType === 4,'red':optional.ResponseType === 3,'grey':optional.ResponseType === 0||optional.ResponseType === 2||optional.ResponseType === 5}">{{optional.statuText}}</span>
                                 </div>
+                                <!-- <div class="css-useractor">
+                                    <span class="css-label gray">可选参会者</span>
+                                </div> -->
                                 <div class="clearfix"></div>
                                 <p class="css-userposition">{{optional.job}}</p>
                                 <!-- <p class="css-userposition" v-if="optional.hasOwnProperty('isMust')">通过邮件邀请的人员</p> -->
@@ -268,24 +296,40 @@ export default {
 
         if (localdata.getdata('userFromEmail')) {
             this.userFromEmail = JSON.parse(localdata.getdata('userFromEmail'));
-            this.userLen = this.userFromEmail.length;
         }
         this.userMustList = JSON.parse(localdata.getdata('userMustList'));
         this.userOptionalList = JSON.parse(localdata.getdata('userOptionalList'));
-        this.userMustList.forEach(function (el) {
-            if(el.isEmail){
+        this.userMustList.forEach(function(el) {
+            if (el.isEmail) {
                 arr.push(el);
             }
             el.isShow = true;
+            if (el.ResponseType === 1) {
+                el.isInitiator = true;
+                el.statuText = '已接受';
+            } else if (el.ResponseType === 3) {
+                el.statuText = '已接受';
+            } else if (el.ResponseType === 4) {
+                el.statuText = '已谢绝';
+            } else {
+                el.statuText = '未接受';
+            }
         }, this);
-        this.userOptionalList.forEach(function (el) {
+        this.userOptionalList.forEach(function(el) {
             el.isShow = true;
+            if (el.ResponseType === 1) {
+                el.statuText = '已接受';
+            } else if (el.ResponseType === 3) {
+                el.statuText = '已接受';
+            } else if (el.ResponseType === 4) {
+                el.statuText = '已谢绝';
+            } else {
+                el.statuText = '未接受';
+            }
         }, this);
 
-        this.userFromEmailLen = arr.length;
-        this.userLen = this.userLen+this.userFromEmailLen;
-        this.userLen = this.userMustList.length + this.userOptionalList.length;
         this.$moaapi.updateNavTitle('参与人员');
+        this.countUserLen();
     },
     data() {
         return {
@@ -297,67 +341,84 @@ export default {
             userFromEmail: [],
             userMustList: [],
             userOptionalList: [],
-            userFromEmailLen :0,//来自回填email人数
             isHoverClass: 0,
-            userLen:0//全部人员人数
+            userAllLen:0,//全部人员人数
+            unAcceptLen:0//未接受人数
         }
     },
     methods: {
+        countUserLen() {
+            //人数操作渲染
+            this.userMustList.forEach((el) => {
+                if (el.ResponseType === 0 || el.ResponseType === 2 || el.ResponseType === 5||el.isEmail) {
+                    this.unAcceptLen = this.unAcceptLen + 1;
+                }
+            })
+
+            this.userOptionalList.forEach((el) => {
+                if (el.ResponseType === 0 || el.ResponseType === 2 || el.ResponseType === 5) {
+                    this.unAcceptLen = this.unAcceptLen + 1;
+                }
+            })
+            this.unAcceptLen = this.unAcceptLen;
+
+            this.userAllLen = this.userMustList.length + this.userOptionalList.length;
+        },
         switchBtn(type) {
             //全部
             if (type === 0) {
                 this.isHoverClass = 0;
-                this.userMustList.forEach(function (el) {
+                this.userMustList.forEach(function(el) {
                     el.isShow = true;
                 }, this);
-                this.userOptionalList.forEach(function (el) {
+                this.userOptionalList.forEach(function(el) {
                     el.isShow = true;
                 }, this);
-            //已接受
+                //已接受
             } else if (type === 1) {
                 this.isHoverClass = 1;
-                this.userMustList.forEach(function (el) {
+                this.userMustList.forEach(function(el) {
                     if (el.ResponseType === 3) {
                         el.isShow = true;
                     } else {
                         el.isShow = false;
                     }
                 }, this);
-                this.userOptionalList.forEach(function (el) {
+                this.userOptionalList.forEach(function(el) {
                     if (el.ResponseType === 3) {
                         el.isShow = true;
                     } else {
                         el.isShow = false;
                     }
                 }, this);
-            //已拒绝
+                //已拒绝
             } else if (type === 2) {
                 this.isHoverClass = 2;
-                this.userMustList.forEach(function (el) {
+                this.userMustList.forEach(function(el) {
                     if (el.ResponseType === 4) {
                         el.isShow = true;
                     } else {
                         el.isShow = false;
                     }
                 }, this);
-                this.userOptionalList.forEach(function (el) {
+                this.userOptionalList.forEach(function(el) {
                     if (el.ResponseType === 4) {
                         el.isShow = true;
                     } else {
                         el.isShow = false;
                     }
                 }, this);
-            //未接受
+                //未接受
             } else if (type === 3) {
                 this.isHoverClass = 3;
-                this.userMustList.forEach(function (el) {
-                    if (el.ResponseType === 0 || el.ResponseType === 2 || el.ResponseType === 5 || el.ResponseType === null) {
+                this.userMustList.forEach(function(el) {
+                    if (el.ResponseType === 0 || el.ResponseType === 2 || el.ResponseType === 5 || el.ResponseType === null||el.isEmail) {
                         el.isShow = true;
                     } else {
                         el.isShow = false;
                     }
                 }, this);
-                this.userOptionalList.forEach(function (el) {
+                this.userOptionalList.forEach(function(el) {
                     if (el.ResponseType === 0 || el.ResponseType === 2 || el.ResponseType === 5 || el.ResponseType === null) {
                         el.isShow = true;
                     } else {
@@ -376,10 +437,13 @@ export default {
                     this.userMustList.splice(idx, 1);
                     localdata.setdata('userMustList', JSON.stringify(this.userMustList));
                 }
-            } else {
+            } else if(type === 1) {
                 this.userOptionalList.splice(idx, 1);
                 localdata.setdata('userOptionalList', JSON.stringify(this.userOptionalList));
             }
+            this.userAllLen = 0;
+            this.unAcceptLen = 0;
+            this.countUserLen();
         }
     }
 }

@@ -114,7 +114,7 @@ $col9b:#9b9b9b;
             <div class="weui-tab">
                 <div class="css-main-container">
                     <section class="css-pageinfo">
-                        <div class="weui-cell css-pageinfoBox" v-for="must in userMustList" :key="must.id">
+                        <div class="weui-cell css-pageinfoBox" v-for="(must,index) in userMustList" :key="index">
                             <div class="weui-cell__hd css-picBox" v-bind:style="{backgroundImage:'url('+must.AvatarUrl+')'}" v-if="must.AvatarUrl"></div>
                             <div class="weui-cell__hd css-picBox" v-bind:style="{backgroundImage:'url('+noavatar+')'}" v-else></div>
                             <div class="weui-cell__bd">
@@ -131,7 +131,7 @@ $col9b:#9b9b9b;
                     </section>
 
                     <section class="css-pageinfo" v-if="userOptionalList.length>0">
-                        <div class="weui-cell css-pageinfoBox" v-for="optional in userOptionalList" :key="optional.id">
+                        <div class="weui-cell css-pageinfoBox" v-for="(optional,index) in userOptionalList" :key="index">
                             <div class="weui-cell__hd css-picBox" v-bind:style="{backgroundImage:'url('+optional.AvatarUrl+')'}" v-if="optional.AvatarUrl"></div>
                             <div class="weui-cell__hd css-picBox" v-bind:style="{backgroundImage:'url('+noavatar+')'}" v-else></div>
                             <div class="weui-cell__bd">
@@ -163,6 +163,7 @@ export default {
             userLen = this.userFromEmail.length;
         }
         this.userMustList = JSON.parse(localdata.getdata('userMustList'));
+        this.userMustList[0].isInitiator = true;
         this.userOptionalList = JSON.parse(localdata.getdata('userOptionalList'));
         userLen = this.userMustList.length + this.userOptionalList.length;
         this.$moaapi.updateNavTitle('参与人员');

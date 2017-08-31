@@ -111,17 +111,17 @@ $col9b:#9b9b9b;
         <div class="weui-tab__panel">
             <div class="weui-tab">
                 <div class="css-main-container" v-if="!loading">
-                    <section class="css-pageinfo">
-                        <div class="css-pagebox">
-                            <div class="weui-cell weui-cell_switch">
-                                <div class="weui-cell__bd css-item">接收会议邀请通知</div>
-                                <div class="weui-cell__ft">
-                                    <input class="weui-switch" type="checkbox" v-model="recNoti" @change="recNotiAct">
+                    <!-- <section class="css-pageinfo">
+                            <div class="css-pagebox">
+                                <div class="weui-cell weui-cell_switch">
+                                    <div class="weui-cell__bd css-item">接收会议邀请通知</div>
+                                    <div class="weui-cell__ft">
+                                        <input class="weui-switch" type="checkbox" v-model="recNoti" @change="recNotiAct">
+                                    </div>
                                 </div>
+                                <p class="css-explantime">开启后，当有您有受邀请的会议时，唯秘将推送消息到您的手机消息通知栏。</p>
                             </div>
-                            <p class="css-explantime">开启后，当有您有受邀请的会议时，唯秘将推送消息到您的手机消息通知栏。</p>
-                        </div>
-                    </section>
+                        </section> -->
                     <section class="css-pageinfo">
                         <div class="css-pagebox">
                             <div class="weui-cell weui-cell_switch">
@@ -133,7 +133,7 @@ $col9b:#9b9b9b;
                             <p class="css-explantime">开启后，在会议开始前，唯秘将推送会议提醒到您的手机消息通知栏。</p>
                         </div>
                     </section>
-    
+
                     <section class="css-pagesetting" v-if="remind">
                         <div class="weui-cell weui-cell_switch css-setting weui-cell_access">
                             <div class="weui-cell__bd css-item ">提醒时间</div>
@@ -154,21 +154,24 @@ $col9b:#9b9b9b;
 // import service2 from '../../services/postMeetingSetting'
 import urldata from '../../config/urldata.js';
 import weui from '../../lib/js/weui.min.js';
+import loading from '../loading/loading.vue';
 
 export default {
     name: 'mtNoticeSet',
+    created() {
+        //初始化
+        this.initSet(urldata.basePath + urldata.PersonSetting);
+    },
     mounted() {
         this.$moaapi.updateNavTitle('通知设置');
         this.$moaapi.hideNavMenu();
-        //初始化
-        this.initSet(urldata.basePath + urldata.PersonSetting);
 
         // this.getMeetingSetting()
     },
     data() {
         return {
-            recNoti: true,
-            remind: true,
+            // recNoti: '',//接收会议邀请通知
+            remind: '',//会议开始前，通知我
             remindTime: 15,
             loading: true
         }
@@ -177,13 +180,22 @@ export default {
         initSet(url) {
             this.$http.get(url).then(res => {
                 if (res.body.status === 200) {
-                    this.recNoti = res.body.data.ReceiveMeetingPush === "true";
-                    this.remind = res.body.data.RemindMeetingPush === "true";
+                    // this.recNoti = res.body.data.ReceiveMeetingPush;
+                    this.remind = res.body.data.RemindMeetingPush;
+                    // if(this.recNoti==='true'){ 
+                    //     this.recNoti = true;
+                    // }else{
+                    //     this.recNoti = false;
+                    // }
+                    if (this.remind === 'true') {
+                        this.remind = true;
+                    } else {
+                        this.remind = false;
+                    }
                     this.remindTime = res.body.data.RemindMeetinTime;
                     this.loading = false
                 } else {
-                    this.isShowerr = true;
-                    this.errinfo = res.body.errorMessage;
+                    alert(res.body.errorMessage);
                 }
             }, error => {
                 this.loading = false
@@ -191,14 +203,15 @@ export default {
             })
         },
         setMeetingSetting(key, value) {
+            // this.pageloading = true;
             this.$http.post(urldata.basePath + urldata.SetPersonSetting, { key: key, value: value }).then(data => {
+                // this.pageloading = false;
+                // window.location.reload();
                 console.log(data)
             }, status => {
                 console.log(status)
             })
         },
-
-
 
         // getMeetingSetting() {
         //     service1.get(this.$http, {}).then(data => {
@@ -244,9 +257,9 @@ export default {
                     id: 'picker'
                 })
         },
-        recNotiAct() {
-            this.setMeetingSetting("ReceiveMeetingPush", this.recNoti)
-        },
+        // recNotiAct() {
+        //     this.setMeetingSetting("ReceiveMeetingPush", this.recNoti)
+        // },
         remindAct() {
             this.setMeetingSetting("RemindMeetingPush", this.remind)
         },

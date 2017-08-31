@@ -26,14 +26,14 @@
     </div>
     <div class="cal-body">
       <div class="weeks">
-        <span v-for="dayName in i18n[calendar.options.locale].dayNames" class="item" :key="dayName">{{dayName}}</span>
+        <span v-for="(dayName,index) in i18n[calendar.options.locale].dayNames" class="item" :key="index">{{dayName}}</span>
       </div>
       <div class="dates">
-        <div v-for="date in dayList" class="item" :class="{
+        <div v-for="(date,index) in dayList" class="item" :class="{
                             today: date.status ? (today == date.date) : false,
                             event: date.status ? (date.title != undefined) : false,
                             [calendar.options.className] : (date.date == selectedDay ||date.date ===curday)
-                          }" :key="date" v-on:click="removecls()">
+                          }" :key="index" v-on:click="removecls()">
           <p class="date-num" @click="handleChangeCurday(date)" :style="{color: date.title != undefined ? ((date.date == selectedDay) ? ((date.status===0) ?'#ccc':colfff):((date.status===0) ?'#ccc':'inherit')) :((date.status===0) ?'#ccc':'inherit')}">
             {{date.date.split('/')[2]}}</p>
           <span v-if="date.status ? (date.title != undefined) : false" class="has-event" :style="{backgroundColor: (date.date == selectedDay) ? colfff : eventsubcolor}"></span>
@@ -119,21 +119,23 @@ export default {
   methods: {
     nextMonth() {
       this.$EventCalendar.nextMonth();
+      let splitDate = this.curYearMonth.split('年');
       //判断是否存在当天日期
       this.$emit('month-changed', this.curYearMonth);
-      if ((+this.today.split('/')[1]) === +(+this.curYearMonth.split('年')[1].substr(0, this.curYearMonth.split('年')[1].length - 1))) {
+      if ((+this.today.split('/')[1]) === +(+splitDate[1].substr(0, splitDate[1].length - 1))) {
         this.curday = this.today;
       } else {
-        this.curday = this.curYearMonth.split('年')[0] + '/' + (+this.curYearMonth.split('年')[1].substr(0, this.curYearMonth.split('年')[1].length - 1)) + '/1';
+        this.curday = splitDate[0] + '/' + (+splitDate[1].substr(0, splitDate[1].length - 1)) + '/1';
       }
     },
     preMonth() {
       this.$EventCalendar.preMonth();
+      let splitDate = this.curYearMonth.split('年');
       this.$emit('month-changed', this.curYearMonth);
-      if ((+this.today.split('/')[1]) === +(+this.curYearMonth.split('年')[1].substr(0, this.curYearMonth.split('年')[1].length - 1))) {
+      if ((+this.today.split('/')[1]) === +(+splitDate[1].substr(0, splitDate[1].length - 1))) {
         this.curday = this.today;
       } else {
-        this.curday = this.curYearMonth.split('年')[0] + '/' + (+this.curYearMonth.split('年')[1].substr(0, this.curYearMonth.split('年')[1].length - 1)) + '/1';
+        this.curday =splitDate[0] + '/' + (+splitDate[1].substr(0, splitDate[1].length - 1)) + '/1';
       }
       // console.log(this.curday)
     },

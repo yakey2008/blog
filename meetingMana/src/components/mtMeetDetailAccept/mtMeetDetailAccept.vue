@@ -344,8 +344,7 @@ $col9b:#9b9b9b;
                             <div class="weui-cell__bd">
                                 <p>会议时间</p>
                             </div>
-                            <div class="weui-cell__ft">
-                                {{formatDate(mtrSelected.meetTimeDetail)}}
+                            <div class="weui-cell__ft" v-html="formatDate(mtrSelected.meetTimeDetail)">
                             </div>
                         </div>
                     </div>
@@ -355,15 +354,15 @@ $col9b:#9b9b9b;
                     <div class="css-mtlaunchmeet-meetlocation">
                         <div class="css-mtlaunchmeet-mtl-infoadd-container">
                             <div class="css-mtlaunchmeet-mtl-info">
-                                <p>会议地点（{{mtrSelected.Resources.length}}）</p>
+                                <p>会议地点（{{mtrSelected.mtrLen}}）</p>
                             </div>
                         </div>
-                        <div class="css-mtlaunchmeet-mtl-location-container" v-for="(mtr,index) in mtrSelected.Resources" :key="mtr">
+                        <div class="css-mtlaunchmeet-mtl-location-container" v-for="(mtr,index) in mtrSelected.Resources" :key="index">
                             <div class="css-mtlaunchmeet-mtl-location-info">
                                 <p>{{mtr.Name}}</p>
                             </div>
                         </div>
-                        <div class="css-mtlaunchmeet-mtl-location-container css-shouall-container" v-if="mtrSelected.Resources.length>2" v-on:click="showMoreMtr()">
+                        <div class="css-mtlaunchmeet-mtl-location-container css-shouall-container" v-if="mtrSelected.mtrLen>2" v-on:click="showMoreMtr()">
                             <div class="css-showall-participate">{{showMtrText}}</div>
                         </div>
                     </div>
@@ -382,9 +381,9 @@ $col9b:#9b9b9b;
                 <div class="hr-div"></div>
                 <section>
                     <div class="css-mtlaunchmeet-participate-container">
-                        <div class="css-mtlaunchmeet-mtl-infoadd-container weui-cell_access">
+                        <div class="css-mtlaunchmeet-mtl-infoadd-container weui-cell_access">   
                             <div class="css-mtlaunchmeet-mtl-info">
-                                <p>参会人员（{{mtrSelected.RequiredAttendees.length+mtrSelected.OptionalAttendees.length}}）</p>
+                                <p>参会人员（{{mtrSelected.userLen}}）</p>
                             </div>
                             <div class="css-mtlaunchmeet-mtl-addbtn weui-cell__ft" v-on:click="checkAlluser()">
                                 <span class="css-add-btn">查看所有参与人</span>
@@ -393,7 +392,7 @@ $col9b:#9b9b9b;
                         <div class="css-mtlaunchmeet-mtl-participate-items">
                             <div class="weui-uploader__bd">
                                 <div class="weui-uploader__files css-invite-container">
-                                    <div class="fl-l css-must-in" v-for="(requiremen,index) in noDeptMustList" :key="requiremen.Address" v-if="index<4">
+                                    <div class="fl-l css-must-in" v-for="(requiremen,index) in noDeptMustList" :key="index" v-if="index<4">
                                         <div v-on:click="viewUserInfo(requiremen.id)">
                                             <div class="css-must-in-item" v-bind:style="{backgroundImage:'url('+requiremen.AvatarUrl+')'}" v-if="requiremen.AvatarUrl"></div>
                                             <div class="css-must-in-item" v-bind:style="{backgroundImage:'url('+noavatar+')'}" v-else></div>
@@ -404,10 +403,10 @@ $col9b:#9b9b9b;
                             </div>
                             <i class="css-right-icon css-must-icon"></i>
                         </div>
-                        <div class="css-mtlaunchmeet-mtl-participate-items" v-if="mtrSelected.OptionalAttendees.length>0">
+                        <div class="css-mtlaunchmeet-mtl-participate-items" v-if="mtrSelected.optionalLen>0">
                             <div class="weui-uploader__bd">
                                 <div class="weui-uploader__files css-invite-container">
-                                    <div class="fl-l css-must-in" v-for="(optionalmen,index) in noDeptOptionalList" :key="optionalmen.Address" v-if="index<4">
+                                    <div class="fl-l css-must-in" v-for="(optionalmen,index) in noDeptOptionalList" :key="index" v-if="index<4">
                                         <div v-on:click="viewUserInfo(optionalmen.id)">
                                             <div class="css-must-in-item" v-bind:style="{backgroundImage:'url('+optionalmen.AvatarUrl+')'}" v-if="optionalmen.AvatarUrl"></div>
                                             <div class="css-must-in-item" v-bind:style="{backgroundImage:'url('+noavatar+')'}" v-else></div>
@@ -469,6 +468,7 @@ export default {
             this.$moaapi.updateNavTitle('会议详情');
             this.$moaapi.hideNavMenu();
         }, 100)
+        
     },
     data() {
         return {
@@ -485,7 +485,6 @@ export default {
             showMtrText: '展开显示全部会议室',//多个会议室显示按钮文字
             showMore: 2,//显示更多会议室
             currentUserInfo: {},//当前用户信息
-            mtrStatu: undefined,//审批状态
             mtrStatuText: '',//审批状态名称
             isShowCtrlBtn: true//是否显示操作按钮
         }
@@ -503,18 +502,24 @@ export default {
             if (val) {
                 let date = moment(val.split(' ')[0]).format('YYYY年MM月DD日 ddd');
                 let time = val.split(' ')[1];
-                return date + ' ' + time;
+                return date + '<br>' + time;
             }
         },
         initData(data) {
             this.mtrSelected = data;
-
+            
+            
+            
             //来自接受者拼接到Resources,来自发起者直接用Resources
             if (this.mtrSelected.Resources.length === 0) {
                 this.mtrSelected.Location.split('; ').forEach((el) => {
                     this.mtrSelected.Resources.push({ Name: el });
                 })
             }
+            //兼容app消息显示长度
+            this.mtrSelected.mtrLen = this.mtrSelected.Resources.length;
+            this.mtrSelected.userLen = this.mtrSelected.RequiredAttendees.length +this.mtrSelected.OptionalAttendees.length;
+            this.mtrSelected.optionalLen = this.mtrSelected.OptionalAttendees.length;
 
             let date = this.mtrSelected.Start.split(' ')[0];
             let st = this.mtrSelected.Start.split(' ')[1];
@@ -534,6 +539,12 @@ export default {
                 this.mtrStatuText = '已结束';
                 this.isShowCtrlBtn = false;
             }
+
+            if (this.mtrSelected.IsCancelled) {
+                this.mtrStatuText = '已取消';
+                this.isShowCtrlBtn = false;
+            }
+
             this.mtrSelected.meetTimeDetail = date + ' \r\n' + st.substr(0, st.length - 3) + '-' + ed.substr(0, ed.length - 3);
             this.mtrSelected.RequiredAttendees.forEach((el, index) => {
                 if (el.ResponseType === null) {
@@ -551,7 +562,7 @@ export default {
                 }
             })
 
-            if (this.mtrSelected.RequiredAttendees.length===0 ||this.mtrSelected.RequiredAttendees[0].Address !== this.mtrSelected.Organizer.Address) {
+            if (this.mtrSelected.RequiredAttendees.length === 0 || this.mtrSelected.RequiredAttendees[0].Address !== this.mtrSelected.Organizer.Address) {
                 this.mtrSelected.Organizer.name = this.mtrSelected.Organizer.Name;
                 this.mtrSelected.Organizer.url = this.mtrSelected.Organizer.AvatarUrl;
                 this.mtrSelected.Organizer.id = this.mtrSelected.Organizer.Address;

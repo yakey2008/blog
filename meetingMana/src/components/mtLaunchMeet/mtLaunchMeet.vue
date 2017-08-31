@@ -47,8 +47,9 @@ $col9b:#9b9b9b;
                 padding-top: 23px;
                 padding-left: 22px;
                 .weui-textarea {
-                    height: 33px;
-                    resize: vertical;
+                    resize: none;
+                    overflow: hidden;
+                    min-height: 33px;
                 }
             }
         }
@@ -145,8 +146,9 @@ $col9b:#9b9b9b;
             .weui-cell {
                 padding-left: 22px;
                 .weui-textarea {
-                    height: 36px;
-                    resize: vertical;
+                    resize: none;
+                    overflow: hidden;
+                    min-height: 36px;
                 }
             }
         }
@@ -247,9 +249,9 @@ $col9b:#9b9b9b;
                         width: 21px;
                         background-color: #434750;
                     }
-                    &.marginle12p {
+                    // &.marginle12p {
                         // margin-left: 12%;
-                    }
+                    // }
                 }
 
                 &.css-shouall-container {
@@ -293,7 +295,7 @@ $col9b:#9b9b9b;
                     <div class="weui-cells weui-cells_form css-mtlaunchmeet-theme">
                         <div class="weui-cell">
                             <div class="weui-cell__bd">
-                                <textarea class="weui-textarea" placeholder="请输入会议主题" rows="3" maxlength="30" v-model="sendData.Subject"></textarea>
+                                <textarea class="weui-textarea" placeholder="请输入会议主题" rows="3" maxlength="30" v-model="sendData.Subject" v-on:keyup="auto_grow($event)" id="js-mtrSubject"></textarea>
                             </div>
                         </div>
                     </div>
@@ -305,8 +307,7 @@ $col9b:#9b9b9b;
                             <div class="weui-cell__bd">
                                 <p>会议时间</p>
                             </div>
-                            <div class="weui-cell__ft">
-                                <span>{{formatDate(mtrSelected.timeInterval)}}</span>
+                            <div class="weui-cell__ft" v-html="formatDate(mtrSelected.timeInterval)">
                             </div>
                         </div>
                     </div>
@@ -324,7 +325,7 @@ $col9b:#9b9b9b;
                                 <span class="css-add-btn" v-on:click="mtrAddone()" v-if="!mtrSelected.isDIYResource">添加</span>
                             </div>
                         </div>
-                        <div class="css-mtlaunchmeet-mtl-location-container" v-for="(mtr,index) in mtrSelected.mtrList" :key="mtr.mtrId" v-show="index<showMore">
+                        <div class="css-mtlaunchmeet-mtl-location-container" v-for="(mtr,index) in mtrSelected.mtrList" :key="index" v-show="index<showMore">
                             <div class="css-mtlaunchmeet-mtl-location-info">
                                 <p>{{mtr.mtrName}}</p>
                             </div>
@@ -342,7 +343,7 @@ $col9b:#9b9b9b;
                     <div class="weui-cells weui-cells_form css-mtlaunchmeet-content">
                         <div class="weui-cell">
                             <div class="weui-cell__bd">
-                                <textarea class="weui-textarea" placeholder="请输入会议内容（可选）" rows="3" maxlength="500" v-model="sendData.Body"></textarea>
+                                <textarea class="weui-textarea" placeholder="请输入会议内容（可选）" rows="3" maxlength="500" v-model="sendData.Body" v-on:keyup="auto_grow($event)" id="js-mtrContent"></textarea>
                             </div>
                         </div>
                     </div>
@@ -361,7 +362,7 @@ $col9b:#9b9b9b;
                         <div class="css-mtlaunchmeet-mtl-participate-items">
                             <div class="weui-uploader__bd clearfix">
                                 <div class="weui-uploader__files css-invite-container">
-                                    <div class="fl-l css-must-in" v-for="(mustuser,index) in noDeptMustList" :key="mustuser.id" v-if="index<4">
+                                    <div class="fl-l css-must-in" v-for="(mustuser,index) in noDeptMustList" :key="index" v-if="index<4">
                                         <div v-on:click="viewUserInfo(mustuser.id)">
                                             <div class="css-must-in-item" v-bind:style="{backgroundImage:'url('+mustuser.url+')'}" v-if="mustuser.url"></div>
                                             <div class="css-must-in-item" v-bind:style="{backgroundImage:'url('+noavatar+')'}" v-else></div>
@@ -381,7 +382,7 @@ $col9b:#9b9b9b;
                         <div class="css-mtlaunchmeet-mtl-participate-items">
                             <div class="weui-uploader__bd">
                                 <div class="weui-uploader__files css-invite-container">
-                                    <div class="fl-l css-must-in" v-for="(optional,index) in noDeptOptionalList" :key="optional.id" v-if="index<4">
+                                    <div class="fl-l css-must-in" v-for="(optional,index) in noDeptOptionalList" :key="index" v-if="index<4">
                                         <div v-on:click="viewUserInfo(optional.id)">
                                             <div class="css-must-in-item" v-bind:style="{backgroundImage:'url('+optional.url+')'}" v-if="optional.url"></div>
                                             <div class="css-must-in-item" v-bind:style="{backgroundImage:'url('+noavatar+')'}" v-else></div>
@@ -470,80 +471,32 @@ export default {
         if (localStorage.getItem('content')) {
             this.sendData.Body = localStorage.getItem('content');
         }
+
+        localdata.removedata('isFromModified');
     },
-    // activated() {
-    //     if (localdata.getdata('mtrSelected')) {
-    //         this.mtrSelected = JSON.parse(localdata.getdata('mtrSelected'));
-    //     }
-    //     if (localdata.getdata('userMustList')) {
-    //         this.userMustList = JSON.parse(localdata.getdata('userMustList'));
-    //     }
-    //     if (localdata.getdata('userOptionalList')) {
-    //         this.userOptionalList = JSON.parse(localdata.getdata('userOptionalList'));
-    //     }
-    //     if (localdata.getdata('userFromEmail')) {
-    //         this.userFromEmail = JSON.parse(localdata.getdata('userFromEmail'));
-    //     }
-    //     if(localStorage.getItem('themeTitle')){
-    //         this.sendData.Subject = localStorage.getItem('themeTitle');
-    //     }
-    //     if(localStorage.getItem('content')){
-    //         this.sendData.Body = localStorage.getItem('content');
-    //     }
-    // },
-    // deactivated(){
-    //     localStorage.setItem('themeTitle', JSON.stringify(this.sendData.Subject));
-    //     localStorage.setItem('content', JSON.stringify(this.sendData.Body));
-    // },
     mounted() {
         setTimeout(() => {
             this.$moaapi.resetNavTitle();
             this.$moaapi.updateNavTitle('会议详情');
             this.$moaapi.hideNavMenu();
         }, 100)
+        this.auto_grow('init');
         //引用类型数组去重
-        let objUnique = function (arr) {
+        let objUnique = function(arr) {
             var hash = {};
-            let arr2 = arr.reduce(function (item, next) {
-                hash[next.id] ? '' : hash[next.id] = true && item.push(next);
+            let arr2 = arr.reduce(function(item, next) {
+                hash[next.email] ? '' : hash[next.email] = true && item.push(next);
                 return item;
             }, [])
             return arr2;
         }
-        //原生选择人
-        let _this = this;
-        window.excMustUser = function (userList) {
-            if (_this.userMustList.length > 0) {
-                _this.userMustList = _this.userMustList.concat(JSON.parse(userList));
-                _this.userMustList = objUnique(_this.userMustList);
-            } else {
-                _this.userMustList = JSON.parse(userList);
-            }
-            _this.noDeptMustList = _this.userMustList;
-            _this.eachSplit(_this.noDeptMustList);
-            window.localStorage.setItem('userMustList', JSON.stringify(_this.userMustList));
-        }
-        window.excOptionalUser = function (userList) {
-            if (_this.userOptionalList.length > 0) {
-                _this.userOptionalList = _this.userOptionalList.concat(JSON.parse(userList));
-                _this.userOptionalList = objUnique(_this.userOptionalList);
-            } else {
-                _this.userOptionalList = JSON.parse(userList);
-            }
-            _this.noDeptOptionalList = _this.userOptionalList;
-            _this.eachSplit(_this.noDeptOptionalList);
-
-            window.localStorage.setItem('userOptionalList', JSON.stringify(_this.userOptionalList));
-        }
-        // this.paramsData.dateTime = this.paramsData.dateTime.split(' ')[0];
-        // this.paramsData.meetingroom = JSON.parse(this.paramsData.meetingroom);
         if (localdata.getdata('userMustList')) {
             this.userMustList = JSON.parse(localdata.getdata('userMustList'));
             this.noDeptMustList = this.userMustList;
             this.eachSplit(this.noDeptMustList);
         } else {
             //适应原生 与后端返回字段
-            let obj = { name: this.currentUserData.Name, Name: this.currentUserData.Name, id: this.currentUserData.UserEmail, dept: this.currentUserData.DeptFullName, isInitiator: true }
+            let obj = { name: this.currentUserData.Name, Name: this.currentUserData.Name, email: this.currentUserData.UserEmail,id:this.currentUserData.UserEmail, dept: this.currentUserData.DeptFullName, isInitiator: true }
             this.userMustList.push(obj);
             this.noDeptMustList = this.userMustList;
             this.eachSplit(this.noDeptMustList);
@@ -551,6 +504,70 @@ export default {
         }
         this.userFromEmail = [];
         localdata.setdata('userFromEmail', JSON.stringify(this.userFromEmail));
+
+        //原生选择人
+        let _this = this;
+        window.excMustUser = function(userList) {
+            if (_this.userMustList.length > 0) {
+                _this.userMustList = _this.userMustList.concat(JSON.parse(userList));
+            } else {
+                _this.userMustList = JSON.parse(userList);
+            }
+
+            //禁止添加已存在的人员
+            let splitArr = [];
+            _this.userMustList.forEach((el, index) => {
+                _this.userOptionalList.forEach((eloptional) => {
+                    if (el.email === eloptional.email) {
+                        splitArr.push(index);
+                    }
+                }, _this)
+            }, _this)
+            splitArr.reverse().forEach((el)=>{
+                _this.userMustList.splice(el,1);
+            })
+            // if(splitArr.length>0){
+            //     _this.isShowerr = true;
+            //     _this.errinfo = '不可添加已添加的人员';
+            // }
+
+            _this.userMustList = objUnique(_this.userMustList);
+            _this.noDeptMustList = _this.userMustList;
+            _this.eachSplit(_this.noDeptMustList);
+            window.localStorage.setItem('userMustList', JSON.stringify(_this.userMustList));
+        }
+        window.excOptionalUser = function(userList) {
+            if (_this.userOptionalList.length > 0) {
+                _this.userOptionalList = _this.userOptionalList.concat(JSON.parse(userList));
+            } else {
+                _this.userOptionalList = JSON.parse(userList);
+            }
+            //禁止添加已存在的人员
+            let splitArr = [];
+            _this.userOptionalList.forEach((el, index) => {
+                _this.userMustList.forEach((elmust) => {
+                    if (el.email === elmust.email) {
+                        splitArr.push(index);
+                    }
+                }, _this)
+            }, _this)
+            splitArr.reverse().forEach((el)=>{
+                _this.userOptionalList.splice(el,1);
+            })
+            // if(splitArr.length>0){
+            //     _this.isShowerr = true;
+            //     _this.errinfo = '不可添加已添加的人员';
+            // }
+
+            _this.userOptionalList = objUnique(_this.userOptionalList);
+            _this.noDeptOptionalList = _this.userOptionalList;
+            _this.eachSplit(_this.noDeptOptionalList);
+
+            window.localStorage.setItem('userOptionalList', JSON.stringify(_this.userOptionalList));
+        }
+        // this.paramsData.dateTime = this.paramsData.dateTime.split(' ')[0];
+        // this.paramsData.meetingroom = JSON.parse(this.paramsData.meetingroom);
+        
     },
     data() {
         return {
@@ -605,20 +622,36 @@ export default {
             localStorage.setItem('themeTitle', this.sendData.Subject);
             localStorage.setItem('content', this.sendData.Body);
         },
+        //文本框自适应高度
+        auto_grow(element) {
+            let el,el2;
+            if(element==='init'){
+                el = document.getElementById('js-mtrSubject');
+                el2 = document.getElementById('js-mtrContent');
+
+                el2.style.height = "5px";
+                el2.style.height = (el2.scrollHeight) + "px";
+            }else{
+                el = element.currentTarget;
+            }
+            el.style.height = "5px";
+            el.style.height = (el.scrollHeight) + "px";
+        },
         formatDate(val) {
             let date = moment(val.split(' ')[0]).format('YYYY年MM月DD日 ddd');
             let time = val.split(' ')[1];
-            return date + ' ' + time;
+            return date + '<br>' + time;
         },
         //重新选择时间
         takeTime() {
             this.setCache();
-            localdata.setdata('isFromTimeModify', true);
             if (this.mtrSelected.mtrList.length === 0) {
                 this.isShowerr = true;
                 this.errinfo = '请先选择会议室';
             } else {
                 // this.getRegionId();
+                localdata.setdata('isFromTimeModify', true);
+                localdata.setdata('isFromModified', true);
                 this.$router.push({ path: '/mttimeselect' });
             }
 

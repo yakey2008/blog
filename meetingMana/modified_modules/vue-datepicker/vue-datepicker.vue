@@ -427,22 +427,22 @@ table {
           <div class="cov-picker-box">
             <div class="week">
               <ul>
-                <li v-for="weekie in library.week" :key="weekie">{{weekie}}</li>
+                <li v-for="(weekie,index) in library.week" :key="index">{{weekie}}</li>
               </ul>
             </div>
-            <div class="day" v-for="day in dayList" track-by="$index" @click="checkDay(day)" :class="{'checked':day.checked,'unavailable':day.unavailable,'passive-day': !(day.inMonth)}" :style="day.checked ? '' : {}" :key="day">
+            <div class="day" v-for="(day,index) in dayList" track-by="$index" @click="checkDay(day)" :class="{'checked':day.checked,'unavailable':day.unavailable,'passive-day': !(day.inMonth)}" :style="day.checked ? '' : {}" :key="index">
               <span class="checkedday">{{day.value}}</span>
             </div>
           </div>
         </div>
         <div class="cov-date-box list-box" v-if="showInfo.year">
           <div class="cov-picker-box date-list" id="yearList">
-            <div class="date-item" v-for="yearItem in library.year" track-by="$index" @click="setYear(yearItem)" :key="yearItem">{{yearItem}}</div>
+            <div class="date-item" v-for="(yearItem,index) in library.year" track-by="$index" @click="setYear(yearItem)" :key="index">{{yearItem}}</div>
           </div>
         </div>
         <div class="cov-date-box list-box" v-if="showInfo.month">
           <div class="cov-picker-box date-list">
-            <div class="date-item" v-for="monthItem in library.month" track-by="$index" @click="setMonth(monthItem)" :key="monthItem">{{monthItem}}</div>
+            <div class="date-item" v-for="(monthItem,index) in library.month" track-by="$index" @click="setMonth(monthItem)" :key="index">{{monthItem}}</div>
           </div>
         </div>
         <div class="cov-date-box list-box" v-if="showInfo.hour">
@@ -451,12 +451,12 @@ table {
               <div class="hour-box">
                 <div class="mui-pciker-rule mui-pciker-rule-ft"></div>
                 <ul>
-                  <li class="hour-item" v-for="hitem in hours" @click="setTime('hour', hitem, hours)" :class="{'active':hitem.checked}" :key="hitem">{{hitem.value}}</li>
+                  <li class="hour-item" v-for="(hitem,index) in hours" @click="setTime('hour', hitem, hours)" :class="{'active':hitem.checked}" :key="index">{{hitem.value}}</li>
                 </ul>
               </div>
               <div class="min-box">
                 <div class="mui-pciker-rule mui-pciker-rule-ft"></div>
-                <div class="min-item" v-for="mitem in mins" @click="setTime('min',mitem, mins)" :class="{'active':mitem.checked}" :key="mitem">{{mitem.value}}</div>
+                <div class="min-item" v-for="(mitem,index) in mins" @click="setTime('min',mitem, mins)" :class="{'active':mitem.checked}" :key="index">{{mitem.value}}</div>
               </div>
             </div>
           </div>
