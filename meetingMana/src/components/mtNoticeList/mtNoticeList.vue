@@ -11,6 +11,11 @@
     flex: $w;
 }
 
+.weui-btn:after {
+    border: none;
+}
+
+
 .css-mtnoticelist-page {
     height: 100%;
     .col9b {
@@ -29,14 +34,32 @@
             border-radius: 10px;
             overflow: hidden;
             position: relative;
+
+            // &:after {
+            //     content: '';
+            //     position: absolute;
+            //     top: 0;
+            //     left: 0;
+            //     border: 1px solid #000;
+            //     -webkit-box-sizing: border-box;
+            //     box-sizing: border-box;
+            //     width: 200%;
+            //     height: 200%;
+            //     -webkit-transform: scale(0.5);
+            //     transform: scale(0.5);
+            //     -webkit-transform-origin: left top;
+            //     transform-origin: left top;
+            // }
             .right-ribbon {
                 position: absolute;
                 right: -28px;
                 top: 5px;
-                height: 31px;
-                line-height: 31px;
+                // height: 31px;
+                // line-height: 31px;
+                padding: 5px 0;
                 width: 94px;
                 text-align: center;
+                -webkit-transform: rotate(45deg);
                 transform: rotate(45deg);
                 background-color: #88b1ff;
                 color: #fff;
@@ -51,7 +74,6 @@
                     @include flexbox();
                     padding-bottom: 13px;
                     &.css-list-item-main-info-time {
-                        border-top: 1px solid #e7e7e7;
                         padding-top: 13px;
                     }
                     .leftdom {
@@ -66,20 +88,30 @@
                 }
             }
             .css-list-item-main-title {
-                font-size: 1.125rem; // height: 50px;
-                // line-height: 50px;
-                // overflow: hidden;
-                // white-space: nowrap;
-                // text-overflow: ellipsis;
-                // padding-right: 8%;
+                position: relative;
+                font-size: 1.125rem;
                 padding: 12px 0;
                 word-break: break-all;
                 padding-right: 8%;
+                &:after {
+                    content: " ";
+                    position: absolute;
+                    left: 0;
+                    bottom: 0;
+                    right: 0;
+                    height: 1px;
+                    border-bottom: 1px solid #e7e7e7;
+                    color: #e7e7e7;
+                    -webkit-transform-origin: 0 100%;
+                    transform-origin: 0 100%;
+                    -webkit-transform: scaleY(0.5);
+                    transform: scaleY(0.5);
+                }
             }
             &.bgcolor {
                 background-color: #e7e7e7;
                 word-break: break-all;
-                padding: 5px 0;
+                padding: 7px 0;
                 border: none;
                 .css-list-item-main-info {
                     margin: 0 15px;
@@ -105,6 +137,7 @@
                 &.css-delinebtn {
                     margin-right: 21px;
                     color: #9b9b9b;
+                    border: 1px solid rgba(0, 0, 0, 0.2);
                     &:active {
                         color: rgba(0, 0, 0, 0.6);
                         background-color: #dedede;
@@ -127,7 +160,7 @@
     <div>
         <scroller :on-refresh="refresh" :on-infinite="infinite" ref="scroller" class="css-mtnoticelist-page">
             <div v-for="(item,index) in data" :key="index">
-                <div v-if="item.DisplayType !== 2 && item.MeetingResponseType == 3" class="css-list-item">
+                <div v-if="item.DisplayType !== 2 &&item.DisplayType !== 4&& item.MeetingResponseType == 3" class="css-list-item">
                     <p class="css-list-item-time col9b">{{item.CreateTime}}</p>
                     <div class="css-list-item-main bgcolor modify-title" v-if="item.DisplayType ===3">
                         <div class="css-list-item-main-info">{{item.Title}}</div>
@@ -153,7 +186,7 @@
                         </div>
                     </div>
                 </div>
-                <div v-if="item.DisplayType !== 2 && item.MeetingResponseType == 4" class="css-list-item">
+                <div v-if="item.DisplayType !== 2 &&item.DisplayType !== 4&& item.MeetingResponseType == 4" class="css-list-item">
                     <p class="css-list-item-time col9b">{{item.CreateTime}}</p>
                     <div class="css-list-item-main bgcolor modify-title" v-if="item.DisplayType ===3">
                         <div class="css-list-item-main-info">{{item.Title}}</div>
@@ -179,7 +212,7 @@
                         </div>
                     </div>
                 </div>
-                <div v-if="item.DisplayType !== 2 && item.MeetingResponseType == 0" class="css-list-item">
+                <div v-if="item.DisplayType !== 2 &&item.DisplayType !== 4&& item.MeetingResponseType == 0" class="css-list-item">
                     <p class="css-list-item-time col9b">{{item.CreateTime}}</p>
                     <div class="css-list-item-main bgcolor modify-title" v-if="item.DisplayType ===3">
                         <div class="css-list-item-main-info">{{item.Title}}</div>
@@ -307,7 +340,7 @@ export default {
                         this.$refs.scroller.finishInfinite(false);
                     }
 
-                    
+
                 }, error => {
                     // this.$refs.scroller.finishInfinite(true);
                 })

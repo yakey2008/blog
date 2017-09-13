@@ -4,9 +4,7 @@
     <!--<p class="time">{{dateTimeFormatter(Date.parse(new Date(event.date)),i18n[locale].fullFormat)}}</p>-->
     <p class="time">{{event.datetime}}</p>
     <p class="desc" v-for="(mtr,index) in event.desc" :key="index">
-      <i class="css-locaticon">
-        <img v-bind:src="locaticon">
-      </i>{{mtr.Name}}</p>
+      <i class="css-locaticon" v-bind:style="{backgroundImage:'url('+locaticon+')'}"></i>{{mtr.Name}}</p>
   </div>
 </template>
 <script>

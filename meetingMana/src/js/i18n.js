@@ -13,8 +13,8 @@ export default {
     format : 'yyyy年M月',
     fullFormat: 'yyyy年M月d日',
     monthDayFormat: 'M月d日',
-    dayEventsTitle: '全部会议',
-    notHaveEvents: '当天您没有会议要参加'
+    dayEventsTitle: '加载中...',
+    notHaveEvents: '您没有会议要参加'
   },
   // es: {
   //   dayNames: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá"],

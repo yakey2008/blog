@@ -65,10 +65,11 @@
 
 //区域弹出 End
 .weui-navbar:after {
-    border-bottom: 1px solid #E5E5E5;
-    color: #E5E5E5;
+    border-bottom: 1px solid #ddd;
+    color: #ddd;
     -webkit-transform-origin: 0 0;
     transform-origin: 0 0;
+    bottom: -1px;
 }
 
 .weui-navbar__item {
@@ -152,8 +153,8 @@ $col9b:#9b9b9b;
         .select-btn {
             .css-arrow {
                 position: absolute;
-                right: 11px;
-                top: 6px;
+                right: 18px;
+                top: 5px;
                 display: inline-block;
                 height: 8px;
                 width: 8px;
@@ -181,7 +182,21 @@ $col9b:#9b9b9b;
                 margin-left: 5%;
                 overflow: hidden;
                 &.css-bottom-line {
-                    border-bottom: 1px solid #e7e7e7;
+                    position: relative;
+                    &:after {
+                        content: " ";
+                        position: absolute;
+                        left: 0;
+                        bottom: 0;
+                        right: 0;
+                        height: 1px;
+                        border-bottom: 1px solid #e7e7e7;
+                        color: #e7e7e7;
+                        -webkit-transform-origin: 0 100%;
+                        transform-origin: 0 100%;
+                        -webkit-transform: scaleY(0.5);
+                        transform: scaleY(0.5);
+                    }
                 }
                 .css-setting {
                     position: relative;
@@ -232,10 +247,27 @@ $col9b:#9b9b9b;
         @include flexbox();
         .css-timepicker-box {
             @include flexboxwidth(1);
-
+            .time-title {
+                border-bottom: 1px solid #88b1ff;
+                height: 50px;
+                line-height: 50px;
+            }
             ul {
                 height: 100px;
                 overflow-y: scroll;
+                .time-hover-start,
+                .time-hover-end {
+                    color: #fff;
+                    background-color: #88b1ff;
+                }
+            }
+            .time-btn {
+                border-top: 1px solid #88b1ff;
+                height: 50px;
+                line-height: 50px;
+            }
+            .text-blue {
+                color: #88b1ff;
             }
         }
     }
@@ -322,16 +354,18 @@ $col9b:#9b9b9b;
             <div class="weui-mask" v-on:click="closeTimpicker()"></div>
             <div class="weui-dialog css-timepicker">
                 <div class="css-timepicker-box">
-                    <div>小时</div>
+                    <div class="time-title">小时</div>
                     <ul id="js-hours">
-                        <li v-for="(hours,index) in timepickerArr.hours" :key="index" v-on:click="takehour(hours)">{{hours}}</li>
+                        <li v-for="(hours,index) in timepickerArr.hours" :key="index" :class="{'time-hover-start':startHour===hours&&timePickerType===1,'time-hover-end':endHour===hours&&timePickerType===2}" v-on:click="takehour(hours)">{{hours}}</li>
                     </ul>
+                    <div class="time-btn" v-on:click="confirmTime()">确认</div>
                 </div>
                 <div class="css-timepicker-box">
-                    <div>分钟</div>
+                    <div class="time-title">分钟</div>
                     <ul>
-                        <li v-for="(minutes,index) in timepickerArr.minutes" :key="index" v-on:click="takeminute(minutes)">{{minutes}}</li>
+                        <li v-for="(minutes,index) in timepickerArr.minutes" :key="index" :class="{'time-hover-start':startMinute===minutes&&timePickerType===1,'time-hover-end':endMinute===minutes&&timePickerType===2}" v-on:click="takeminute(minutes)">{{minutes}}</li>
                     </ul>
+                    <div class="time-btn text-blue" v-on:click="closeTimpicker()">取消</div>
                 </div>
             </div>
         </div>
@@ -386,7 +420,7 @@ export default {
             // weekDate: '',
 
             startTime: {
-                time: moment().format('YYYY-MM-DD')
+                time: moment().format('YYYY/M/D')
             },
             endtime: {
                 time: ''
@@ -395,7 +429,7 @@ export default {
                 type: 'day',
                 week: ['一', '二', '三', '四', '五', '六', '日'],
                 month: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
-                format: 'YYYY-M-D',
+                format: 'YYYY/M/D',
                 overlayOpacity: 0.5, // 0.5 as default
                 dismissible: true // as true as default
             },
@@ -413,7 +447,6 @@ export default {
             // },
             limit: [],
 
-
             isShowregion: false,
             isShowtime: false,
             curRegion: '请选择',
@@ -424,12 +457,12 @@ export default {
                 hours: ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"],
                 minutes: ["00", "15", "30", "45"]
             },//时间选择数据
-            startHour: '00',
+            startHour: moment().format('HH'),
             startMinute: '00',
-            endHour: '00',
+            endHour: moment().format('HH'),
             endMinute: '00',
-            hourVal: moment().format('HH')+':00',
-            minuteVal:moment().format('HH')+':00',
+            hourVal: moment().format('HH') + ':00',
+            minuteVal: moment().format('HH') + ':00',
             MtrName: '',//会议室名称
             tabVal: [],
             isPicker: true,//是否使用时间组件
@@ -437,7 +470,7 @@ export default {
     },
     methods: {
         formatToWeek(val) {
-            return moment(val).format('M月D日 ddd');
+            return moment(+new Date(val)).format('M月D日 ddd');
         },
         swichTimeDom() {
             this.isPicker = true;
@@ -471,6 +504,9 @@ export default {
         regionEvt(item) {
             this.curRegion = item.Name;
             this.curRegionId = item.Address;
+            localdata.setdata('curRegion', this.curRegion);
+            localdata.setdata('curRegionId', this.curRegionId);
+
             this.showregion();
         },
         //定位当前时间
@@ -493,29 +529,39 @@ export default {
             }, 0)
         },
         takehour(val) {
-
             if (this.timePickerType === 1) {
                 this.startHour = val;
-                this.hourVal = this.startHour + ':' + this.startMinute;
+                // this.hourVal = this.startHour + ':' + this.startMinute;
             } else {
                 this.endHour = val;
-                this.minuteVal = this.endHour + ':' + this.endMinute;
+                // this.minuteVal = this.endHour + ':' + this.endMinute;
             }
         },
         takeminute(val) {
             if (this.timePickerType === 1) {
                 this.startMinute = val;
-                this.hourVal = this.startHour + ':' + this.startMinute;
+                // this.hourVal = this.startHour + ':' + this.startMinute;
             } else {
                 this.endMinute = val;
+                // this.minuteVal = this.endHour + ':' + this.endMinute;
+            }
+            // this.isShowTimepicker = false;
+        },
+        confirmTime() {
+            this.isShowTimepicker = false;
+            if (this.timePickerType === 1) {
+                this.hourVal = this.startHour + ':' + this.startMinute;
+            } else {
                 this.minuteVal = this.endHour + ':' + this.endMinute;
             }
-            this.isShowTimepicker = false;
         },
         //发起搜索
         searchEvt() {
             let selectedTime = +moment(this.startTime.time);
-            if (selectedTime < this.today) {
+            if (this.curRegion === '请选择') {
+                this.isShowerr = true;
+                this.errinfo = '请选择区域';
+            } else if (selectedTime < this.today) {
                 this.isShowerr = true;
                 this.errinfo = '不可以选择今天之前的日期';
             } else {
@@ -528,15 +574,15 @@ export default {
                 if (stStemp === edStemp) {
                     this.isShowerr = true;
                     this.errinfo = '不可选择相同时间';
+                } else if (stStemp > edStemp) {
+                    this.isShowerr = true;
+                    this.errinfo = '开始时间不可晚于结束时间';
                 } else if (stStemp < now) {
                     this.isShowerr = true;
                     this.errinfo = '不可选择当前时间之前的时间';
                 } else if (edStemp < now) {
                     this.isShowerr = true;
                     this.errinfo = '不可选择当前时间之前的时间';
-                } else if (stStemp > edStemp) {
-                    this.isShowerr = true;
-                    this.errinfo = '开始时间不可晚于结束时间';
                 } else if ((+moment(edTime)) - (+moment(stTime)) <= 60 * 15 * 1000) {
                     this.isShowerr = true;
                     this.errinfo = '查询时间段最小为30分钟';

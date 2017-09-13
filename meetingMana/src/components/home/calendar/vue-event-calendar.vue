@@ -68,7 +68,7 @@ $icon-border-size: 1px;
         position: absolute;
         width: 32px;
         height: 24px;
-        top: 9px;
+        top: 18px;
         left: 4%;
         padding: 0;
         background-size: cover;
@@ -120,7 +120,7 @@ $icon-border-size: 1px;
       &>div {
         float: left;
         line-height: 20px;
-        padding: 12px;
+        padding: 20px;
       }
       .title {
         width: 60%;
@@ -224,8 +224,23 @@ $icon-border-size: 1px;
   }
   .events-wrapper {
     .css-datetitle {
+      position: relative;
       color: #9b9b9b;
       padding: 15px 0;
+      &:after {
+        content: " ";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        height: 1px;
+        border-bottom: 1px solid #e7e7e7;
+        color: #e7e7e7;
+        -webkit-transform-origin: 0 100%;
+        transform-origin: 0 100%;
+        -webkit-transform: scaleY(0.5);
+        transform: scaleY(0.5);
+      }
     }
     .cal-events {
       height: 100%;
@@ -242,10 +257,23 @@ $icon-border-size: 1px;
     }
     .event-item {
       padding: 5px 0;
-      border-top: 1px solid #e7e7e7;
       background-color: #fff;
       color: #333;
       position: relative;
+      &:after {
+        content: " ";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        height: 1px;
+        border-bottom: 1px solid #e7e7e7;
+        color: #e7e7e7;
+        -webkit-transform-origin: 0 100%;
+        transform-origin: 0 100%;
+        -webkit-transform: scaleY(0.5);
+        transform: scaleY(0.5);
+      }
       .title {
         // overflow: hidden;
         // white-space: nowrap;
@@ -253,11 +281,11 @@ $icon-border-size: 1px;
         // height: 40px;
         // line-height: 40px;
         padding: 8px 0;
-        width: 70%;
+        width: 68%;
         color: #333;
         font-size: 16px;
         @media (max-width: 365px) {
-          width: 65%;
+          width: 62%;
         }
       }
       .time {
@@ -274,22 +302,21 @@ $icon-border-size: 1px;
         padding-right: 20px;
         .css-locaticon {
           width: 10px;
+          height: 14px;
+          background-size: cover;
           display: block;
           float: left;
           margin-right: 5px;
-          margin-top: 2px;
-          img {
-            width: 100%;
-          }
+          margin-top: 4px;
         }
       }
     }
   }
   .arrow-left.icon {
-    color: #000;
+    color: #9b9b9b;
     position: absolute;
-    left: 6%;
-    margin-top: 9px;
+    left: 30%;
+    margin-top: 10px;
   }
   .arrow-left.icon:before {
     content: '';
@@ -304,10 +331,10 @@ $icon-border-size: 1px;
     transform: rotate(-135deg);
   }
   .arrow-right.icon {
-    color: #000;
+    color: #9b9b9b;
     position: absolute;
-    right: 6%;
-    margin-top: 9px;
+    right: 30%;
+    margin-top: 10px;
   }
   .arrow-right.icon:before {
     content: '';
@@ -420,7 +447,7 @@ export default {
       this.$emit('date-back-today');
     },
     handleChangeCurDay(date) {
-      let events = this.events.filter(function (event) {
+      let events = this.events.filter(function(event) {
         return isEqualDateStr(event.date, date)
       })
       this.selectedDayEvents = {

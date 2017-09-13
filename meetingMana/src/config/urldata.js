@@ -14,5 +14,6 @@ export default {
     SearchMyMeeting:'api/Meeting/SearchMyMeeting',//我的会议
     PersonSetting:'api/Meeting/PersonSetting',//获取设置通知页信息
     SetPersonSetting:'api/Meeting/SetPersonSetting',//设置通知页设置
-    GetMeetingDetail:'api/Meeting/GetMeetingDetail'//返回就是一个会议的详情信息，其数据结构是MyCalendar接口返回数据数组中的一个
+    GetMeetingDetail:'api/Meeting/GetMeetingDetail',//返回就是一个会议的详情信息，其数据结构是MyCalendar接口返回数据数组中的一个
+    GetPersonInfo:'api/Meeting/GetPersonInfo'//根据email获取人员信息
 }

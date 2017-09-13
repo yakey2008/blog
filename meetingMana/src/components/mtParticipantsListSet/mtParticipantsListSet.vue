@@ -169,8 +169,7 @@ $col9b:#9b9b9b;
                             color: #9b9b9b;
                         }
                     }
-                }
-                // .css-useractor {
+                } // .css-useractor {
                 //     float: left;
                 //     width: 80px;
                 //     height: 25px;
@@ -233,8 +232,10 @@ $col9b:#9b9b9b;
                     <section class="css-pageinfo">
                         <div class="weui-cell css-pageinfoBox" v-for="(must,index) in userMustList" :key="index" v-if="must.isShow">
                             <div class="css-avarar-box">
-                                <div class="weui-cell__hd css-picBox" v-bind:style="{backgroundImage:'url('+must.url+')'}" v-if="must.url"></div>
-                                <div class="weui-cell__hd css-picBox" v-bind:style="{backgroundImage:'url('+noavatar+')'}" v-else></div>
+                                <div v-on:click="viewUserInfo(must.id)">
+                                    <div class="weui-cell__hd css-picBox" v-bind:style="{backgroundImage:'url('+must.url+')'}" v-if="must.url"></div>
+                                    <div class="weui-cell__hd css-picBox" v-bind:style="{backgroundImage:'url('+noavatar+')'}" v-else></div>
+                                </div>
                                 <span class="css-delIcon" v-bind:style="{backgroundImage:'url('+deluserIcon+')'}" v-on:click="delUser(0,index)" v-if="index!==0"></span>
                             </div>
                             <div class="weui-cell__bd">
@@ -243,10 +244,10 @@ $col9b:#9b9b9b;
                                     <span class="css-statutext fl-r" :class="{'green':must.ResponseType === 1||must.ResponseType === 4,'red':must.ResponseType === 3,'grey':must.ResponseType === 0||must.ResponseType === 2||must.ResponseType === 5||must.ResponseType === null||must.isEmail}">{{must.statuText}}</span>
                                 </div>
                                 <!-- <div class="css-useractor" v-if="must.isInitiator">
-                                            <span class="css-label">会议组织者</span>
-                                        </div> -->
+                                                            <span class="css-label">会议组织者</span>
+                                                        </div> -->
                                 <div class="clearfix"></div>
-                                <p class="css-userposition" v-if="!must.hasOwnProperty('isEmail')">{{must.isInitiator?must.dept:must.job}}</p>
+                                <p class="css-userposition" v-if="!must.hasOwnProperty('isEmail')">{{must.job}}</p>
                                 <p class="css-userposition" v-if="must.hasOwnProperty('isEmail')">通过邮件邀请的人员</p>
                             </div>
                         </div>
@@ -255,18 +256,21 @@ $col9b:#9b9b9b;
                     <section class="css-pageinfo" v-if="userOptionalList.length>0">
                         <div class="weui-cell css-pageinfoBox" v-for="(optional,index) in userOptionalList" :key="index" v-if="optional.isShow">
                             <div class="css-avarar-box">
-                                <div class="weui-cell__hd css-picBox" v-bind:style="{backgroundImage:'url('+optional.url+')'}" v-if="optional.url"></div>
-                                <div class="weui-cell__hd css-picBox" v-bind:style="{backgroundImage:'url('+noavatar+')'}" v-else></div>
+                                <div v-on:click="viewUserInfo(optional.id)">
+                                    <div class="weui-cell__hd css-picBox" v-bind:style="{backgroundImage:'url('+optional.url+')'}" v-if="optional.url"></div>
+                                    <div class="weui-cell__hd css-picBox" v-bind:style="{backgroundImage:'url('+noavatar+')'}" v-else></div>
+                                </div>
                                 <span class="css-delIcon" v-bind:style="{backgroundImage:'url('+deluserIcon+')'}" v-on:click="delUser(1,index)"></span>
                             </div>
 
                             <div class="weui-cell__bd">
-                                <div class="css-username">{{optional.Name}}<span class="css-label gray">可选参会者</span>
+                                <div class="css-username">{{optional.Name}}
+                                    <span class="css-label gray">可选参会者</span>
                                     <span class="css-statutext fl-r" :class="{'green':optional.ResponseType === 1||optional.ResponseType === 4,'red':optional.ResponseType === 3,'grey':optional.ResponseType === 0||optional.ResponseType === 2||optional.ResponseType === 5}">{{optional.statuText}}</span>
                                 </div>
                                 <!-- <div class="css-useractor">
-                                    <span class="css-label gray">可选参会者</span>
-                                </div> -->
+                                                    <span class="css-label gray">可选参会者</span>
+                                                </div> -->
                                 <div class="clearfix"></div>
                                 <p class="css-userposition">{{optional.job}}</p>
                                 <!-- <p class="css-userposition" v-if="optional.hasOwnProperty('isMust')">通过邮件邀请的人员</p> -->
@@ -342,15 +346,15 @@ export default {
             userMustList: [],
             userOptionalList: [],
             isHoverClass: 0,
-            userAllLen:0,//全部人员人数
-            unAcceptLen:0//未接受人数
+            userAllLen: 0,//全部人员人数
+            unAcceptLen: 0//未接受人数
         }
     },
     methods: {
         countUserLen() {
             //人数操作渲染
             this.userMustList.forEach((el) => {
-                if (el.ResponseType === 0 || el.ResponseType === 2 || el.ResponseType === 5||el.isEmail) {
+                if (el.ResponseType === 0 || el.ResponseType === 2 || el.ResponseType === 5 || el.isEmail) {
                     this.unAcceptLen = this.unAcceptLen + 1;
                 }
             })
@@ -412,7 +416,7 @@ export default {
             } else if (type === 3) {
                 this.isHoverClass = 3;
                 this.userMustList.forEach(function(el) {
-                    if (el.ResponseType === 0 || el.ResponseType === 2 || el.ResponseType === 5 || el.ResponseType === null||el.isEmail) {
+                    if (el.ResponseType === 0 || el.ResponseType === 2 || el.ResponseType === 5 || el.ResponseType === null || el.isEmail) {
                         el.isShow = true;
                     } else {
                         el.isShow = false;
@@ -437,13 +441,18 @@ export default {
                     this.userMustList.splice(idx, 1);
                     localdata.setdata('userMustList', JSON.stringify(this.userMustList));
                 }
-            } else if(type === 1) {
+            } else if (type === 1) {
                 this.userOptionalList.splice(idx, 1);
                 localdata.setdata('userOptionalList', JSON.stringify(this.userOptionalList));
             }
             this.userAllLen = 0;
             this.unAcceptLen = 0;
             this.countUserLen();
+        },
+        //查看人员信息
+        viewUserInfo(id) {
+            console.log(id)
+            this.$moaapi.callUserProfile(id);
         }
     }
 }

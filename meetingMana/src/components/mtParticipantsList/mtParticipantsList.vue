@@ -115,8 +115,11 @@ $col9b:#9b9b9b;
                 <div class="css-main-container">
                     <section class="css-pageinfo">
                         <div class="weui-cell css-pageinfoBox" v-for="(must,index) in userMustList" :key="index">
-                            <div class="weui-cell__hd css-picBox" v-bind:style="{backgroundImage:'url('+must.AvatarUrl+')'}" v-if="must.AvatarUrl"></div>
-                            <div class="weui-cell__hd css-picBox" v-bind:style="{backgroundImage:'url('+noavatar+')'}" v-else></div>
+                            <div v-on:click="viewUserInfo(must.id)">
+                                <div class="weui-cell__hd css-picBox" v-bind:style="{backgroundImage:'url('+must.AvatarUrl+')'}" v-if="must.AvatarUrl"></div>
+                                <div class="weui-cell__hd css-picBox" v-bind:style="{backgroundImage:'url('+must.url+')'}" v-else-if="must.url"></div>
+                                <div class="weui-cell__hd css-picBox" v-bind:style="{backgroundImage:'url('+noavatar+')'}" v-else></div>
+                            </div>
                             <div class="weui-cell__bd">
                                 <div class="css-username">{{must.Name}}</div>
                                 <div class="css-useractor" v-if="must.isInitiator">
@@ -124,7 +127,7 @@ $col9b:#9b9b9b;
                                 </div>
                                 <div class="clearfix"></div>
 
-                                <p class="css-userposition" v-if="!must.hasOwnProperty('isEmail')">{{must.isInitiator?must.dept:must.job}}</p>
+                                <p class="css-userposition" v-if="!must.hasOwnProperty('isEmail')">{{must.Job?must.Job:must.job}}</p>
                                 <p class="css-userposition" v-if="must.hasOwnProperty('isEmail')">通过邮件邀请的人员</p>
                             </div>
                         </div>
@@ -132,15 +135,18 @@ $col9b:#9b9b9b;
 
                     <section class="css-pageinfo" v-if="userOptionalList.length>0">
                         <div class="weui-cell css-pageinfoBox" v-for="(optional,index) in userOptionalList" :key="index">
-                            <div class="weui-cell__hd css-picBox" v-bind:style="{backgroundImage:'url('+optional.AvatarUrl+')'}" v-if="optional.AvatarUrl"></div>
-                            <div class="weui-cell__hd css-picBox" v-bind:style="{backgroundImage:'url('+noavatar+')'}" v-else></div>
+                            <div v-on:click="viewUserInfo(optional.id)">
+                                <div class="weui-cell__hd css-picBox" v-bind:style="{backgroundImage:'url('+optional.AvatarUrl+')'}" v-if="optional.AvatarUrl"></div>
+                                <div class="weui-cell__hd css-picBox" v-bind:style="{backgroundImage:'url('+optional.url+')'}" v-else-if="optional.url"></div>
+                                <div class="weui-cell__hd css-picBox" v-bind:style="{backgroundImage:'url('+noavatar+')'}" v-else></div>
+                            </div>
                             <div class="weui-cell__bd">
                                 <div class="css-username">{{optional.Name}}</div>
                                 <div class="css-useractor">
                                     <span class="css-label gray">可选参会者</span>
                                 </div>
                                 <div class="clearfix"></div>
-                                <p class="css-userposition">{{optional.job}}</p>
+                                <p class="css-userposition">{{optional.Job?optional.Job:optional.job}}</p>
                                 <!-- <p class="css-userposition" v-if="optional.hasOwnProperty('isEmail')">通过邮件邀请的人员</p> -->
                             </div>
                         </div>
@@ -181,6 +187,10 @@ export default {
         }
     },
     methods: {
+        //查看人员信息
+        viewUserInfo(id) {
+            this.$moaapi.callUserProfile(id);
+        },
     }
 }
 </script>

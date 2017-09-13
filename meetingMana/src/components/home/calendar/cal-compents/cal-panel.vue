@@ -36,7 +36,8 @@
                           }" :key="index" v-on:click="removecls()">
           <p class="date-num" @click="handleChangeCurday(date)" :style="{color: date.title != undefined ? ((date.date == selectedDay) ? ((date.status===0) ?'#ccc':colfff):((date.status===0) ?'#ccc':'inherit')) :((date.status===0) ?'#ccc':'inherit')}">
             {{date.date.split('/')[2]}}</p>
-          <span v-if="date.status ? (date.title != undefined) : false" class="has-event" :style="{backgroundColor: (date.date == selectedDay) ? colfff : eventsubcolor}"></span>
+          <span v-if="date.title != undefined" class="has-event" :style="{backgroundColor: (date.date == selectedDay) ? colfff : eventsubcolor}"></span>
+          <!-- <span v-if="date.status ? (date.title != undefined) : false" class="has-event" :style="{backgroundColor: (date.date == selectedDay) ? colfff : eventsubcolor}"></span> -->
           <span class="is-event" :style="{borderColor: customColor, backgroundColor: (date.date == selectedDay||date.date ===curday) ? customColor : 'inherit'}"></span>
         </div>
       </div>

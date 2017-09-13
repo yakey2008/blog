@@ -14,9 +14,12 @@ div {
         overflow: hidden;
     }
     .css-nav-container {
+        position: fixed;
         padding: 7px;
         padding-left: 22px;
         background-color: #fff;
+        -webkit-flex-direction: column;
+        flex-direction: column;
         .location-info {
             font-size: 14px;
             padding: 7px 0;
@@ -41,6 +44,9 @@ div {
             margin: 0;
             position: absolute;
             width: 100%;
+            &.css-ctrl-day {
+                position: fixed;
+            }
         }
         .weui-cells:before {
             border: none;
@@ -135,6 +141,8 @@ div {
         }
     } //底部bar
     .css-bottombar {
+        position: fixed;
+        bottom: 0;
         background-color: #fff;
         &.weui-tabbar:before {
             border: none;
@@ -167,17 +175,18 @@ div {
     <div class="weui-tab css-mttime-page">
         <div class="weui-tab__panel">
             <div class="weui-tab">
-                <div class="weui-navbar css-nav-container">
-                    <p class="location-info" v-if="!mtrSelected.isDIYResource">
-                        <i class="css-locaticon" v-bind:style="{backgroundImage:'url('+locaticonpng+')'}">
-                        </i>{{mtrSelected.mtrList[mtrSelected.mtrList.length-1].mtrName}}</p>
-
+                <div class="weui-navbar css-nav-container" id="js-locationbox">
+                    <div v-if="!mtrSelected.isDIYResource">
+                        <p class="location-info" v-for="(mtr,index) in mtrSelected.mtrList" :key="index">
+                            <i class="css-locaticon" v-bind:style="{backgroundImage:'url('+locaticonpng+')'}">
+                            </i>{{mtr.mtrName}}</p>
+                    </div>
                     <p class="location-info" v-if="mtrSelected.isDIYResource">
                         <i class="css-locaticon" v-bind:style="{backgroundImage:'url('+locaticonpng+')'}">
                         </i>{{mtrSelected.mtrList[mtrSelected.mtrList.length-1].mtrName}}</p>
                 </div>
                 <div class="weui-tab__panel css-main-container" id="js-mainheight">
-                    <section class="weui-cells">
+                    <section class="weui-cells css-ctrl-day">
                         <div class="hr-div"></div>
                         <div class="weui-cell">
                             <div class="css-take-oneday css-align-right" v-on:click="preday()">
@@ -228,7 +237,7 @@ div {
                 </div>
                 <div class="weui-cell__ft">
                     <!-- <router-link :to="'/mtlaunchmeet'" tag="div"> -->
-                    <button class="weui-btn css-next-step" v-on:click="tolunchPage()">下一步</button>
+                    <button class="weui-btn css-next-step" v-on:click="tolaunchPage()">下一步</button>
                     <!-- </router-link> -->
                 </div>
             </div>
@@ -254,18 +263,6 @@ export default {
         notice
     },
     created() {
-        //数组去重
-        Array.prototype.unique = function() {
-            var res = [];
-            var json = {};
-            for (var i = 0; i < this.length; i++) {
-                if (!json[this[i]]) {
-                    res.push(this[i]);
-                    json[this[i]] = 1;
-                }
-            }
-            return res;
-        }
         if (localdata.getdata('DIYResource')) {
             this.mtrSelected = JSON.parse(localdata.getdata('DIYResource'));
             // this.mtrSelected.weekDateTime = moment(this.mtrSelected.dateTime).format('YYYY-MM-DD ddd');
@@ -277,8 +274,9 @@ export default {
                 this.mtrSelected.mtrList[0].isAdded = false;
             }
             localdata.setdata('mtrSelected', JSON.stringify(this.mtrSelected));
-
         }
+
+
     },
     mounted() {
         setTimeout(() => {
@@ -294,12 +292,26 @@ export default {
             // this.ajaxMtrStatu(urldata.basePath + urldata.GetRoomsStatus + '?date=2017-08-10&roomListAddress=' + localdata.getdata('curRegionId'));
             this.ajaxMtrStatu(urldata.basePath + urldata.GetRoomsStatus + '?date=' + this.mtrSelected.dateTime + '&roomListAddress=' + localdata.getdata('curRegionId'));
         }
+
+
+        //兼容iphone5c
+        document.querySelector('html').style.height = 'auto';
+        document.querySelector('body').style.height = 'auto';
+
+        //定位到当前时间
         this.matchAllTimezone.forEach((el, index) => {
             if (el.value === moment().format('HH') + ':00') {
-                document.querySelector('#js-mainheight').scrollTop = 25*index;
+                // document.querySelector('#js-mainheight').scrollTop = 25 * index;
+                document.body.scrollTop = 25 * index;
             }
-        },this)
+        }, this)
 
+        // document.querySelector('.css-timeline').style.height = window.innerHeight+'px';
+        document.querySelector('#js-mainheight').style.paddingTop = document.querySelector('#js-locationbox').scrollHeight;
+    },
+    destroyed() {
+        document.querySelector('html').removeAttribute('style');
+        document.querySelector('body').removeAttribute('style');
     },
     data() {
         return {
@@ -316,7 +328,7 @@ export default {
             isShowtime: false,
             isNodata: false,
             isShowtab: true,
-            initTimenum: 96,//预定格数量
+            // initTimenum: 96,//预定格数量
             initDatetime: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00', '24:00'],//所有时间区域
             // matchTimezonCopy: [],//区域默认副本
             matchAllTimezone: [{ "value": "00:00", "selected": false, "ordered": false, "passed": false }, { "value": "00:15", "selected": false, "ordered": false, "passed": false }, { "value": "00:30", "selected": false, "ordered": false, "passed": false }, { "value": "00:45", "selected": false, "ordered": false, "passed": false }, { "value": "01:00", "selected": false, "ordered": false, "passed": false }, { "value": "01:15", "selected": false, "ordered": false, "passed": false }, { "value": "01:30", "selected": false, "ordered": false, "passed": false }, { "value": "01:45", "selected": false, "ordered": false, "passed": false }, { "value": "02:00", "selected": false, "ordered": false, "passed": false }, { "value": "02:15", "selected": false, "ordered": false, "passed": false }, { "value": "02:30", "selected": false, "ordered": false, "passed": false }, { "value": "02:45", "selected": false, "ordered": false, "passed": false }, { "value": "03:00", "selected": false, "ordered": false, "passed": false }, { "value": "03:15", "selected": false, "ordered": false, "passed": false }, { "value": "03:30", "selected": false, "ordered": false, "passed": false }, { "value": "03:45", "selected": false, "ordered": false, "passed": false }, { "value": "04:00", "selected": false, "ordered": false, "passed": false }, { "value": "04:15", "selected": false, "ordered": false, "passed": false }, { "value": "04:30", "selected": false, "ordered": false, "passed": false }, { "value": "04:45", "selected": false, "ordered": false, "passed": false }, { "value": "05:00", "selected": false, "ordered": false, "passed": false }, { "value": "05:15", "selected": false, "ordered": false, "passed": false }, { "value": "05:30", "selected": false, "ordered": false, "passed": false }, { "value": "05:45", "selected": false, "ordered": false, "passed": false }, { "value": "06:00", "selected": false, "ordered": false, "passed": false }, { "value": "06:15", "selected": false, "ordered": false, "passed": false }, { "value": "06:30", "selected": false, "ordered": false, "passed": false }, { "value": "06:45", "selected": false, "ordered": false, "passed": false }, { "value": "07:00", "selected": false, "ordered": false, "passed": false }, { "value": "07:15", "selected": false, "ordered": false, "passed": false }, { "value": "07:30", "selected": false, "ordered": false, "passed": false }, { "value": "07:45", "selected": false, "ordered": false, "passed": false }, { "value": "08:00", "selected": false, "ordered": false, "passed": false }, { "value": "08:15", "selected": false, "ordered": false, "passed": false }, { "value": "08:30", "selected": false, "ordered": false, "passed": false }, { "value": "08:45", "selected": false, "ordered": false, "passed": false }, { "value": "09:00", "selected": false, "ordered": false, "passed": false }, { "value": "09:15", "selected": false, "ordered": false, "passed": false }, { "value": "09:30", "selected": false, "ordered": false, "passed": false }, { "value": "09:45", "selected": false, "ordered": false, "passed": false }, { "value": "10:00", "selected": false, "ordered": false, "passed": false }, { "value": "10:15", "selected": false, "ordered": false, "passed": false }, { "value": "10:30", "selected": false, "ordered": false, "passed": false }, { "value": "10:45", "selected": false, "ordered": false, "passed": false }, { "value": "11:00", "selected": false, "ordered": false, "passed": false }, { "value": "11:15", "selected": false, "ordered": false, "passed": false }, { "value": "11:30", "selected": false, "ordered": false, "passed": false }, { "value": "11:45", "selected": false, "ordered": false, "passed": false }, { "value": "12:00", "selected": false, "ordered": false, "passed": false }, { "value": "12:15", "selected": false, "ordered": false, "passed": false }, { "value": "12:30", "selected": false, "ordered": false, "passed": false }, { "value": "12:45", "selected": false, "ordered": false, "passed": false }, { "value": "13:00", "selected": false, "ordered": false, "passed": false }, { "value": "13:15", "selected": false, "ordered": false, "passed": false }, { "value": "13:30", "selected": false, "ordered": false, "passed": false }, { "value": "13:45", "selected": false, "ordered": false, "passed": false }, { "value": "14:00", "selected": false, "ordered": false, "passed": false }, { "value": "14:15", "selected": false, "ordered": false, "passed": false }, { "value": "14:30", "selected": false, "ordered": false, "passed": false }, { "value": "14:45", "selected": false, "ordered": false, "passed": false }, { "value": "15:00", "selected": false, "ordered": false, "passed": false }, { "value": "15:15", "selected": false, "ordered": false, "passed": false }, { "value": "15:30", "selected": false, "ordered": false, "passed": false }, { "value": "15:45", "selected": false, "ordered": false, "passed": false }, { "value": "16:00", "selected": false, "ordered": false, "passed": false }, { "value": "16:15", "selected": false, "ordered": false, "passed": false }, { "value": "16:30", "selected": false, "ordered": false, "passed": false }, { "value": "16:45", "selected": false, "ordered": false, "passed": false }, { "value": "17:00", "selected": false, "ordered": false, "passed": false }, { "value": "17:15", "selected": false, "ordered": false, "passed": false }, { "value": "17:30", "selected": false, "ordered": false, "passed": false }, { "value": "17:45", "selected": false, "ordered": false, "passed": false }, { "value": "18:00", "selected": false, "ordered": false, "passed": false }, { "value": "18:15", "selected": false, "ordered": false, "passed": false }, { "value": "18:30", "selected": false, "ordered": false, "passed": false }, { "value": "18:45", "selected": false, "ordered": false, "passed": false }, { "value": "19:00", "selected": false, "ordered": false, "passed": false }, { "value": "19:15", "selected": false, "ordered": false, "passed": false }, { "value": "19:30", "selected": false, "ordered": false, "passed": false }, { "value": "19:45", "selected": false, "ordered": false, "passed": false }, { "value": "20:00", "selected": false, "ordered": false, "passed": false }, { "value": "20:15", "selected": false, "ordered": false, "passed": false }, { "value": "20:30", "selected": false, "ordered": false, "passed": false }, { "value": "20:45", "selected": false, "ordered": false, "passed": false }, { "value": "21:00", "selected": false, "ordered": false, "passed": false }, { "value": "21:15", "selected": false, "ordered": false, "passed": false }, { "value": "21:30", "selected": false, "ordered": false, "passed": false }, { "value": "21:45", "selected": false, "ordered": false, "passed": false }, { "value": "22:00", "selected": false, "ordered": false, "passed": false }, { "value": "22:15", "selected": false, "ordered": false, "passed": false }, { "value": "22:30", "selected": false, "ordered": false, "passed": false }, { "value": "22:45", "selected": false, "ordered": false, "passed": false }, { "value": "23:00", "selected": false, "ordered": false, "passed": false }, { "value": "23:15", "selected": false, "ordered": false, "passed": false }, { "value": "23:30", "selected": false, "ordered": false, "passed": false }, { "value": "23:45", "selected": false, "ordered": false, "passed": false }],//15分一格的区域
@@ -331,14 +343,14 @@ export default {
     },
     methods: {
         formatToWeek(val) {
-            return moment(val).format('M月D日 ddd');
+            return moment(+new Date(val)).format('M月D日 ddd');
         },
         initTimeSatus(time) {
             //已过时间标记
             let now = +new Date();
             if (this.mtrSelected.isDIYResource) {
                 this.matchAllTimezone.forEach((el, i) => {
-                    if (now > +moment(time + ' ' + el.value)) {
+                    if (now > +new Date(time + ' ' + el.value)) {
                         el.passed = true;
                         el.selected = false;
                     } else {
@@ -347,7 +359,7 @@ export default {
                 }, this)
             } else if (localdata.getdata('isFromModified')) {
                 this.matchAllTimezone.forEach((el, i) => {
-                    if (now > +moment(time + ' ' + el.value)) {
+                    if (now > +new Date(time + ' ' + el.value)) {
                         el.passed = true;
                         el.selected = false;
                     } else {
@@ -356,7 +368,7 @@ export default {
                 }, this)
             } else {
                 this.matchAllTimezone.forEach((el, i) => {
-                    if (now > +moment(time + ' ' + el.value)) {
+                    if (now > +new Date(time + ' ' + el.value)) {
                         el.passed = true;
                         el.selected = false;
                     } else {
@@ -373,7 +385,7 @@ export default {
             }
         },
         //根据会议室Id获取会议室方法
-        ajaxMtrStatu(url) {
+        ajaxMtrStatu(url, type) {
             this.pageloading = true;
             this.matchAllTimezone = [{ "value": "00:00", "selected": false, "ordered": false, "passed": false }, { "value": "00:15", "selected": false, "ordered": false, "passed": false }, { "value": "00:30", "selected": false, "ordered": false, "passed": false }, { "value": "00:45", "selected": false, "ordered": false, "passed": false }, { "value": "01:00", "selected": false, "ordered": false, "passed": false }, { "value": "01:15", "selected": false, "ordered": false, "passed": false }, { "value": "01:30", "selected": false, "ordered": false, "passed": false }, { "value": "01:45", "selected": false, "ordered": false, "passed": false }, { "value": "02:00", "selected": false, "ordered": false, "passed": false }, { "value": "02:15", "selected": false, "ordered": false, "passed": false }, { "value": "02:30", "selected": false, "ordered": false, "passed": false }, { "value": "02:45", "selected": false, "ordered": false, "passed": false }, { "value": "03:00", "selected": false, "ordered": false, "passed": false }, { "value": "03:15", "selected": false, "ordered": false, "passed": false }, { "value": "03:30", "selected": false, "ordered": false, "passed": false }, { "value": "03:45", "selected": false, "ordered": false, "passed": false }, { "value": "04:00", "selected": false, "ordered": false, "passed": false }, { "value": "04:15", "selected": false, "ordered": false, "passed": false }, { "value": "04:30", "selected": false, "ordered": false, "passed": false }, { "value": "04:45", "selected": false, "ordered": false, "passed": false }, { "value": "05:00", "selected": false, "ordered": false, "passed": false }, { "value": "05:15", "selected": false, "ordered": false, "passed": false }, { "value": "05:30", "selected": false, "ordered": false, "passed": false }, { "value": "05:45", "selected": false, "ordered": false, "passed": false }, { "value": "06:00", "selected": false, "ordered": false, "passed": false }, { "value": "06:15", "selected": false, "ordered": false, "passed": false }, { "value": "06:30", "selected": false, "ordered": false, "passed": false }, { "value": "06:45", "selected": false, "ordered": false, "passed": false }, { "value": "07:00", "selected": false, "ordered": false, "passed": false }, { "value": "07:15", "selected": false, "ordered": false, "passed": false }, { "value": "07:30", "selected": false, "ordered": false, "passed": false }, { "value": "07:45", "selected": false, "ordered": false, "passed": false }, { "value": "08:00", "selected": false, "ordered": false, "passed": false }, { "value": "08:15", "selected": false, "ordered": false, "passed": false }, { "value": "08:30", "selected": false, "ordered": false, "passed": false }, { "value": "08:45", "selected": false, "ordered": false, "passed": false }, { "value": "09:00", "selected": false, "ordered": false, "passed": false }, { "value": "09:15", "selected": false, "ordered": false, "passed": false }, { "value": "09:30", "selected": false, "ordered": false, "passed": false }, { "value": "09:45", "selected": false, "ordered": false, "passed": false }, { "value": "10:00", "selected": false, "ordered": false, "passed": false }, { "value": "10:15", "selected": false, "ordered": false, "passed": false }, { "value": "10:30", "selected": false, "ordered": false, "passed": false }, { "value": "10:45", "selected": false, "ordered": false, "passed": false }, { "value": "11:00", "selected": false, "ordered": false, "passed": false }, { "value": "11:15", "selected": false, "ordered": false, "passed": false }, { "value": "11:30", "selected": false, "ordered": false, "passed": false }, { "value": "11:45", "selected": false, "ordered": false, "passed": false }, { "value": "12:00", "selected": false, "ordered": false, "passed": false }, { "value": "12:15", "selected": false, "ordered": false, "passed": false }, { "value": "12:30", "selected": false, "ordered": false, "passed": false }, { "value": "12:45", "selected": false, "ordered": false, "passed": false }, { "value": "13:00", "selected": false, "ordered": false, "passed": false }, { "value": "13:15", "selected": false, "ordered": false, "passed": false }, { "value": "13:30", "selected": false, "ordered": false, "passed": false }, { "value": "13:45", "selected": false, "ordered": false, "passed": false }, { "value": "14:00", "selected": false, "ordered": false, "passed": false }, { "value": "14:15", "selected": false, "ordered": false, "passed": false }, { "value": "14:30", "selected": false, "ordered": false, "passed": false }, { "value": "14:45", "selected": false, "ordered": false, "passed": false }, { "value": "15:00", "selected": false, "ordered": false, "passed": false }, { "value": "15:15", "selected": false, "ordered": false, "passed": false }, { "value": "15:30", "selected": false, "ordered": false, "passed": false }, { "value": "15:45", "selected": false, "ordered": false, "passed": false }, { "value": "16:00", "selected": false, "ordered": false, "passed": false }, { "value": "16:15", "selected": false, "ordered": false, "passed": false }, { "value": "16:30", "selected": false, "ordered": false, "passed": false }, { "value": "16:45", "selected": false, "ordered": false, "passed": false }, { "value": "17:00", "selected": false, "ordered": false, "passed": false }, { "value": "17:15", "selected": false, "ordered": false, "passed": false }, { "value": "17:30", "selected": false, "ordered": false, "passed": false }, { "value": "17:45", "selected": false, "ordered": false, "passed": false }, { "value": "18:00", "selected": false, "ordered": false, "passed": false }, { "value": "18:15", "selected": false, "ordered": false, "passed": false }, { "value": "18:30", "selected": false, "ordered": false, "passed": false }, { "value": "18:45", "selected": false, "ordered": false, "passed": false }, { "value": "19:00", "selected": false, "ordered": false, "passed": false }, { "value": "19:15", "selected": false, "ordered": false, "passed": false }, { "value": "19:30", "selected": false, "ordered": false, "passed": false }, { "value": "19:45", "selected": false, "ordered": false, "passed": false }, { "value": "20:00", "selected": false, "ordered": false, "passed": false }, { "value": "20:15", "selected": false, "ordered": false, "passed": false }, { "value": "20:30", "selected": false, "ordered": false, "passed": false }, { "value": "20:45", "selected": false, "ordered": false, "passed": false }, { "value": "21:00", "selected": false, "ordered": false, "passed": false }, { "value": "21:15", "selected": false, "ordered": false, "passed": false }, { "value": "21:30", "selected": false, "ordered": false, "passed": false }, { "value": "21:45", "selected": false, "ordered": false, "passed": false }, { "value": "22:00", "selected": false, "ordered": false, "passed": false }, { "value": "22:15", "selected": false, "ordered": false, "passed": false }, { "value": "22:30", "selected": false, "ordered": false, "passed": false }, { "value": "22:45", "selected": false, "ordered": false, "passed": false }, { "value": "23:00", "selected": false, "ordered": false, "passed": false }, { "value": "23:15", "selected": false, "ordered": false, "passed": false }, { "value": "23:30", "selected": false, "ordered": false, "passed": false }, { "value": "23:45", "selected": false, "ordered": false, "passed": false }];
             this.$http.get(url).then(res => {
@@ -407,10 +419,15 @@ export default {
                                         timeobg.st = st;
                                         timeobg.ed = ed;
                                         timeobg.Name = elrmstatu.Organizer.Name;
-                                        objNextpage.selectedTime.push(timeobg);
+                                        if (_this.mtrSelected.dateTime.split(' ')[0].split('/')[2] === elrmstatu.End.split(' ')[0].split('-')[2] && elrmstatu.End.split(' ')[1] === '00:00:00') {
+                                            // objNextpage.selectedTime.push(timeobg);
+                                        } else {
+                                            objNextpage.selectedTime.push(timeobg);
+                                        }
                                     }, _this)
                                     //存储选中会议室时间
                                     arrNextpage.push(objNextpage);
+
                                     localdata.setdata('selectedTime', JSON.stringify(arrNextpage));
                                     isNostatus = false;
                                     arrNostatus.push(isNostatus);
@@ -421,10 +438,54 @@ export default {
                                     arrNostatus.push(isNostatus);
                                 }
                             }, _this)
+
+                            if (localdata.getdata('isFromModified') && !localdata.getdata('isFromTimeModify')) {
+                                arrNextpage[_this.mtrSelected.listindex].selectedTime.forEach((el) => {
+                                    if (el.st === _this.mtrSelected.Start.split(' ')[1] && el.ed === _this.mtrSelected.End.split(' ')[1]) {
+                                        let timeInterval = _this.mtrSelected.timeInterval.split(' ')[1].split('-');
+                                        el.st = timeInterval[0] + ':00';
+                                        el.ed = timeInterval[1] + ':00';
+                                    }
+                                }, _this)
+                            }
+
+                            //来自手动返回到时间
+                            if (localdata.getdata('launchPage')) {
+                                if (type !== 'changeday') {
+                                    let modifyFirstIndex = undefined;
+                                    let st = _this.mtrSelected.timeInterval.split(' ')[1].split('-')[0].trim();
+                                    let ed = _this.mtrSelected.timeInterval.split(' ')[1].split('-')[1].trim();
+                                    _this.startTime = st;
+                                    _this.endTime = ed;
+                                    _this.matchAllTimezone.forEach((el, index) => {
+                                        if (el.value === st) {
+                                            modifyFirstIndex = index;
+                                            _this.firstIndex = index;
+                                            if (el.passed) {
+                                                el.selected = false;
+                                            } else {
+                                                el.selected = true;
+                                            }
+                                            el.ordered = false;
+                                        } else if (el.value === ed) {
+                                            modifyFirstIndex = undefined;
+                                        }
+                                        if (typeof modifyFirstIndex !== 'undefined') {
+                                            el.ordered = false;
+                                            if (el.passed) {
+                                                el.selected = false;
+                                            } else {
+                                                el.selected = true;
+                                            }
+                                        }
+                                    }, _this)
+                                }
+                            }
+
                             //恢复到默认无选中状态
                             if (arrNostatus[_this.mtrSelected.listindex]) {
                                 _this.matchAllTimezone.forEach((el2, index) => {
-                                    if (now > +moment(_this.mtrSelected.dateTime + ' ' + el2.value)) {
+                                    if (now > +new Date(_this.mtrSelected.dateTime + ' ' + el2.value)) {
                                         el2.passed = true;
                                         el2.selected = false;
                                     } else {
@@ -468,7 +529,7 @@ export default {
                                 arrNextpage[_this.mtrSelected.listindex].selectedTime.forEach((el, seltindex) => {
                                     //是否已预定
                                     _this.matchAllTimezone.forEach((el2, index) => {
-                                        if (now > +moment(_this.mtrSelected.dateTime + ' ' + el2.value)) {
+                                        if (now > +new Date(_this.mtrSelected.dateTime + ' ' + el2.value)) {
                                             el2.passed = true;
                                             el2.selected = false;
                                         } else {
@@ -485,7 +546,12 @@ export default {
                                             _this.matchAllTimezone[index].Name = el.Name + ' （' + time.st.substr(0, time.st.length - 3) + '-' + time.ed.substr(0, time.ed.length - 3) + '）';
                                         }
                                         if (el2.value.indexOf(el.ed.substr(0, el.ed.length - 3)) !== -1) {
-                                            _this.matchAllTimezone[index - 1].ordered = true;
+                                            if (index === 0) {
+                                                _this.matchAllTimezone[index].ordered = true;
+
+                                            } else {
+                                                _this.matchAllTimezone[index - 1].ordered = true;
+                                            }
                                         }
                                         // }, _this)
                                     }, _this)
@@ -518,35 +584,36 @@ export default {
                                 }, _this)
                             }
                             //来自修改 将已预定时间修改为 选中
-                            if (localdata.getdata('isFromModified')) {
-                                let modifyFirstIndex = undefined;
-                                let st = _this.mtrSelected.timeInterval.split(' ')[1].split('-')[0].trim();
-                                let ed = _this.mtrSelected.timeInterval.split(' ')[1].split('-')[1].trim();
-                                _this.startTime = st;
-                                _this.endTime = ed;
-                                _this.matchAllTimezone.forEach((el, index) => {
-                                    if (el.value === st) {
-                                        modifyFirstIndex = index;
-                                        _this.firstIndex = index;
-                                        if (el.passed) {
-                                            el.selected = false;
-                                        } else {
-                                            el.selected = true;
+                            if (type !== 'changeday') {
+                                if (localdata.getdata('isFromModified')) {
+                                    let modifyFirstIndex = undefined;
+                                    let st = _this.mtrSelected.timeInterval.split(' ')[1].split('-')[0].trim();
+                                    let ed = _this.mtrSelected.timeInterval.split(' ')[1].split('-')[1].trim();
+                                    _this.startTime = st;
+                                    _this.endTime = ed;
+                                    _this.matchAllTimezone.forEach((el, index) => {
+                                        if (el.value === st) {
+                                            modifyFirstIndex = index;
+                                            _this.firstIndex = index;
+                                            if (el.passed) {
+                                                el.selected = false;
+                                            } else {
+                                                el.selected = true;
+                                            }
+                                            el.ordered = false;
+                                        } else if (el.value === ed) {
+                                            modifyFirstIndex = undefined;
                                         }
-                                        el.ordered = false;
-                                    } else if (el.value === ed) {
-                                        modifyFirstIndex = undefined;
-                                    }
-                                    if (typeof modifyFirstIndex !== 'undefined') {
-                                        el.ordered = false;
-                                        if (el.passed) {
-                                            el.selected = false;
-                                        } else {
-                                            el.selected = true;
+                                        if (typeof modifyFirstIndex !== 'undefined') {
+                                            el.ordered = false;
+                                            if (el.passed) {
+                                                el.selected = false;
+                                            } else {
+                                                el.selected = true;
+                                            }
                                         }
-                                    }
-                                }, _this)
-
+                                    }, _this)
+                                }
                             }
                         })(res, this)
                     } else {
@@ -564,7 +631,8 @@ export default {
             });
         },
         preday() {
-            let selectedTime = +moment(this.mtrSelected.dateTime) - 24 * 60 * 60 * 1000
+            let selectedTime = +new Date(this.mtrSelected.dateTime) - 24 * 60 * 60 * 1000;
+            let type;
             if (selectedTime < this.today) {
                 this.isShowerr = true;
                 this.errinfo = '不可以选择今天之前的日期';
@@ -572,10 +640,14 @@ export default {
                 // let pretimestemp = +moment(this.mtrSelected.weekDateTime.split(' ')[0]) - 24 * 60 * 60 * 1000;
                 // this.mtrSelected.weekDateTime = moment(pretimestemp).format('YYYY-MM-DD ddd');
                 // this.mtrSelected.dateTime = this.mtrSelected.weekDateTime.split(' ')[0];
-                this.mtrSelected.dateTime = moment(+moment(this.mtrSelected.dateTime) - 24 * 60 * 60 * 1000).format('YYYY-MM-DD');
+                this.mtrSelected.dateTime = moment(+new Date(this.mtrSelected.dateTime) - 24 * 60 * 60 * 1000).format('YYYY/M/D');
+                let orderedDay = moment(+new Date(this.mtrSelected.meetTimeDetail.split(' ')[0])).format('YYYY/M/D');
                 // this.ajaxMtrStatu('/mt/GetRoomsStatus?date=' + this.mtrSelected.dateTime + '&roomListAddress=' + localdata.getdata('curRegionId'));
                 if (!this.mtrSelected.isDIYResource) {
-                    this.ajaxMtrStatu(urldata.basePath + urldata.GetRoomsStatus + '?date=' + this.mtrSelected.dateTime + '&roomListAddress=' + localdata.getdata('curRegionId'));
+                    if (this.mtrSelected.dateTime !== orderedDay) {
+                        type = "changeday";
+                    }
+                    this.ajaxMtrStatu(urldata.basePath + urldata.GetRoomsStatus + '?date=' + this.mtrSelected.dateTime + '&roomListAddress=' + localdata.getdata('curRegionId'), type);
                 } else {
                     this.initTimeSatus(this.mtrSelected.dateTime);
                 }
@@ -584,13 +656,18 @@ export default {
             }
         },
         nextday() {
-            // let pretimestemp = +moment(this.mtrSelected.weekDateTime.split(' ')[0]) + 24 * 60 * 60 * 1000;
+            // let pretimestemp =+new Date(this.mtrSelected.dateTime) + 24 * 60 * 60 * 1000;
+            let type;
             // this.mtrSelected.weekDateTime = moment(pretimestemp).format('YYYY-MM-DD ddd');
             // this.mtrSelected.dateTime = this.mtrSelected.weekDateTime.split(' ')[0];
-            this.mtrSelected.dateTime = moment(+moment(this.mtrSelected.dateTime) + 24 * 60 * 60 * 1000).format('YYYY-MM-DD');
+            this.mtrSelected.dateTime = moment(+new Date(this.mtrSelected.dateTime) + 24 * 60 * 60 * 1000).format('YYYY/M/D');
+            let orderedDay = moment(+new Date(this.mtrSelected.meetTimeDetail.split(' ')[0])).format('YYYY/M/D');
             // this.ajaxMtrStatu('/mt/GetRoomsStatus?date=' + this.mtrSelected.dateTime + '&roomListAddress=' + localdata.getdata('curRegionId'));
             if (!this.mtrSelected.isDIYResource) {
-                this.ajaxMtrStatu(urldata.basePath + urldata.GetRoomsStatus + '?date=' + this.mtrSelected.dateTime + '&roomListAddress=' + localdata.getdata('curRegionId'));
+                if (this.mtrSelected.dateTime !== orderedDay) {
+                    type = "changeday";
+                }
+                this.ajaxMtrStatu(urldata.basePath + urldata.GetRoomsStatus + '?date=' + this.mtrSelected.dateTime + '&roomListAddress=' + localdata.getdata('curRegionId'), type);
             } else {
                 this.initTimeSatus(this.mtrSelected.dateTime);
             }
@@ -740,13 +817,15 @@ export default {
             //     }
             // }, this)
         },
-        tolunchPage() {
+        tolaunchPage() {
             if (this.startTime === '--:--' || this.endTime === '--:--') {
                 this.isShowerr = true;
                 this.errinfo = '请选择正确的时间区域';
             } else {
                 // this.mtrSelected.dateTime = this.mtrSelected.weekDateTime.split(' ')[0];
                 this.mtrSelected.timeInterval = this.mtrSelected.dateTime + ' ' + this.startTime + '-' + this.endTime;
+
+
                 this.mtrSelected.startTime = this.startTime;
                 this.mtrSelected.endTime = this.endTime;
 

@@ -593,7 +593,7 @@ exports.default = {
 
   methods: {
     formatToWeek(val){
-      return _moment(val).format('M月D日 ddd');
+      return _moment(+new Date(val)).format('M月D日 ddd');
     },
     showhide() {
       return this.$emit();

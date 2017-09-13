@@ -52,16 +52,15 @@ export default [{
         {
             name:'mtlaunchmeet',
             path: '/mtlaunchmeet',
-            meta: {
-                keepAlive: true
-            },
+            // meta: {
+            //     keepAlive: true
+            // },
+            meta: 'false',
             component: Mtdetail
         },
         {
             path: '/mtaddcontact',
-            meta: {
-                keepAlive: true
-            },
+            meta: 'false',
             component: Mtaddcontact
         },
         {

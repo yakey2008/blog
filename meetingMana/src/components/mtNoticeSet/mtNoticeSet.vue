@@ -30,6 +30,13 @@
 $col9b:#9b9b9b;
 
 @include placeholder(#ccc);
+.weui-switch:after, .weui-switch-cp__box:after{
+    background-color: #ec4280;
+}
+.weui-switch:checked, .weui-switch-cp__input:checked ~ .weui-switch-cp__box{
+    background-color: #fbd9e6;
+    border-color: #fbd9e6;
+}
 .css-mtnotice-page {
     background-color: #f6f7f8;
     .weui-media-box__title {
@@ -112,16 +119,16 @@ $col9b:#9b9b9b;
             <div class="weui-tab">
                 <div class="css-main-container" v-if="!loading">
                     <!-- <section class="css-pageinfo">
-                            <div class="css-pagebox">
-                                <div class="weui-cell weui-cell_switch">
-                                    <div class="weui-cell__bd css-item">接收会议邀请通知</div>
-                                    <div class="weui-cell__ft">
-                                        <input class="weui-switch" type="checkbox" v-model="recNoti" @change="recNotiAct">
-                                    </div>
-                                </div>
-                                <p class="css-explantime">开启后，当有您有受邀请的会议时，唯秘将推送消息到您的手机消息通知栏。</p>
-                            </div>
-                        </section> -->
+                                                <div class="css-pagebox">
+                                                    <div class="weui-cell weui-cell_switch">
+                                                        <div class="weui-cell__bd css-item">接收会议邀请通知</div>
+                                                        <div class="weui-cell__ft">
+                                                            <input class="weui-switch" type="checkbox" v-model="recNoti" @change="recNotiAct">
+                                                        </div>
+                                                    </div>
+                                                    <p class="css-explantime">开启后，当有您有受邀请的会议时，唯秘将推送消息到您的手机消息通知栏。</p>
+                                                </div>
+                                            </section> -->
                     <section class="css-pageinfo">
                         <div class="css-pagebox">
                             <div class="weui-cell weui-cell_switch">
@@ -134,12 +141,15 @@ $col9b:#9b9b9b;
                         </div>
                     </section>
 
-                    <section class="css-pagesetting" v-if="remind">
+                    <section class="css-pagesetting" v-if="remind" @click="timePicker">
                         <div class="weui-cell weui-cell_switch css-setting weui-cell_access">
                             <div class="weui-cell__bd css-item ">提醒时间</div>
                             <div>
                                 提前
-                                <span class="css-settime" @click="timePicker">{{remindTime}} 分钟</span>
+                                <span class="css-settime">
+                                    <span v-if="remindTime>30">{{remindTime/60}}小时</span>
+                                    <span v-else>{{remindTime}}分钟</span>
+                                </span>
                             </div>
                             <div class="weui-cell__ft"></div>
                         </div>
@@ -161,11 +171,14 @@ export default {
     created() {
         //初始化
         this.initSet(urldata.basePath + urldata.PersonSetting);
+
+        this.$moaapi.updateNavTitle('通知设置');
+        setTimeout(() => {
+            this.$moaapi.hideNavMenu();
+        }, 100)
+
     },
     mounted() {
-        this.$moaapi.updateNavTitle('通知设置');
-        this.$moaapi.hideNavMenu();
-
         // this.getMeetingSetting()
     },
     data() {
@@ -178,7 +191,7 @@ export default {
     },
     methods: {
         initSet(url) {
-            this.$http.get(url).then(res => {
+            this.$http.get(url+'?num='+(+new Date().getTime())).then(res => {
                 if (res.body.status === 200) {
                     // this.recNoti = res.body.data.ReceiveMeetingPush;
                     this.remind = res.body.data.RemindMeetingPush;
@@ -207,9 +220,9 @@ export default {
             this.$http.post(urldata.basePath + urldata.SetPersonSetting, { key: key, value: value }).then(data => {
                 // this.pageloading = false;
                 // window.location.reload();
-                console.log(data)
+                // console.log(data)
             }, status => {
-                console.log(status)
+                // console.log(status)
             })
         },
 
@@ -261,7 +274,9 @@ export default {
         //     this.setMeetingSetting("ReceiveMeetingPush", this.recNoti)
         // },
         remindAct() {
-            this.setMeetingSetting("RemindMeetingPush", this.remind)
+            setTimeout(() => {
+                this.setMeetingSetting("RemindMeetingPush", this.remind)
+            }, 100)
         },
         remindTimeAct() {
             this.setMeetingSetting("RemindMeetinTime", this.remindTime)

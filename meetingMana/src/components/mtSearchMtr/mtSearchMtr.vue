@@ -31,6 +31,11 @@
 }
 
 @include placeholder(#9b9b9b);
+
+.weui-btn:after {
+    border: none;
+}
+
 .css-mtnoticelist-page {
     background-color: #fff;
     .col9b {
@@ -112,13 +117,14 @@
                         top: 14px;
                         right: -7px;
                         z-index: 0;
-                        width: 15px;
-                        height: 15px;
+                        width: 12px;
+                        height: 12px;
                         border-right: 1px solid #ddd;
                         border-top: 1px solid #ddd;
                         background-color: #fff;
+                        -webkit-transform: rotate(45deg);
                         transform: rotate(45deg);
-                        border-radius: 3px;
+                        border-top-right-radius: 3px;
                     }
                 }
             }
@@ -126,7 +132,7 @@
                 .css-timeline-line {
                     top: 18px;
                     &:after {
-                        top: -3px;
+                        top: -5px;
                     }
                     @media (max-width: 350px) {
                         top: 20px;
@@ -185,15 +191,16 @@
                 .left-arrowpop {
                     position: absolute;
                     top: 16px;
-                    left: -8px;
+                    left: -6px;
                     z-index: 50;
-                    width: 15px;
-                    height: 15px;
+                    width: 12px;
+                    height: 12px;
                     border-left: 1px solid #ddd;
                     border-bottom: 1px solid #ddd;
                     background-color: #fff;
+                    -webkit-transform: rotate(45deg);
                     transform: rotate(45deg);
-                    border-radius: 3px;
+                    border-bottom-left-radius: 3px;
                 }
                 .css-list-item-time {
                     text-align: center;
@@ -210,10 +217,12 @@
                         position: absolute;
                         right: -28px;
                         top: 5px;
-                        height: 31px;
-                        line-height: 31px;
+                        // height: 31px;
+                        // line-height: 31px;
+                        padding: 5px 0;
                         width: 94px;
                         text-align: center;
+                        -webkit-transform: rotate(45deg);
                         transform: rotate(45deg);
                         background-color: #88b1ff;
                         color: #fff;
@@ -259,7 +268,7 @@
                     &.bgcolor {
                         background-color: #e7e7e7;
                         word-break: break-all;
-                        padding: 5px 0;
+                        padding: 7px 0;
                         border: none;
                         .css-list-item-main-info {
                             margin: 0 15px;
@@ -280,9 +289,13 @@
                         border-radius: 6px;
                         font-size: 1rem;
                         color: #9b9b9b;
+                        &.css-cancel{
+                            border: 1px solid rgba(0, 0, 0, 0.2);
+                        }
                         &.css-delinebtn {
                             margin-right: 21px;
                             color: #9b9b9b;
+                            border: 1px solid rgba(0, 0, 0, 0.2);
                             &:active {
                                 color: rgba(0, 0, 0, 0.6);
                                 background-color: #dedede;
@@ -310,13 +323,15 @@
 <template>
     <div class="weui-tab css-mtnoticelist-page">
         <div class="css-search-container">
-            <form class="css-searcharea">
+            <div class="css-searcharea">
                 <i class="css-searcharea-icon" v-on:click="excSearch()"></i>
-                <input type="search" placeholder="搜索会议主题" class="css-searcharea-input" v-model="searchSubjectKey" v-on:keyup="keyExcSearch($event)">
+                <form action="javascript:void(0);">
+                    <input type="search" placeholder="搜索会议主题" class="css-searcharea-input" v-model="searchSubjectKey" v-on:keyup="keyExcSearch($event)">
+                </form>
                 <div class="css-clean-btn" v-if="searchSubjectKey!==''" v-on:click="cleanInput()">
                     <i class="css-clean-icon"></i>
                 </div>
-            </form>
+            </div>
         </div>
         <scroller :on-infinite="infinite" ref="scroller" class="weui-tab css-mtnoticelist-page">
             <div class="css-mtnoticelist-main">
@@ -342,7 +357,7 @@
                                     </div>
                                     <div class="inside-item">
                                         <span class="leftdom col9b">地点</span>
-                                        <span class="rightdom">{{mtr.mtrListStr}}</span>
+                                        <span class="rightdom" v-html="mtr.mtrListStr"></span>
                                     </div>
                                     <div class="inside-item">
                                         <span class="leftdom col9b">人员</span>
@@ -351,7 +366,7 @@
                                 </div>
 
                                 <div class="css-bottombar" v-if="mtr.mtrStatu===1">
-                                    <div class="weui-btn css-bottombtn" v-on:click="cancelMt(mtr.ICalUid)">取消会议</div>
+                                    <div class="weui-btn css-bottombtn css-cancel" v-on:click="cancelMt(mtr.ICalUid)">取消会议</div>
                                 </div>
 
                                 <div class="css-bottombar" v-if="mtr.mtrStatu===2">
@@ -391,6 +406,14 @@ export default {
         this.$moaapi.updateNavTitle('搜索会议');
         this.$moaapi.hideNavMenu();
         this.currentUserInfo = JSON.parse(localdata.getdata('currentUserData'));
+
+        if (localdata.getdata('searchKey')) {
+            this.offset = 0;
+            this.searchSubjectKey = localdata.getdata('searchKey');
+            let obj = { searchSubjectKey: this.searchSubjectKey.trim(), currentDate: this.todayTime, pageSize: this.pageSize, offset: this.offset, searchDirection: this.searchDirection };
+            this.pageloading = true;
+            this.initData(this.getMineMtr, obj, 'search');
+        }
 
         //清除详情页缓存
         localdata.removedata('mtrSelected');
@@ -464,7 +487,7 @@ export default {
                                 if (!el.mtrListStr) {
                                     el.mtrListStr = elMtr.Name;
                                 } else {
-                                    el.mtrListStr = el.mtrListStr + '/' + elMtr.Name;
+                                    el.mtrListStr = el.mtrListStr + '<br>' + elMtr.Name;
                                 }
                             }, this);
                         }
@@ -491,7 +514,7 @@ export default {
                             } else {
                                 el.RequiredAttendees.forEach(function(elreA) {
 
-                                    if (elreA.ResponseType === null) {
+                                    if (elreA.ResponseType === null&& elreA.Name.substr(0,1)==='['&&elreA.Name.substr(elreA.Name.length-1,1)===']') {
                                         //判断是否来自email
                                         if (JSON.parse(elreA.Name).length !== 0) {
                                             JSON.parse(elreA.Name).forEach((elemail) => {
@@ -633,7 +656,7 @@ export default {
             let obj = { searchSubjectKey: this.searchSubjectKey.trim(), currentDate: this.todayTime, pageSize: this.pageSize, offset: this.offset, searchDirection: this.searchDirection };
             this.pageloading = true;
             this.initData(this.getMineMtr, obj, 'search');
-            // localdata('searchKey',this.searchSubjectKey.trim());
+            localdata.setdata('searchKey', this.searchSubjectKey.trim());
         },
         keyExcSearch(evt) {
             if (evt.keyCode === 13) {
@@ -641,7 +664,8 @@ export default {
                 let obj = { searchSubjectKey: this.searchSubjectKey.trim(), currentDate: this.todayTime, pageSize: this.pageSize, offset: this.offset, searchDirection: this.searchDirection };
                 this.pageloading = true;
                 this.initData(this.getMineMtr, obj, 'search');
-                // localdata('searchKey',this.searchSubjectKey.trim());
+                localdata.setdata('searchKey', this.searchSubjectKey.trim());
+                evt.currentTarget.blur()
             }
         },
         //跳转到详情

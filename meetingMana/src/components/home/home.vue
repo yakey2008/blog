@@ -51,6 +51,8 @@ export default {
   data() {
     return {
       pageloading: false,
+
+      pureUserinfo: '',//原生获取人
       curDateMonth: moment().format('YYYY/M'),//当前月份
       datetoday: moment().format('YYYY/M/D'),
       currentUserData: [],//当前登录用户信息
@@ -58,7 +60,16 @@ export default {
     }
   },
   mounted() {
+    //清除本地存储已存在的数据
+    this.clearStorage();
 
+    this.$moaapi.resetNavTitle();
+    setTimeout(() => {
+      this.$moaapi.updateNavTitle('会易订');
+    }, 100)
+    // setTimeout(() => {
+    this.$moaapi.hideNavMenu();
+    // }, 100)
     //原生右上角菜单
     let _this = this;
     window.orderMtr = function() {
@@ -74,46 +85,63 @@ export default {
       _this.$router.push({ path: '/mtnoticeset' });
     }
     let list = '[{ "name": "预定会议", "action": "orderMtr()" }, { "name": "我的会议", "action": "mineMtr()" },{ "name": "搜索会议", "action": "searchMtr()" }, { "name": "会议通知设置", "action": "noticeSet()" }]';
-    this.$moaapi.updateNavTitle('会易订');
-    this.$moaapi.hideNavMenu();
+
     setTimeout(() => {
-      this.$moaapi.closeWebkitSpringBack();
+      // this.$moaapi.closeWebkitSpringBack();
       this.$moaapi.showListNavMenu(list);
     }, 100)
 
+
     //获取当前登录人信息
-    // window.getUserInfo = function(info) {
-    //   alert(info)
-    //   _this.initData(this.datetoday, info.email);
-    //   localdata.setdata('currentUserData', JSON.stringify(info));
-    // }
-    // this.$moaapi.getUserInfo('getUserInfo');
-
-    // this.$http.get('mt/CurrentUserInfo').then(res => {
-    this.pageloading = true;
-    this.$http.get(urldata.basePath + urldata.CurrentUserInfo).then(res => {
-      //获取当前月的数据
-      this.initData(this.datetoday, res.body.data.UserEmail);
-      // this.initData(this.datetoday, 'jianxian.zhou@contoso.com');//临时
-      this.currentUserData = res.body.data;
-      localdata.setdata('currentUserData', JSON.stringify(res.body.data));
-    }, error => {
-      console.log(error.body.errorMessage);
-    })
-
-
-
-
+    window.getUserInfo = function(info) {
+      // alert(info)
+      // _this.pureUserinfo = info;
+      localdata.setdata('pureUserInfo', info);
+      // alert(_this.pureUserinfo)
+      // _this.initData(this.datetoday, info.email);
+      // localdata.setdata('currentUserData', JSON.stringify(info));
+    }
+    if (!localdata.getdata('currentUserData')) {
+      setTimeout(() => {
+        this.$moaapi.getUserInfo('getUserInfo');
+      }, 100)
+      //获取登录人信息，如果有原生数据，则拼接原生数据
+      // this.$http.get('mt/CurrentUserInfo').then(res => {
+      this.pageloading = true;
+      this.$http.get(urldata.basePath + urldata.CurrentUserInfo).then(res => {
+        //获取当前月的数据
+        setTimeout(() => {
+          this.initData(this.datetoday, res.body.data.UserEmail);
+          // this.initData(this.datetoday, 'jianxian.zhou@contoso.com');//临时
+          this.currentUserData = res.body.data;
+          let obj;
+          //是否有从原生获取的登录人信息
+          // alert(localdata.getdata('pureUserInfo'));
+          if (localdata.getdata('pureUserInfo')) {
+            obj = Object.assign(JSON.parse(localdata.getdata('pureUserInfo')), res.body.data);
+            // alert(JSON.stringify(obj))
+          } else {
+            obj = res.body.data;
+          }
+          // alert(JSON.stringify(obj))
+          localdata.setdata('currentUserData', JSON.stringify(obj));
+        }, 100)
+      }, error => {
+        console.log(error.body.errorMessage);
+      })
+    }else{
+      this.initData(this.datetoday, JSON.parse(localdata.getdata('currentUserData')).UserEmail);
+    }
     //获取所有会议室列表和会议室的映射关系
-    this.$http.get(urldata.basePath + urldata.GetAllRoomListAndRoom).then(res => {
-      //获取当前月的数据
-      this.currentUserData = res.body.data;
-      localdata.setdata('GetAllRoomListAndRoom', JSON.stringify(res.body.data));
-    }, error => {
-      console.log(error.body.errorMessage);
-    })
-    //清除本地存储已存在的数据
-    this.clearStorage();
+    if (!localdata.getdata('GetAllRoomListAndRoom')) {
+      this.$http.get(urldata.basePath + urldata.GetAllRoomListAndRoom).then(res => {
+        //获取当前月的数据
+        this.currentUserData = res.body.data;
+        localdata.setdata('GetAllRoomListAndRoom', JSON.stringify(res.body.data));
+      }, error => {
+        console.log(error.body.errorMessage);
+      })
+    }
   },
   methods: {
     //初始化 重新获取
@@ -122,7 +150,7 @@ export default {
       this.pageloading = true;
       // this.$http.get('/json/index.json').then(response => {
       // this.$http.get('/mt/MyCalendar?date=' + date + '&userEmail=eric.hu@vipshop.com').then(response => {
-      this.$http.get(urldata.basePath + urldata.MyCalendar + '?date=' + date).then(response => {
+      this.$http.get(urldata.basePath + urldata.MyCalendar + '?date=' + date + '&num=' + (+new Date().getTime())).then(response => {
         if (response.status === 200) {
           let arr = response.body.data;
           arr.forEach(function(el) {
@@ -137,12 +165,28 @@ export default {
             obj.curData = el;
             obj.title = el.Subject;
             if (el.Resources.length === 0) {
-              obj.desc = [{ Name: el.Location }];
+              let arr = el.Location.split('; ');
+              let arr2 = [];
+              if (arr.length > 1) {
+                arr.forEach((el) => {
+                  arr2.push({ Name: el });
+                }, this)
+                obj.desc = arr2;
+              } else {
+                obj.desc = [{ Name: el.Location }];
+              }
+
             } else {
               obj.desc = el.Resources;
             }
+            //结束时间为00:00:00的算在前一天
+            if (strEnd === '00:00:00') {
+              let stTime = el.End.substr(0, el.End.length - 9).split('-');
+              obj.date = stTime[0] + '/' + stTime[1] + '/' + ((+stTime[2]) - 1);
+            } else {
+              obj.date = el.End.substr(0, el.End.length - 9).replace(/-/g, '/');
+            }
 
-            obj.date = el.End.substr(0, el.End.length - 9).replace(/-/g, '/')
             obj.datetime = strStart2 + ' - ' + strEnd2;
             this.demoEvents.push(obj);
           }, this);
@@ -153,8 +197,8 @@ export default {
         this.$moaapi.closeWin();
       }).then(() => {
         //更换时间
-        let cur = this.datetoday.substr(this.datetoday, this.datetoday.length - 3);
-        let evt = date.substr(date, date.length - 3);
+        let cur = this.datetoday.split('/')[1];
+        let evt = date.split('/')[1];
         if (evt === cur) {
           this.$EventCalendar.toDate(this.datetoday);
         } else {
@@ -164,18 +208,20 @@ export default {
     },
     //回到当前天
     dateBackToday() {
-      if (this.curDateMonth !== this.datetoday.substr(0, this.datetoday.length - 3)) {
+      let toadyM = this.datetoday.split('/')[0] + '/' + this.datetoday.split('/')[1];
+      if (this.curDateMonth !== toadyM) {
         this.initData(this.datetoday, this.currentUserData.UserEmail);
-        this.curDateMonth = this.datetoday.substr(0, this.datetoday.length - 3);
+        this.curDateMonth = toadyM;
       } else {
         this.$EventCalendar.toDate(this.datetoday);
       }
     },
     handleDayChanged(data) {
-      let monthDate = moment(new Date(data.date)).format('YYYY/M/D');
-      if (this.curDateMonth !== monthDate.substr(0, monthDate.length - 3)) {
-        this.curDateMonth = monthDate.substr(0, monthDate.length - 3);
-        this.initData(monthDate, this.currentUserData.UserEmail);
+      let monthDate = moment(new Date(data.date)).format('YYYY/M');
+      if (this.curDateMonth !== monthDate) {
+        this.curDateMonth = monthDate;
+        let date = moment(new Date(data.date)).format('YYYY/M/D')
+        this.initData(date, this.currentUserData.UserEmail);
         // this.$EventCalendar.toDate(monthDate);
       }
     },
@@ -191,7 +237,12 @@ export default {
       })
       this.curDateMonth = str2.substr(0, str2.length - 3);
       //切换月份
+      // if (this.curDateMonth === this.datetoday.substr(this.datetoday, this.datetoday.length - 3)) {
+      //   this.initData(this.datetoday, this.currentUserData.UserEmail);
+      // } else {
       this.initData(str2, this.currentUserData.UserEmail);
+
+      // }
     },
     //清除本地存储已存在的数据
     clearStorage() {

@@ -248,9 +248,8 @@ $col9b:#9b9b9b;
                     &.weui-uploader__input-box:after {
                         width: 21px;
                         background-color: #434750;
-                    }
-                    // &.marginle12p {
-                        // margin-left: 12%;
+                    } // &.marginle12p {
+                    // margin-left: 12%;
                     // }
                 }
 
@@ -343,7 +342,7 @@ $col9b:#9b9b9b;
                     <div class="weui-cells weui-cells_form css-mtlaunchmeet-content">
                         <div class="weui-cell">
                             <div class="weui-cell__bd">
-                                <textarea class="weui-textarea" placeholder="请输入会议内容（可选）" rows="3" maxlength="500" v-model="sendData.Body" v-on:keyup="auto_grow($event)" id="js-mtrContent"></textarea>
+                                <textarea class="weui-textarea" placeholder="请输入会议内容（可选）" rows="3" maxlength="500" v-model="sendData.Body" v-on:keyup="auto_grow($event)" id="js-mtrContent" v-on:focus="inputFocus()"></textarea>
                             </div>
                         </div>
                     </div>
@@ -472,6 +471,17 @@ export default {
             this.sendData.Body = localStorage.getItem('content');
         }
 
+        if (localStorage.getItem('IsResponseRequested')) {
+            this.sendData.IsResponseRequested = localStorage.getItem('IsResponseRequested');
+            if (this.sendData.IsResponseRequested === 'true') {
+                this.sendData.IsResponseRequested = true;
+            } else {
+                this.sendData.IsResponseRequested = false;
+            }
+        }
+
+        localdata.setdata('launchPage', true);
+
         localdata.removedata('isFromModified');
     },
     mounted() {
@@ -496,7 +506,9 @@ export default {
             this.eachSplit(this.noDeptMustList);
         } else {
             //适应原生 与后端返回字段
-            let obj = { name: this.currentUserData.Name, Name: this.currentUserData.Name, email: this.currentUserData.UserEmail,id:this.currentUserData.UserEmail, dept: this.currentUserData.DeptFullName, isInitiator: true }
+            let obj = { name: this.currentUserData.Name, Name: this.currentUserData.Name, email: this.currentUserData.UserEmail, id: this.currentUserData.id, Job: this.currentUserData.job, job: this.currentUserData.job, url: this.currentUserData.url, isInitiator: true }
+            // this.currentUserData.isInitiator = true;
+            // this.userMustList.push(this.currentUserData);
             this.userMustList.push(obj);
             this.noDeptMustList = this.userMustList;
             this.eachSplit(this.noDeptMustList);
@@ -523,8 +535,8 @@ export default {
                     }
                 }, _this)
             }, _this)
-            splitArr.reverse().forEach((el)=>{
-                _this.userMustList.splice(el,1);
+            splitArr.reverse().forEach((el) => {
+                _this.userMustList.splice(el, 1);
             })
             // if(splitArr.length>0){
             //     _this.isShowerr = true;
@@ -551,8 +563,8 @@ export default {
                     }
                 }, _this)
             }, _this)
-            splitArr.reverse().forEach((el)=>{
-                _this.userOptionalList.splice(el,1);
+            splitArr.reverse().forEach((el) => {
+                _this.userOptionalList.splice(el, 1);
             })
             // if(splitArr.length>0){
             //     _this.isShowerr = true;
@@ -567,7 +579,7 @@ export default {
         }
         // this.paramsData.dateTime = this.paramsData.dateTime.split(' ')[0];
         // this.paramsData.meetingroom = JSON.parse(this.paramsData.meetingroom);
-        
+
     },
     data() {
         return {
@@ -589,7 +601,12 @@ export default {
                 OptionalAttendees: [],//可选人[{"Email":"city-test@vipshop.com","AvatarUrl":"url_1"}]
                 Resources: [],//会议室id "gd2bl-room2@vipshop.com","gd2gg-room2@vipshop.com"
                 OtherAttendees: [],//通过邮箱人
-                IsResponseRequested: false
+                IsResponseRequested: false,
+                AllPersonInfo: {
+                    Organizer: {},
+                    RequiredAttendees: [],
+                    OptionalAttendees: []
+                }
             },
             // meetingroom: [
             //     { name: '广州-广新2F 巴黎会议室（8人；投影仪；玻璃写字板）' },
@@ -619,26 +636,27 @@ export default {
             return list;
         },
         setCache() {
+            localStorage.setItem('IsResponseRequested', this.sendData.IsResponseRequested);
             localStorage.setItem('themeTitle', this.sendData.Subject);
             localStorage.setItem('content', this.sendData.Body);
         },
         //文本框自适应高度
         auto_grow(element) {
-            let el,el2;
-            if(element==='init'){
+            let el, el2;
+            if (element === 'init') {
                 el = document.getElementById('js-mtrSubject');
                 el2 = document.getElementById('js-mtrContent');
 
                 el2.style.height = "5px";
                 el2.style.height = (el2.scrollHeight) + "px";
-            }else{
+            } else {
                 el = element.currentTarget;
             }
             el.style.height = "5px";
             el.style.height = (el.scrollHeight) + "px";
         },
         formatDate(val) {
-            let date = moment(val.split(' ')[0]).format('YYYY年MM月DD日 ddd');
+            let date = moment(+new Date(val.split(' ')[0])).format('YYYY年MM月DD日 ddd');
             let time = val.split(' ')[1];
             return date + '<br>' + time;
         },
@@ -664,6 +682,7 @@ export default {
             // if(this.mtrSelected.mtrList.length>0){
             //     localdata.setdata('isFromModified', true);
             // }
+            localdata.setdata('isFromModified', true);
             this.$router.push({ path: '/mtlocationselect' });
         },
         //删除一条会议地点
@@ -759,6 +778,7 @@ export default {
                 this.errinfo = '请选择参会人';
             } else {
                 //拼接会议室
+                this.sendData.Resources = [];
                 this.mtrSelected.mtrList.forEach((el) => {
                     this.sendData.Resources.push(el.mtrId);
                 }, this);
@@ -771,7 +791,17 @@ export default {
                 }
                 //组织者
                 // this.sendData.OrganizerEmailAndAvatarUrl = { Email: this.currentUserData.UserEmail, AvatarUrl: this.currentUserData.AvatarUrl }
-                this.sendData.OrganizerEmailAndAvatarUrl = { Email: this.currentUserData.UserEmail, AvatarUrl: '' }
+                this.sendData.OrganizerEmailAndAvatarUrl = { Email: this.currentUserData.UserEmail, AvatarUrl: this.currentUserData.url };
+                //提交不成功时候，清空数据
+                this.sendData.AllPersonInfo = {
+                    Organizer: {},
+                    RequiredAttendees: [],
+                    OptionalAttendees: []
+                }
+                this.sendData.OtherAttendees = [];
+                this.sendData.RequiredAttendees = [];
+                this.sendData.OptionalAttendees = [];
+
                 //拼接必选人 拼接通过email人员
                 this.userMustList.forEach((el, index) => {
                     if (index !== 0) {
@@ -783,9 +813,15 @@ export default {
                             obj.AvatarUrl = '';
                         }
                         if (el.hasOwnProperty('isEmail')) {
+                            //将email添加的人员email加入其他人员
                             this.sendData.OtherAttendees.push(el.id);
                         } else {
-                            this.sendData.RequiredAttendees.push(obj)
+                            this.sendData.RequiredAttendees.push(obj);
+                            //拼接带有职位id全部信息
+                            obj.Id = el.id;
+                            obj.Job = el.job;
+                            obj.Name = el.name;
+                            this.sendData.AllPersonInfo.RequiredAttendees.push(obj);
                         }
                     }
                 })
@@ -799,6 +835,11 @@ export default {
                         obj.AvatarUrl = '';
                     }
                     this.sendData.OptionalAttendees.push(obj);
+                    //拼接带有职位id全部信息
+                    obj.Id = el.id;
+                    obj.Job = el.job;
+                    obj.Name = el.name;
+                    this.sendData.AllPersonInfo.OptionalAttendees.push(obj);
                 })
                 //拼接通过email人员
                 // this.userFromEmail.forEach((el, index) => {
@@ -808,6 +849,9 @@ export default {
                 //         this.sendData.OtherAttendees.push(el.id);
                 //     }
                 // })
+
+                //拼接带有职位id全部信息
+                this.sendData.AllPersonInfo.Organizer = { Email: this.currentUserData.UserEmail, AvatarUrl: this.currentUserData.url, Id: this.currentUserData.id, Job: this.currentUserData.job, Name: this.currentUserData.Name };
 
                 this.pageloading = true;
                 // this.$http.post('/mt/CreateMeeting', this.sendData).then(res => {
@@ -849,6 +893,14 @@ export default {
         //清除本地存储已存在的数据
         clearStorage() {
             localdata.removedata(storageList);
+        },
+        inputFocus() {
+            interval = setTimeout(function() {
+                if (document.body.scrollTop !== 0) {
+                    document.body.scrollTop = document.body.scrollHeight/2;
+                }
+            }, 500)
+            // clearInterval(interval);
         },
         //关闭错误提示
         closeShowerr() {

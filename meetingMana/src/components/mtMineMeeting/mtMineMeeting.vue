@@ -31,6 +31,11 @@
 }
 
 @include placeholder(#9b9b9b);
+
+.weui-btn:after {
+    border: none;
+}
+
 .css-mtnoticelist-page {
     .css-loadmore-text {
         text-align: center;
@@ -91,13 +96,14 @@
                         top: 14px;
                         right: -7px;
                         z-index: 0;
-                        width: 15px;
-                        height: 15px;
+                        width: 12px;
+                        height: 12px;
                         border-right: 1px solid #ddd;
                         border-top: 1px solid #ddd;
                         background-color: #fff;
+                        -webkit-transform: rotate(45deg);
                         transform: rotate(45deg);
-                        border-radius: 3px;
+                        border-top-right-radius: 3px;
                     }
                 }
             }
@@ -105,7 +111,7 @@
                 .css-timeline-line {
                     top: 18px;
                     &:after {
-                        top: -3px;
+                        top: -5px;
                     }
                     @media (max-width: 350px) {
                         top: 20px;
@@ -163,15 +169,16 @@
                 .left-arrowpop {
                     position: absolute;
                     top: 16px;
-                    left: -8px;
+                    left: -6px;
                     z-index: 50;
-                    width: 15px;
-                    height: 15px;
+                    width: 12px;
+                    height: 12px;
                     border-left: 1px solid #ddd;
                     border-bottom: 1px solid #ddd;
                     background-color: #fff;
+                    -webkit-transform: rotate(45deg);
                     transform: rotate(45deg);
-                    border-radius: 3px;
+                    border-bottom-left-radius: 3px;
                 }
                 .css-list-item-time {
                     text-align: center;
@@ -187,11 +194,12 @@
                     .right-ribbon {
                         position: absolute;
                         right: -28px;
-                        top: 5px;
-                        height: 31px;
-                        line-height: 31px;
+                        top: 5px; // height: 31px;
+                        // line-height: 31px;
+                        padding: 5px 0;
                         width: 94px;
                         text-align: center;
+                        -webkit-transform: rotate(45deg);
                         transform: rotate(45deg);
                         background-color: #88b1ff;
                         color: #fff;
@@ -237,7 +245,7 @@
                     &.bgcolor {
                         background-color: #e7e7e7;
                         word-break: break-all;
-                        padding: 5px 0;
+                        padding: 7px 0;
                         border: none;
                         .css-list-item-main-info {
                             margin: 0 15px;
@@ -258,9 +266,13 @@
                         border-radius: 6px;
                         font-size: 1rem;
                         color: #9b9b9b;
+                        &.css-cancel {
+                            border: 1px solid rgba(0, 0, 0, 0.2);
+                        }
                         &.css-delinebtn {
                             margin-right: 21px;
                             color: #9b9b9b;
+                            border: 1px solid rgba(0, 0, 0, 0.2);
                             &:active {
                                 color: rgba(0, 0, 0, 0.6);
                                 background-color: #dedede;
@@ -310,7 +322,7 @@
                                     </div>
                                     <div class="inside-item">
                                         <span class="leftdom col9b">地点</span>
-                                        <span class="rightdom">{{mtr.mtrListStr}}</span>
+                                        <span class="rightdom" v-html="mtr.mtrListStr"></span>
                                     </div>
                                     <div class="inside-item">
                                         <span class="leftdom col9b">人员</span>
@@ -318,7 +330,7 @@
                                     </div>
                                 </div>
                                 <div class="css-bottombar" v-if="mtr.mtrStatu===1">
-                                    <div class="weui-btn css-bottombtn" v-on:click="cancelMt(mtr.ICalUid)">取消会议</div>
+                                    <div class="weui-btn css-bottombtn css-delinebtn" v-on:click="cancelMt(mtr.ICalUid)">取消会议</div>
                                 </div>
                                 <div class="css-bottombar" v-if="mtr.mtrStatu===2">
                                     <div class="weui-btn css-bottombtn css-delinebtn" v-on:click="responseMeeting(mtr.ICalUid,false)">谢绝</div>
@@ -353,8 +365,12 @@ export default {
         loading,
         notice
     },
-    mounted() {
+    created() {
         this.$moaapi.updateNavTitle('我的会议');
+        this.$moaapi.hideNavMenu();
+    },
+    mounted() {
+
         //原生右上角菜单
         let _this = this;
         window.orderMtr = function() {
@@ -370,8 +386,10 @@ export default {
             _this.$router.push({ path: '/mtnoticeset' });
         }
         let list = '[{ "name": "预定会议", "action": "orderMtr()" }, { "name": "会议日程", "action": "mineMtr()" },{ "name": "搜索会议", "action": "searchMtr()" }, { "name": "会议通知设置", "action": "noticeSet()" }]';
-        this.$moaapi.showListNavMenu(list);
 
+        setTimeout(() => {
+            this.$moaapi.showListNavMenu(list);
+        }, 100)
         this.currentUserInfo = JSON.parse(localdata.getdata('currentUserData'));
 
         //清除详情页缓存
@@ -417,11 +435,11 @@ export default {
                     // this.pageloading = false;
                     if (type === 'reload') {
                         if (this.resultLen > 0) {
-                            this.mtrData = res.body.data.Meetings.concat(this.mtrData);
+                            this.mtrData = res.body.data.Meetings.reverse().concat(this.mtrData);
                         } else {
-                            this.$refs.scroller.finishPullToRefresh();
-                            this.moreText = '没有更多了'
+                            this.moreText = '没有更多了';
                         }
+                        this.$refs.scroller.finishPullToRefresh();
                     } else {
                         if (this.resultLen > 0) {
                             this.mtrData = this.mtrData.concat(res.body.data.Meetings);
@@ -450,7 +468,7 @@ export default {
                                 if (!el.mtrListStr) {
                                     el.mtrListStr = elMtr.Name;
                                 } else {
-                                    el.mtrListStr = el.mtrListStr + '/' + elMtr.Name;
+                                    el.mtrListStr = el.mtrListStr + '<br>' + elMtr.Name;
                                 }
                             }, this);
                         }
@@ -462,7 +480,7 @@ export default {
                             if (!el.UseStr) {
                                 el.RequiredAttendees.forEach(function(elreA) {
 
-                                    if (elreA.ResponseType === null) {
+                                    if (elreA.ResponseType === null && elreA.Name.substr(0, 1) === '[' && elreA.Name.substr(elreA.Name.length - 1, 1) === ']') {
                                         //判断是否来自email
                                         if (JSON.parse(elreA.Name).length !== 0) {
                                             JSON.parse(elreA.Name).forEach((elemail) => {
@@ -487,7 +505,7 @@ export default {
                             } else {
                                 el.RequiredAttendees.forEach(function(elreA) {
 
-                                    if (elreA.ResponseType === null) {
+                                    if (elreA.ResponseType === null && elreA.Name.substr(0, 1) === '[' && elreA.Name.substr(elreA.Name.length - 1, 1) === ']') {
                                         //判断是否来自email
                                         if (JSON.parse(elreA.Name).length !== 0) {
                                             JSON.parse(elreA.Name).forEach((elemail) => {

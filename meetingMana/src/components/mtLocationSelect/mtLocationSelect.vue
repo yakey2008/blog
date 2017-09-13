@@ -8,6 +8,10 @@
     border: none;
 }
 
+.weui-navbar:after {
+    border-color: #ddd;
+}
+
 .css-selector-container {
     .css-mask {
         position: fixed;
@@ -20,8 +24,8 @@
     }
     .css-selector-list {
         width: 100%;
-        position: absolute;
-        z-index: 501;
+        position: fixed;
+        z-index: 503;
         top: 50px;
         background-color: #fff;
         max-height: 150px;
@@ -56,6 +60,7 @@
 }
 
 .css-nav-container.weui-navbar {
+    position: fixed;
     z-index: 502;
     background-color: #fff;
     .css-select-region {
@@ -117,7 +122,7 @@ $col9b:#9b9b9b;
         .select-btn {
             .css-arrow {
                 position: absolute;
-                right: 11px;
+                right: 18px;
                 top: 18px;
                 display: inline-block;
                 height: 8px;
@@ -139,7 +144,7 @@ $col9b:#9b9b9b;
     }
     .css-main-container {
         .css-pageinfo-container {
-            position: absolute;
+            position: fixed;
             width: 100%;
             .css-pageinfo {
                 background-color: #fff;
@@ -191,7 +196,8 @@ $col9b:#9b9b9b;
             }
         }
         .css-locationdatetime-container {
-            padding-top: 55px;
+            padding-top: 65px;
+            padding-bottom: 7px;
             .css-locationdatetime {
                 .css-meetingroom-item {
                     background-color: #fff;
@@ -231,8 +237,9 @@ $col9b:#9b9b9b;
         }
     } //底部bar
     .css-bottombar {
-        background-color: #fff;
+        position: fixed;
         z-index: 400;
+        background-color: #fff;
         &.weui-tabbar:before {
             border: none;
             @include boxshadow(0, -7, 49, 0);
@@ -271,9 +278,6 @@ $col9b:#9b9b9b;
                         <i class="css-arrow" :class="{drop:isShowregion}"></i>
                     </div>
                 </div>
-                <!-- <div v-on:click="showtime()">
-                                                                                                                                                                                        <date-picker :date="startTime" :option="option" :limit="limit"></date-picker>
-                                                                                                                                                                                    </div> -->
                 <div class="weui-tab__panel css-main-container">
                     <section>
                         <div class="css-pageinfo-container">
@@ -325,7 +329,9 @@ $col9b:#9b9b9b;
                 <div class="weui-cell css-maxwidth">
                     <div class="weui-cell__bd">
                         <i class="css-inputinco" v-on:click="addCustomMtr()"></i>
-                        <input class="weui-input" type="text" placeholder="其它地点" v-model="customMtr" v-on:keyup="keyAddCustomMtr($event)">
+                        <form action="javascript:void(0);">
+                            <input class="weui-input" type="text" placeholder="其它地点" v-model="customMtr" v-on:keyup="keyAddCustomMtr($event)" v-on:focus="inputFocus()">
+                        </form>
                     </div>
                 </div>
             </div>
@@ -361,7 +367,6 @@ export default {
         'date-picker': myDatepicker
     },
     created() {
-
         this.$moaapi.resetNavTitle();
         this.$moaapi.updateNavTitle('选择地点');
         this.$moaapi.hideNavMenu();
@@ -375,21 +380,23 @@ export default {
         setTimeout(() => {
             this.$moaapi.showNavMenu(searchicon);
         }, 100)
+        localdata.removedata('launchPage');
     },
     mounted() {
         this.today = +new Date(moment().format('YYYY/MM/DD'));
         let getParams = this.$route.query;
 
         // this.weekDate = moment(this.startTime.time).format('MM-DD dddd');
-
         if (getParams.searchregionid) {
             // let searchurl = decodeURIComponent('/mt/SearchRooms?begin=' + getParams.starttime + '&end=' + getParams.endtime + '&roomListAddress=' + getParams.searchregionid);
             this.curRegion = localdata.getdata('curRegion');
             this.curRegionId = localdata.getdata('curRegionId');
+
             let searchurl = decodeURIComponent(urldata.basePath + urldata.SearchRooms + '?begin=' + getParams.starttime + '&end=' + getParams.endtime + '&roomListAddress=' + getParams.searchregionid + '&roomName=' + getParams.roomName);
             this.startTime.time = getParams.starttime.split(' ')[0];
+
             this.ajaxMtrStatu(searchurl);
-        } else if (localdata.getdata('isFromModified')) {
+        } else if (localdata.getdata('isFromModified') || localdata.getdata('launchPage')) {
             this.mtrSelected = JSON.parse(localdata.getdata('mtrSelected'));
             this.startTime.time = this.mtrSelected.dateTime;
             if (localdata.getdata('curRegion')) {
@@ -421,10 +428,19 @@ export default {
             this.isShowerr = true;
             this.errinfo = error.body.errorMessage;
         })
+
         // this.curRegion = '广州-广新办公区会议室列表';
         // this.curRegionId = 'gd2wpds-room@vipshop.com';
         // this.ajaxMtrStatu('/mt/GetRoomsStatus?date=' + this.startTime.time + '&roomListAddress=' + this.curRegionId);
-
+        //兼容iphone5c
+        if (localdata.getdata('curRegionId')) {
+            document.querySelector('html').style.height = 'auto';
+            document.querySelector('body').style.height = 'auto';
+        }
+    },
+    destroyed() {
+        document.querySelector('html').removeAttribute('style');
+        document.querySelector('body').removeAttribute('style');
     },
     updated() {
         this.dompadding = document.querySelector('.css-nav-container').offsetHeight;
@@ -440,7 +456,7 @@ export default {
             today: '',//当天
 
             startTime: {
-                time: moment().format('YYYY-MM-DD')
+                time: moment().format('YYYY/M/D')
             },
             // startTime: {
             //     time: '2017-08-26'
@@ -452,7 +468,7 @@ export default {
                 type: 'day',
                 week: ['一', '二', '三', '四', '五', '六', '日'],
                 month: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
-                format: 'YYYY-MM-DD',
+                format: 'YYYY/M/D',
                 overlayOpacity: 0.5, // 0.5 as default
                 dismissible: true // as true as default
             },
@@ -489,7 +505,7 @@ export default {
             tabVal: [],
             //会议室信息
             ordered: [],
-            noUserMtrText: ''//无会议室提示
+            noUserMtrText: '',//无会议室提示
         }
     },
     methods: {
@@ -500,7 +516,7 @@ export default {
         ajaxMtrStatu(url) {
             this.pageloading = true;
             this.$http.get(url).then(res => {
-                if (res.status === 200) {
+                if (res.body.status === 200) {
 
                     (function(res, _this) {
                         // let _this = this;
@@ -531,7 +547,12 @@ export default {
                                 timeobg.date = date.replace(/-/g, '/');
                                 timeobg.st = st.replace(/-/g, '/');
                                 timeobg.ed = ed.replace(/-/g, '/');
-                                objNextpage.selectedTime.push(timeobg);
+
+                                if (_this.startTime.time.split(' ')[0].split('/')[2] === elrmstatu.End.split(' ')[0].split('-')[2] && elrmstatu.End.split(' ')[1] === '00:00:00') {
+                                    // objNextpage.selectedTime.push(timeobg);
+                                } else {
+                                    objNextpage.selectedTime.push(timeobg);
+                                }
                                 // //已选中开始结束时间索引
                                 // obj.stidx = _this.timelist.indexOf(st.substr(st, st.length - 3));
                                 // obj.edidx = _this.timelist.indexOf(ed.substr(ed, ed.length - 3));
@@ -542,6 +563,7 @@ export default {
 
                             //存储选中会议室时间
                             arrNextpage.push(objNextpage);
+
                             localdata.setdata('selectedTime', JSON.stringify(arrNextpage))
                             //时间状态数组
                             _this.timeorder = [
@@ -610,6 +632,9 @@ export default {
 
                         }, _this)
                     })(res, this)
+                } else {
+                    this.isShowerr = true;
+                    this.errinfo = res.body.errorMessage;
                 }
                 this.pageloading = false;
             }, error => {
@@ -617,9 +642,9 @@ export default {
                 this.errinfo = error.body.errorMessage;
             })
         },
-        swichTimeDom() {
-            this.isPicker = true;
-        },
+        // swichTimeDom() {
+        //     this.isPicker = true;
+        // },
         //时间下拉并处理
         showtime() {
             this.isShowregion = false;
@@ -630,7 +655,9 @@ export default {
             }
         },
         changeday() {
-            this.ajaxMtrStatu(urldata.basePath + urldata.GetRoomsStatus + '?date=' + this.startTime.time + '&roomListAddress=' + this.curRegionId);
+            if (this.curRegionId != '') {
+                this.ajaxMtrStatu(urldata.basePath + urldata.GetRoomsStatus + '?date=' + this.startTime.time + '&roomListAddress=' + this.curRegionId);
+            }
         },
         //处理区域显示
         showregion() {
@@ -669,9 +696,11 @@ export default {
                 // this.$router.push({ name: 'mttimeselect',params:{meetingroom:JSON.stringify(meetingroom),dateTime:this.startTime.time,listindex:index} });
                 let saveLocaldata = {}
                 let mtrinfo = {};
-                if (localdata.getdata('mtrSelected') && JSON.parse(localdata.getdata('mtrSelected')).mtrList.length === 1 && !JSON.parse(localdata.getdata('mtrSelected')).mtrList[0].isAdded) {
+                //从发起页原生按返回到本页处理
+                if (localdata.getdata('mtrSelected') && JSON.parse(localdata.getdata('mtrSelected')).mtrList.length === 1 && !JSON.parse(localdata.getdata('mtrSelected')).mtrList[0].isAdded && !localdata.getdata('isFromModified')) {
                     localdata.removedata('mtrSelected');
                 }
+
                 if (localdata.getdata('mtrSelected')) {
                     let pass = true;
                     let isAddedPass = true;
@@ -687,8 +716,8 @@ export default {
                             }
                         }
                     } else {
-                        for(let i=0,len=saveLocaldata.mtrList.length;i<len;i++){
-                            if(saveLocaldata.mtrList[i].mtrId === meetingroom.Address && saveLocaldata.mtrList[i].isAdded){
+                        for (let i = 0, len = saveLocaldata.mtrList.length; i < len; i++) {
+                            if (saveLocaldata.mtrList[i].mtrId === meetingroom.Address && saveLocaldata.mtrList[i].isAdded) {
                                 this.isShowerr = true;
                                 this.errinfo = '不可重复添加会议室';
                                 return false;
@@ -713,21 +742,28 @@ export default {
                     mtrinfo.isAdded = true;
                     saveLocaldata.mtrList.push(mtrinfo)
                     // }
-
                 } else {
+                    // saveLocaldata = JSON.parse(localdata.getdata('mtrSelected'));
                     saveLocaldata.listindex = index;
                     saveLocaldata.dateTime = this.startTime.time;
+                    saveLocaldata.meetTimeDetail = this.startTime.time;
                     saveLocaldata.regionId = this.curRegionId;
                     saveLocaldata.mtrList = [];
                     mtrinfo.mtrId = meetingroom.Address;
                     mtrinfo.mtrName = meetingroom.Location;
                     mtrinfo.isAdded = false;
-                    saveLocaldata.mtrList.push(mtrinfo)
+                    saveLocaldata.mtrList.push(mtrinfo);
                 }
                 //来自详情修改
                 if (localdata.getdata('isFromModified')) {
+                    // console.log(JSON.stringify(saveLocaldata))
                     localdata.setdata('mtrSelected', JSON.stringify(saveLocaldata));
-                    this.$router.push({ path: '/mtmeetdetailinvite' });
+
+                    if (localdata.getdata('launchPage')) {
+                        this.$router.push({ path: '/mtlaunchmeet' });
+                    } else {
+                        this.$router.push({ path: '/mtmeetdetailinvite' });
+                    }
                 } else {
                     if (localdata.getdata('mtrSelected')) {
                         // this.mtrSelected.mtrList[this.mtrSelected.mtrList.length - 1].isAdded = true;
@@ -745,27 +781,18 @@ export default {
         //添加其它地点
         addCustomMtr() {
             if (this.customMtr !== '') {
-                if (localdata.getdata('mtrSelected') && !JSON.parse(localdata.getdata('mtrSelected')).DIYResource && JSON.parse(localdata.getdata('mtrSelected')).isAdded) {
+                if (localdata.getdata('mtrSelected') && !JSON.parse(localdata.getdata('mtrSelected')).DIYResource && localdata.getdata('mtrSelected').isAdded) {
                     this.isShowerr = true;
                     this.errinfo = '已选择会议室，不可再添加其它地点';
                     // localdata.setdata('mtrSelected', JSON.stringify(saveLocaldata));
                     // this.$router.push({ path: '/mtlaunchmeet' });
                 } else {
-                    localdata.removedata('mtrSelected');
-                    localdata.setdata('mtrSelected', JSON.stringify({ "listindex": 0, "mtrList": [{ "isAdded": false, "mtrId": "", "mtrName": this.customMtr }], "dateTime": this.startTime.time, "isDIYResource": true }));
-                    this.$router.push({ path: '/mttimeselect' });
-                }
-
-            }
-        },
-        keyAddCustomMtr(evt) {
-            if (this.customMtr !== '') {
-                if (evt.keyCode === 13) {
-                    if (localdata.getdata('mtrSelected') && !JSON.parse(localdata.getdata('mtrSelected')).DIYResource && JSON.parse(localdata.getdata('mtrSelected')).isAdded) {
-                        this.isShowerr = true;
-                        this.errinfo = '已选择会议室，不可再添加其它地点';
-                        // localdata.setdata('mtrSelected', JSON.stringify(saveLocaldata));
-                        // this.$router.push({ path: '/mtlaunchmeet' });
+                    //来自详情修改
+                    if (localdata.getdata('isFromModified')) {
+                        let data = JSON.parse(localdata.getdata('mtrSelected'))
+                        data.mtrList.push({ mtrName: this.customMtr });
+                        localdata.setdata('mtrSelected', JSON.stringify(data))
+                        this.$router.push({ path: '/mtmeetdetailinvite' });
                     } else {
                         localdata.removedata('mtrSelected');
                         localdata.setdata('mtrSelected', JSON.stringify({ "listindex": 0, "mtrList": [{ "isAdded": false, "mtrId": "", "mtrName": this.customMtr }], "dateTime": this.startTime.time, "isDIYResource": true }));
@@ -773,6 +800,36 @@ export default {
                     }
                 }
             }
+        },
+        keyAddCustomMtr(evt) {
+            if (this.customMtr !== '') {
+                if (evt.keyCode === 13) {
+                    if (localdata.getdata('mtrSelected') && !JSON.parse(localdata.getdata('mtrSelected')).DIYResource && localdata.getdata('mtrSelected').isAdded) {
+                        this.isShowerr = true;
+                        this.errinfo = '已选择会议室，不可再添加其它地点';
+                        // localdata.setdata('mtrSelected', JSON.stringify(saveLocaldata));
+                        // this.$router.push({ path: '/mtlaunchmeet' });
+                    } else {
+                        //来自详情修改
+                        if (localdata.getdata('isFromModified')) {
+                            let data = JSON.parse(localdata.getdata('mtrSelected'))
+                            data.mtrList.push({ mtrName: this.customMtr });
+                            localdata.setdata('mtrSelected', JSON.stringify(data))
+                            this.$router.push({ path: '/mtmeetdetailinvite' });
+                        } else {
+                            localdata.removedata('mtrSelected');
+                            localdata.setdata('mtrSelected', JSON.stringify({ "listindex": 0, "mtrList": [{ "isAdded": false, "mtrId": "", "mtrName": this.customMtr }], "dateTime": this.startTime.time, "isDIYResource": true }));
+                            this.$router.push({ path: '/mttimeselect' });
+                        }
+                    }
+                    evt.currentTarget.blur();
+                }
+            }
+        },
+        inputFocus() {
+            setTimeout(function() {
+                document.body.scrollTop = document.body.scrollHeight;
+            }, 500)
         },
         //关闭错误提示
         closeShowerr() {
