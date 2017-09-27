@@ -7,19 +7,12 @@ module.exports = {
         port: 3000,
         compress: false,
         proxy: {
-            // '/mt': {
-            //     // target: 'http://10.100.68.57:40000',
-            //     target: 'http://10.100.69.209:40000',
-            //     pathRewrite: {
-            //         '^/mt': '/api/Meeting'
-            //     },
-            //     changeOrigin: true
-            // },
             '/api/Meeting': {
                 // target: 'http://eric-hu-1:40000',
                 // target: 'http://10.100.69.232:40000',
                 // target: 'http://10.100.69.209:40000',
                 // target: 'http://10.100.149.248:40000',
+                // target: 'http://192.168.46.38:20000',
                 target:'http://gzoaweb04.sit.vipshop.com:9000/EWS.RestAPI',
                 changeOrigin: true
             }

@@ -1,1 +1,2 @@
-export default ['mtrSelected', 'selectedTime', 'userMustList', 'userOptionalList', 'userFromEmail', 'meetDetailView','isFromModified','reload','themeTitle','content','isFromTimeModify','isFromIvtEndMt','isFromMintMtr','searchKey','pureUserInfo','launchPage','IsResponseRequested']
+//需要清除的localstorage值
+export default ['mtrSelected', 'selectedTime', 'userMustList', 'userOptionalList', 'userFromEmail', 'meetDetailView','isFromModified','reload','themeTitle','content','isFromTimeModify','isFromIvtEndMt','isFromMintMtr','pureUserInfo','launchPage','IsResponseRequested','isFromSearchMtr','isFromNoticeList']

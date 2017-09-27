@@ -1,4 +1,4 @@
-<style lang="scss">
+<style lang="scss" scoped>
 @mixin placeholder($color) {
      ::-webkit-input-placeholder {
         // WebKit browsers
@@ -126,6 +126,7 @@ $col9b:#9b9b9b;
                     .css-mt-themetext {
                         color: #333;
                         padding-left: 20px;
+                        word-break: break-all;
                     }
                     @media (max-width: 340px) {
                         .css-mt-themetext {
@@ -149,9 +150,22 @@ $col9b:#9b9b9b;
                 font-size: 1rem;
                 overflow: hidden;
                 position: relative;
-                padding: 17px 22px 17px 0;
-                border-top: 1px solid #e7e7e7;
+                padding: 17px 22px 17px 0; // border-top: 1px solid #e7e7e7;
                 margin-left: 22px;
+                &:after {
+                    content: " ";
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    right: 0;
+                    height: 1px;
+                    border-top: 1px solid #e7e7e7;
+                    color: #e7e7e7;
+                    -webkit-transform-origin: 0 100%;
+                    transform-origin: 0 100%;
+                    -webkit-transform: scaleY(0.5);
+                    transform: scaleY(0.5);
+                }
                 .css-mtlaunchmeet-mtl-location-info {
                     @include flexboxwidth(1);
                     text-align: left;
@@ -220,14 +234,28 @@ $col9b:#9b9b9b;
                 font-size: 1rem;
                 overflow: hidden;
                 position: relative;
-                padding: 17px 22px 17px 0;
-                border-top: 1px solid #e7e7e7;
+                padding: 17px 22px 17px 0; // border-top: 1px solid #e7e7e7;
                 margin-left: 22px;
+                &:after {
+                    content: " ";
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    right: 0;
+                    height: 1px;
+                    border-top: 1px solid #e7e7e7;
+                    color: #e7e7e7;
+                    -webkit-transform-origin: 0 100%;
+                    transform-origin: 0 100%;
+                    -webkit-transform: scaleY(0.5);
+                    transform: scaleY(0.5);
+                }
                 .css-right-icon {
                     width: 31px;
                     height: 15px;
                     position: absolute;
-                    top: 0;
+                    z-index: 500;
+                    top: 1px;
                     right: 0;
                     background-size: cover;
                     &.css-must-icon {
@@ -304,7 +332,7 @@ $col9b:#9b9b9b;
             line-height: 36px;
             font-size: 1rem;
             &.css-delinebtn {
-                margin-right: 21px;
+                margin-right: 0;
                 color: #9b9b9b;
                 &:active {
                     color: rgba(0, 0, 0, 0.6);
@@ -312,7 +340,7 @@ $col9b:#9b9b9b;
                 }
             }
             &.css-acceptbtn {
-                margin-left: 0;
+                margin-left: 21px;
                 background-color: #88b1ff;
                 &:active {
                     background-color: #6097ff;
@@ -357,7 +385,7 @@ $col9b:#9b9b9b;
                                 <p>会议地点（{{mtrSelected.mtrLen}}）</p>
                             </div>
                         </div>
-                        <div class="css-mtlaunchmeet-mtl-location-container" v-for="(mtr,index) in mtrSelected.Resources" :key="index">
+                        <div class="css-mtlaunchmeet-mtl-location-container" v-for="(mtr,index) in mtrSelected.Resources" :key="index" v-show="index<showMore">
                             <div class="css-mtlaunchmeet-mtl-location-info">
                                 <p>{{mtr.Name}}</p>
                             </div>
@@ -452,14 +480,20 @@ export default {
 
             this.initData(JSON.parse(localdata.getdata('meetDetailView')));
             if (!this.mtrSelected) {
-                this.$router.push({ path: '/' });
+                // this.$router.push({ path: '/' });
+                this.$moaapi.closeWin();
             }
         } else {
             //来自app
             this.pageloading = true;
             this.$http.post(urldata.basePath + urldata.GetMeetingDetail, { ICalUid: getParams.ICalUid }).then(res => {
-                this.pageloading = false;
-                this.initData(res.body.data);
+                if (res.body.status === 200) {
+                    this.pageloading = false;
+                    this.initData(res.body.data);
+                } else {
+                    this.isShowerr = true;
+                    this.errinfo = res.body.errorMessage;
+                }
             }, error => {
                 console.log(error)
                 this.isShowerr = true;
@@ -472,58 +506,6 @@ export default {
             this.$moaapi.updateNavTitle('会议详情');
             this.$moaapi.hideNavMenu();
         }, 100)
-
-
-        if (!this.mtrSelected.AllPersonInfo) {
-            //处理pc发起人员问题
-            this.noDeptMustList.forEach((el) => {
-                if (el.Address) {
-                    let elin = el;
-                    this.$http.get(urldata.basePath + urldata.GetPersonInfo + '?emailAddress=' + elin.Address).then(res => {
-                        if (res.body.status === 200) {
-                            if (res.body.data) {
-                                elin.Id = res.body.data.Id;
-                                elin.id = res.body.data.Id;
-                                elin.Job = res.body.data.Job;
-                                elin.job = res.body.data.Job;
-                                elin.AvatarUrl = res.body.data.AvatarUrl;
-                                elin.url = res.body.data.AvatarUrl;
-                            }
-                        } else {
-                            this.isShowerr = true;
-                            this.errinfo = res.body.errorMessage;
-                            this.pageloading = false;
-                        }
-                    }, error => {
-                        alert(error.body.errorMessage);
-                    })
-                }
-            }, this)
-            this.noDeptOptionalList.forEach((el) => {
-                if (el.Address) {
-                    let elin = el;
-                    this.$http.get(urldata.basePath + urldata.GetPersonInfo + '?emailAddress=' + elin.Address).then(res => {
-                        if (res.body.status === 200) {
-                            if (res.body.data) {
-                                elin.Id = res.body.data.Id;
-                                elin.id = res.body.data.Id;
-                                elin.Job = res.body.data.Job;
-                                elin.job = res.body.data.Job;
-                                elin.AvatarUrl = res.body.data.AvatarUrl;
-                                elin.url = res.body.data.AvatarUrl;
-                            }
-                        } else {
-                            this.isShowerr = true;
-                            this.errinfo = res.body.errorMessage;
-                            this.pageloading = false;
-                        }
-                    }, error => {
-                        alert(error.body.errorMessage);
-                    })
-                }
-            }, this)
-        }
-
     },
     data() {
         return {
@@ -574,7 +556,7 @@ export default {
             let date = this.mtrSelected.Start.split(' ')[0];
             let st = this.mtrSelected.Start.split(' ')[1];
             let ed = this.mtrSelected.End.split(' ')[1];
-            if(ed === '00:00:00'){
+            if (ed === '00:00:00') {
                 ed = '23:59:00';
             }
             if (this.mtrSelected.MyResponseType === 3) {
@@ -599,20 +581,24 @@ export default {
             }
 
             this.mtrSelected.meetTimeDetail = date + ' \r\n' + st.substr(0, st.length - 3) + '-' + ed.substr(0, ed.length - 3);
-
+            //存储邮箱人
+            let emailArr = [];
             this.mtrSelected.RequiredAttendees.forEach((el, index) => {
                 //判断是否来自email
-                if (el.ResponseType === null && el.Name.substr(0,1)==='['&&el.Name.substr(el.Name.length-1,1)===']') {
+                if (el.ResponseType === null && el.Name.substr(0, 1) === '[' && el.Name.substr(el.Name.length - 1, 1) === ']') {
                     try {
                         JSON.parse(el.Name).forEach((elemail) => {
                             let emailUser = {
                                 Address: elemail,
+                                email: elemail,
                                 AvatarUrl: "",
                                 LastResponseTime: null,
                                 Name: elemail,
+                                id: "",
                                 ResponseType: null,
                                 isEmail: true
                             };
+                            emailArr.push(emailUser);
                             this.mtrSelected.RequiredAttendees.push(emailUser);
                         }, this)
                     } catch (e) {
@@ -620,8 +606,22 @@ export default {
                     }
                     this.mtrSelected.RequiredAttendees.splice(index, 1);
                 }
-            })
-
+            }, this)
+            //去掉邮箱添加的人
+            let spliceArr = [];
+            this.mtrSelected.RequiredAttendees.forEach((el, index) => {
+                emailArr.forEach((elinside) => {
+                    if (el.Address === elinside.Address && !el.hasOwnProperty('isEmail')) {
+                        spliceArr.push(index);
+                    }
+                }, this)
+                // if (!el.hasOwnProperty('LastResponseTime') === '' && !el.hasOwnProperty('isEmail')) {
+                //     spliceArr.push(index);
+                // }
+            }, this)
+            spliceArr.reverse().forEach((el) => {
+                this.mtrSelected.RequiredAttendees.splice(el, 1);
+            }, this)
             //将发起人添加到必选列表第一位 是否来自pc发起
             if (this.mtrSelected.AllPersonInfo) {
                 if (this.mtrSelected.RequiredAttendees.length === 0 || this.mtrSelected.RequiredAttendees[0].Address !== this.mtrSelected.Organizer.Address) {
@@ -643,6 +643,9 @@ export default {
                         if (el.Address === elinside.Email) {
                             el.Id = elinside.Id;
                             el.Job = elinside.Job;
+                            if (el.AvatarUrl === '') {
+                                el.AvatarUrl = elinside.AvatarUrl;
+                            }
                         }
                     }, this)
                 }, this)
@@ -653,6 +656,9 @@ export default {
                             if (el.Address === elinside.Email) {
                                 el.Id = elinside.Id;
                                 el.Job = elinside.Job;
+                                if (el.AvatarUrl === '') {
+                                    el.AvatarUrl = elinside.AvatarUrl;
+                                }
                             }
                         }, this)
                     }, this)
@@ -671,6 +677,55 @@ export default {
                 //去掉部门
                 this.noDeptMustList = this.mtrSelected.RequiredAttendees;
                 this.noDeptOptionalList = this.mtrSelected.OptionalAttendees;
+
+                //处理pc发起人员问题
+                this.noDeptMustList.forEach((el) => {
+                    if (el.Address) {
+                        let elin = el;
+                        this.$http.get(urldata.basePath + urldata.GetPersonInfo + '?emailAddress=' + elin.Address).then(res => {
+                            if (res.body.status === 200) {
+                                if (res.body.data) {
+                                    elin.Id = res.body.data.Id;
+                                    elin.id = res.body.data.Id;
+                                    elin.Job = res.body.data.Job;
+                                    elin.job = res.body.data.Job;
+                                    elin.AvatarUrl = res.body.data.AvatarUrl;
+                                    elin.url = res.body.data.AvatarUrl;
+                                }
+                            } else {
+                                this.isShowerr = true;
+                                this.errinfo = res.body.errorMessage;
+                                this.pageloading = false;
+                            }
+                        }, error => {
+                            // alert(error.body.errorMessage);
+                        })
+                    }
+                }, this)
+                this.noDeptOptionalList.forEach((el) => {
+                    if (el.Address) {
+                        let elin = el;
+                        this.$http.get(urldata.basePath + urldata.GetPersonInfo + '?emailAddress=' + elin.Address).then(res => {
+                            if (res.body.status === 200) {
+                                if (res.body.data) {
+                                    elin.Id = res.body.data.Id;
+                                    elin.id = res.body.data.Id;
+                                    elin.Job = res.body.data.Job;
+                                    elin.job = res.body.data.Job;
+                                    elin.AvatarUrl = res.body.data.AvatarUrl;
+                                    elin.url = res.body.data.AvatarUrl;
+                                }
+                            } else {
+                                this.isShowerr = true;
+                                this.errinfo = res.body.errorMessage;
+                                this.pageloading = false;
+                            }
+                        }, error => {
+                            // alert(error.body.errorMessage);
+                        })
+                    }
+                }, this)
+
             }
             //人员数量
             this.mtrSelected.mtrLen = this.mtrSelected.Resources.length;
@@ -698,7 +753,10 @@ export default {
         },
         //查看人员信息
         viewUserInfo(id) {
-            this.$moaapi.callUserProfile(id);
+            if (id && id !== '') {
+                // console.log(id)
+                this.$moaapi.callUserProfile(id);
+            }
         },
         responseMeeting(type) {
             let sendData = {
@@ -709,8 +767,6 @@ export default {
             this.pageloading = true;
             this.$http.post(urldata.basePath + urldata.ResponseMeeting, sendData).then(res => {
                 if (res.body.status === 200) {
-                    //清除本地存储已存在的数据
-                    this.clearStorage();
                     this.pageloading = false;
                     this.isShowerr = true;
                     if (type) {
@@ -735,7 +791,19 @@ export default {
         closeShowerr() {
             this.isShowerr = false;
             this.pageloading = false;
-            this.$router.push({ path: '/' });
+            localdata.setdata('needreload', true);
+            if (localdata.getdata('isFromMintMtr')) {
+                this.$router.push({ path: '/mtminemeeting' });
+            } else if (localdata.getdata('isFromNoticeList')) {
+                this.$router.push({ path: '/mtnoticelist' });
+            } else if (localdata.getdata('isFromSearchMtr')) {
+                this.$router.push({ path: '/mtsearchmtr' });
+            } 
+            else {
+                this.$router.push({ path: '/' });
+            }
+            //清除本地存储已存在的数据
+            this.clearStorage();
         }
     }
 } 

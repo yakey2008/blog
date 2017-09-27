@@ -46,9 +46,8 @@
         position: fixed;
         top: 0;
         left: 0;
-        right: 0;
-        margin: 0 5px;
-        padding: 13px 0;
+        right: 0; // margin: 0 7%;
+        padding: 13px 7%;
         z-index: 502;
         .css-searcharea {
             position: relative; // margin: 20px 9px;
@@ -83,7 +82,9 @@
 
             .css-searcharea-input {
                 width: 80%;
-                padding: 10px 0;
+                padding-top: 7px;
+                padding-bottom: 9px;
+                font-size: .875rem;
                 padding-left: 5px;
                 background-color: #f3f3f3;
                 outline: none;
@@ -215,10 +216,8 @@
 
                     .right-ribbon {
                         position: absolute;
-                        right: -28px;
-                        top: 5px;
-                        // height: 31px;
-                        // line-height: 31px;
+                        right: -25px;
+                        top: 6px;
                         padding: 5px 0;
                         width: 94px;
                         text-align: center;
@@ -252,6 +251,11 @@
                                 // white-space: nowrap;
                                 // text-overflow: ellipsis;
                                 word-break: break-all;
+                                &.css-username {
+                                    overflow: hidden;
+                                    white-space: nowrap;
+                                    text-overflow: ellipsis;
+                                }
                             }
                         }
                     }
@@ -264,6 +268,9 @@
                         padding: 12px 0;
                         word-break: break-all;
                         padding-right: 8%;
+                        @media (max-width: 350px) {
+                            padding-right: 20%;
+                        }
                     }
                     &.bgcolor {
                         background-color: #e7e7e7;
@@ -289,11 +296,11 @@
                         border-radius: 6px;
                         font-size: 1rem;
                         color: #9b9b9b;
-                        &.css-cancel{
+                        &.css-cancel {
                             border: 1px solid rgba(0, 0, 0, 0.2);
                         }
                         &.css-delinebtn {
-                            margin-right: 21px;
+                            margin-right: 0;
                             color: #9b9b9b;
                             border: 1px solid rgba(0, 0, 0, 0.2);
                             &:active {
@@ -302,7 +309,7 @@
                             }
                         }
                         &.css-acceptbtn {
-                            margin-left: 0;
+                            margin-left: 21px;
                             background-color: #88b1ff;
                             color: #fff;
                             &:active {
@@ -349,7 +356,7 @@
                         <div class="css-list-item-main">
                             <span class="right-ribbon" :class="{'unaccept':mtr.mtrStatu===0||mtr.mtrStatu===2||mtr.mtrStatu===4}">{{mtr.mtrStatuText}}</span>
                             <div class="css-list-item-main-info">
-                                <h3 class="css-list-item-main-title">{{mtr.Subject}}</h3>
+                                <h3 class="css-list-item-main-title">{{mtr.Subject===''||mtr.Subject===null?'[无主题]':mtr.Subject}}</h3>
                                 <div v-on:click="toDetail(mtr.IsShowAttentdeesStat,index)">
                                     <div class="inside-item css-list-item-main-info-time">
                                         <span class="leftdom col9b">时间</span>
@@ -361,7 +368,7 @@
                                     </div>
                                     <div class="inside-item">
                                         <span class="leftdom col9b">人员</span>
-                                        <span class="rightdom">{{mtr.UseStr}}</span>
+                                        <span class="rightdom css-username">{{mtr.UseStr}}</span>
                                     </div>
                                 </div>
 
@@ -390,8 +397,6 @@ import Scroller from '../scroll/index.vue';
 import localdata from '../../js/localdata.js';
 import urldata from '../../config/urldata.js';
 import storageList from '../../config/storageList.js';
-import service from '../../services/getMeetingNotificationList';
-import service1 from '../../services/postReplyMeetingInvitation';
 import loading from '../loading/loading.vue';
 import notice from '../popNotice/popNotice.vue';
 
@@ -413,11 +418,51 @@ export default {
             let obj = { searchSubjectKey: this.searchSubjectKey.trim(), currentDate: this.todayTime, pageSize: this.pageSize, offset: this.offset, searchDirection: this.searchDirection };
             this.pageloading = true;
             this.initData(this.getMineMtr, obj, 'search');
+            // localdata.removedata('searchKey');
         }
 
         //清除详情页缓存
-        localdata.removedata('mtrSelected');
-        localdata.removedata('meetDetailView');
+        // localdata.removedata('mtrSelected');
+        // localdata.removedata('meetDetailView');
+    },
+    activated() {
+        if (localdata.getdata('searchKey')) {
+            this.offset = 0;
+            this.searchSubjectKey = localdata.getdata('searchKey');
+            let obj = { searchSubjectKey: this.searchSubjectKey.trim(), currentDate: this.todayTime, pageSize: this.pageSize, offset: this.offset, searchDirection: this.searchDirection };
+            this.pageloading = true;
+            this.initData(this.getMineMtr, obj, 'search');
+            // localdata.removedata('searchKey');
+        }
+
+        //清除本地存储已存在的数据
+        this.clearStorage();
+        this.$moaapi.hideNavMenu();
+        setTimeout(() => {
+            this.$moaapi.updateNavTitle('搜索会议');
+        }, 100)
+        if (localdata.getdata('needreload')) {
+            // setTimeout(() => {
+            window.location.reload();
+            // }, 100)
+            localdata.removedata('needreload');
+        }
+    },
+    beforeRouteLeave(to, from, next) {
+        if (to.fullPath === "/") {
+            localdata.setdata('needreload', true);
+            // if (localdata.getdata('isVisitedCachePage')) {
+            //     localdata.removedata('isVisitedCachePage');
+            // this.$destroy(true)
+            // } else {
+            //     localdata.setdata('isVisitedCachePage', true);
+            // }
+        } else if (to.fullPath === "/mtmeetdetailinvite" && !localdata.getdata('meetDetailView')) {
+            this.$router.push({ path: '/' });
+        } else if (to.fullPath === "/mtmeetdetailaccept" && !localdata.getdata('meetDetailView')) {
+            this.$router.push({ path: '/' });
+        }
+        next();
     },
     data() {
         return {
@@ -426,14 +471,14 @@ export default {
             errinfo: "请稍后再试",
             pageloading: false,
             isShowCancel: false,//是否取消弹出
-            isUpdateDone: false,//是否已修改成功
+            isConfirmErr: false,//是否已修改成功
 
             todayTime: moment().format('YYYY-MM-DD'),//当天时间
             searchSubjectKey: '',//搜索关键字
             currentDate: '',//时间参数
             pageSize: 10,//一页返回条数
             offset: 0,//下页返回的第一个索引
-            searchDirection: 1,//显示方向1 从上到下顺序 0从下到上倒序
+            searchDirection: 0,//显示方向1 从上到下顺序 0从下到上倒序
             getMineMtr: urldata.basePath + urldata.SearchMyMeeting,
             currentUserInfo: {},//当前用户信息
             mtrData: [],//会议室信息
@@ -514,7 +559,7 @@ export default {
                             } else {
                                 el.RequiredAttendees.forEach(function(elreA) {
 
-                                    if (elreA.ResponseType === null&& elreA.Name.substr(0,1)==='['&&elreA.Name.substr(elreA.Name.length-1,1)===']') {
+                                    if (elreA.ResponseType === null && elreA.Name.substr(0, 1) === '[' && elreA.Name.substr(elreA.Name.length - 1, 1) === ']') {
                                         //判断是否来自email
                                         if (JSON.parse(elreA.Name).length !== 0) {
                                             JSON.parse(elreA.Name).forEach((elemail) => {
@@ -584,7 +629,13 @@ export default {
                             // }, this);
                             if (el.MyResponseType === 1) {
                                 el.mtrStatu = 1;
-                                el.mtrStatuText = '已预订';
+                                if (el.ApprovedStatus === 1) {
+                                    el.mtrStatuText = '待审批'
+                                } else if (el.ApprovedStatus === 3) {
+                                    el.mtrStatuText = '不通过';
+                                } else {
+                                    el.mtrStatuText = '已预订';
+                                }
                             } else if (el.MyResponseType === 3) {
                                 el.mtrStatu = 3;
                                 el.mtrStatuText = '已接受';
@@ -600,11 +651,23 @@ export default {
                                 if (el.MyResponseType === 3 || el.MyResponseType === 4) {
                                     el.mtrStatu = 6;
                                 } else {
-                                    el.mtrStatuText = '进行中';
+                                    if (el.ApprovedStatus === 1) {
+                                        el.mtrStatuText = '待审批'
+                                    } else if (el.ApprovedStatus === 3) {
+                                        el.mtrStatuText = '不通过';
+                                    } else {
+                                        el.mtrStatuText = '进行中';
+                                    }
                                 }
                             } else if (!el.IsCancelled && el.Processing === 3) {
                                 el.mtrStatu = 6;
-                                el.mtrStatuText = '已结束';
+                                if (el.ApprovedStatus === 1) {
+                                    el.mtrStatuText = '待审批'
+                                } else if (el.ApprovedStatus === 3) {
+                                    el.mtrStatuText = '不通过';
+                                } else {
+                                    el.mtrStatuText = '已结束';
+                                }
                             }
 
                             if (el.IsCancelled) {
@@ -625,6 +688,7 @@ export default {
                     // this.mtrData.MtrTime = this.mtrData.Start.split(' ')[0]+' '+this.mtrData.Start.split(' ')[1]+'-'+this.mtrData.End.split(' ')[1]
                     this.pageloading = false;
                 } else {
+                    this.isConfirmErr = true;
                     this.isShowerr = true;
                     this.errinfo = res.body.errorMessage;
                     this.pageloading = false;
@@ -634,35 +698,48 @@ export default {
                 // this.currentUserData = res.body.data;
                 // localdata.setdata('currentUserData', JSON.stringify(res.body.data));
             }, error => {
-                alert(error.body.errorMessage);
+                // alert(error.body.errorMessage);
             })
         },
         infinite() {
             if (this.isSearched) {
                 setTimeout(() => {
+                    var obj;
                     if (this.mtrData.length !== 0) {
                         this.offset = this.offset + this.pageSize;
                     }
-                    let obj = { searchSubjectKey: this.searchSubjectKey.trim(), currentDate: this.todayTime, pageSize: this.pageSize, offset: this.offset, searchDirection: this.searchDirection };
-                    this.initData(this.getMineMtr, obj);
+                    if (this.searchSubjectKey.trim() === '') {
+                        obj = { searchSubjectKey: this.searchSubjectKey.trim(), currentDate: this.todayTime, pageSize: this.pageSize, offset: this.offset, searchDirection: 1 };
+                        // this.pageloading = true;
+                        this.initData(this.getMineMtr, obj);
+                    } else {
+                        obj = { searchSubjectKey: this.searchSubjectKey.trim(), currentDate: this.todayTime, pageSize: this.pageSize, offset: this.offset, searchDirection: this.searchDirection };
+                        this.initData(this.getMineMtr, obj);
+                    }
                 }, 500)
             } else {
                 this.$refs.scroller.finishInfinite(false);
             }
         },
         //发起搜索
-        excSearch() {
-            this.offset = 0;
-            let obj = { searchSubjectKey: this.searchSubjectKey.trim(), currentDate: this.todayTime, pageSize: this.pageSize, offset: this.offset, searchDirection: this.searchDirection };
-            this.pageloading = true;
-            this.initData(this.getMineMtr, obj, 'search');
-            localdata.setdata('searchKey', this.searchSubjectKey.trim());
-        },
+        // excSearch() {
+        //     this.offset = 0;
+        //     let obj = { searchSubjectKey: this.searchSubjectKey.trim(), currentDate: this.todayTime, pageSize: this.pageSize, offset: this.offset, searchDirection: this.searchDirection };
+        //     this.pageloading = true;
+        //     this.initData(this.getMineMtr, obj, 'search');
+        //     localdata.setdata('searchKey', this.searchSubjectKey.trim());
+        // },
         keyExcSearch(evt) {
             if (evt.keyCode === 13) {
                 this.offset = 0;
-                let obj = { searchSubjectKey: this.searchSubjectKey.trim(), currentDate: this.todayTime, pageSize: this.pageSize, offset: this.offset, searchDirection: this.searchDirection };
-                this.pageloading = true;
+                var obj;
+                if (this.searchSubjectKey.trim() === '') {
+                    obj = { searchSubjectKey: this.searchSubjectKey.trim(), currentDate: this.todayTime, pageSize: this.pageSize, offset: this.offset, searchDirection: 1 };
+                    this.pageloading = true;
+                } else {
+                    obj = { searchSubjectKey: this.searchSubjectKey.trim(), currentDate: this.todayTime, pageSize: this.pageSize, offset: this.offset, searchDirection: this.searchDirection };
+                    this.pageloading = true;
+                }
                 this.initData(this.getMineMtr, obj, 'search');
                 localdata.setdata('searchKey', this.searchSubjectKey.trim());
                 evt.currentTarget.blur()
@@ -671,6 +748,8 @@ export default {
         //跳转到详情
         toDetail(isInvite, index) {
             localdata.setdata('meetDetailView', JSON.stringify(this.mtrData[index]));
+            localdata.setdata('searchKey', this.searchSubjectKey.trim());
+            localdata.setdata('isFromSearchMtr', true);
             if (isInvite) {
                 this.$router.push({ path: '/mtmeetdetailinvite' });
             } else {
@@ -703,6 +782,8 @@ export default {
                     // window.location.reload();
                     // this.$router.push({ path: '/' });
                 } else {
+                    this.isConfirmErr = true;
+                    this.isShowCancel = false;
                     this.isShowerr = true;
                     this.errinfo = res.body.errorMessage;
                 }
@@ -752,11 +833,15 @@ export default {
                         this.errinfo = '谢绝成功';
                     }
                 } else {
+                    this.isConfirmErr = true;
+                    this.isShowCancel = false;
                     this.isShowerr = true;
                     this.errinfo = res.body.errorMessage;
                 }
             }, error => {
-                alert(error.body.errorMessage);
+                this.isShowerr = true;
+                this.errinfo = error.body.errorMessage;
+                // alert(error.body.errorMessage);
             })
         },
         //清空搜索
@@ -772,9 +857,14 @@ export default {
             this.isShowerr = false;
             this.pageloading = false;
             //操作后重新获取数据
-            this.offset = 0;
-            let obj = { searchSubjectKey: this.searchSubjectKey.trim(), currentDate: this.todayTime, pageSize: this.pageSize, offset: this.offset, searchDirection: this.searchDirection };
-            this.initData(this.getMineMtr, obj, 'search');
+            if (!this.isConfirmErr) {
+                this.offset = 0;
+                let obj = { searchSubjectKey: this.searchSubjectKey.trim(), currentDate: this.todayTime, pageSize: this.pageSize, offset: this.offset, searchDirection: this.searchDirection };
+                this.initData(this.getMineMtr, obj, 'search');
+            } else {
+                window.location.reload();
+                this.isConfirmErr = false;
+            }
             // window.location.reload();
             // this.$router.push({ path: '/' });
         }

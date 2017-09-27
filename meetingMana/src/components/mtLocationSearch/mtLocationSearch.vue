@@ -15,12 +15,28 @@
         background: rgba(0, 0, 0, 0.6);
     }
     .css-selector-list {
+        // &::-webkit-scrollbar {
+        //     -webkit-appearance: none;
+        // }
+        // &::-webkit-scrollbar:vertical {
+        //     width: 4px;
+        // }
+        // &::-webkit-scrollbar:horizontal {
+        //     height: 12px;
+        // }
+        // &::-webkit-scrollbar-thumb {
+        //     background-color: #c0e8ff;
+        //     border-radius: 10px;
+        // }
+        // &::-webkit-scrollbar-track {
+        //     border-radius: 10px;
+        //     background-color: #ffffff;
+        // }
         width: 100%;
         position: absolute;
         z-index: 501;
         top: 50px;
-        background-color: #fff;
-        max-height: 150px;
+        background-color: #fff; // max-height: 150px;
         overflow-y: scroll;
         .css-selector-item {
             position: relative;
@@ -226,6 +242,7 @@ $col9b:#9b9b9b;
         }
     } //底部bar
     .css-bottombar {
+        position: fixed;
         height: 49px;
         background-color: #88b1ff;
         &.weui-tabbar:before {
@@ -253,8 +270,12 @@ $col9b:#9b9b9b;
                 line-height: 50px;
             }
             ul {
-                height: 100px;
+                height: 200px;
                 overflow-y: scroll;
+                li {
+                    height: 50px;
+                    line-height: 50px;
+                }
                 .time-hover-start,
                 .time-hover-end {
                     color: #fff;
@@ -279,7 +300,7 @@ $col9b:#9b9b9b;
             <div class="weui-tab">
                 <div class="weui-navbar css-nav-container">
                     <div class="weui-navbar__item select-btn">
-                        <date-picker :date="startTime" :option="option" :limit="limit" v-on:showpicker="showtime()" v-if="isPicker"></date-picker>
+                        <date-picker :date="startTime" :option="option" :limit="limit" v-on:ajaxdata="changeday()" v-on:showpicker="showtime()" v-if="isPicker"></date-picker>
                         <div v-if="!isPicker" v-on:click="showtime()">{{formatToWeek(startTime.time)}}</div>
                         <i class="css-arrow" :class="{drop:isShowtime}"></i>
                     </div>
@@ -341,9 +362,9 @@ $col9b:#9b9b9b;
             </div>
 
             <!-- 区域弹出 End -->
-            <div class="css-selector-container" v-if="isShowregion">
+            <div class="css-selector-container" v-show="isShowregion">
                 <div class="css-mask" v-on:click="showregion()"></div>
-                <div class="css-selector-list">
+                <div class="css-selector-list" id="js-regionHeight">
                     <div class="css-selector-item" v-for="(item,index) in tabVal" :key="index" v-on:click="regionEvt(item)" :class="{'css-curregion':curRegionId===item.Address}" :curregionid="item.Address">{{item.Name}}</div>
                 </div>
             </div>
@@ -358,14 +379,14 @@ $col9b:#9b9b9b;
                     <ul id="js-hours">
                         <li v-for="(hours,index) in timepickerArr.hours" :key="index" :class="{'time-hover-start':startHour===hours&&timePickerType===1,'time-hover-end':endHour===hours&&timePickerType===2}" v-on:click="takehour(hours)">{{hours}}</li>
                     </ul>
-                    <div class="time-btn" v-on:click="confirmTime()">确认</div>
+                    <div class="time-btn" v-on:click="closeTimpicker()">取消</div>
                 </div>
                 <div class="css-timepicker-box">
                     <div class="time-title">分钟</div>
                     <ul>
                         <li v-for="(minutes,index) in timepickerArr.minutes" :key="index" :class="{'time-hover-start':startMinute===minutes&&timePickerType===1,'time-hover-end':endMinute===minutes&&timePickerType===2}" v-on:click="takeminute(minutes)">{{minutes}}</li>
                     </ul>
-                    <div class="time-btn text-blue" v-on:click="closeTimpicker()">取消</div>
+                    <div class="time-btn text-blue" v-on:click="confirmTime()">确认</div>
                 </div>
             </div>
         </div>
@@ -408,7 +429,10 @@ export default {
             this.curRegion = localdata.getdata('curRegion');
             this.curRegionId = localdata.getdata('curRegionId');
         }
+        //记录日历上一步的日期
+        this.preDate = this.startTime.time;
 
+        document.getElementById('js-regionHeight').style.height = window.innerHeight - document.querySelector('.css-nav-container').scrollHeight + 'px';
     },
     data() {
         return {
@@ -417,6 +441,7 @@ export default {
             errinfo: "请稍后再试",
             pageloading: false,
             today: '',//当天
+            preDate: '',//记录日历上一步的日期
             // weekDate: '',
 
             startTime: {
@@ -484,6 +509,20 @@ export default {
                 this.isShowtime = true;
             }
         },
+        changeday() {
+            //大于7天后提示
+            if (+moment() < this.today + (9 * 60 * 60 * 1000) + (30 * 60 * 1000) && +new Date(this.startTime.time) > this.today + 24 * 60 * 60 * 1000 * 6) {
+                this.isShowerr = true;
+                this.errinfo = '只可预定七天内的会议室';
+                this.startTime.time = this.preDate;
+            } else if (+moment() >= this.today + (9 * 60 * 60 * 1000) + (30 * 60 * 1000) && +new Date(this.startTime.time) > this.today + 24 * 60 * 60 * 1000 * 7) {
+                this.isShowerr = true;
+                this.errinfo = '只可预定七天内的会议室';
+                this.startTime.time = this.preDate;
+            } else {
+                this.preDate = this.startTime.time;
+            }
+        },
         //处理区域显示
         showregion() {
             this.isPicker = true;
@@ -514,7 +553,7 @@ export default {
             let top = 0;
             this.timepickerArr.hours.forEach((el, index) => {
                 if (moment().format('HH') === el) {
-                    top = 25 * index;
+                    top = 50 * index;
                 }
             }, this)
             document.querySelector('#js-hours').scrollTop = top;
@@ -598,6 +637,7 @@ export default {
         },
         //关闭错误提示
         closeShowerr() {
+            this.pageloading = false;
             this.isShowerr = false;
         }
     }

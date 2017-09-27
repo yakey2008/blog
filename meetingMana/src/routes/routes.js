@@ -1,3 +1,4 @@
+//路由信息
 import App from '../app.vue'; //入口
 import Homepage from '../components/home/home.vue'; //首页
 import Mtmeetdetailaccept from '../components/mtMeetDetailAccept/mtMeetDetailAccept.vue'; //会议详情(非发起者)

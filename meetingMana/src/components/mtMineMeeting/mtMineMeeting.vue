@@ -193,9 +193,8 @@
 
                     .right-ribbon {
                         position: absolute;
-                        right: -28px;
-                        top: 5px; // height: 31px;
-                        // line-height: 31px;
+                        right: -25px;
+                        top: 6px;
                         padding: 5px 0;
                         width: 94px;
                         text-align: center;
@@ -229,6 +228,11 @@
                                 // white-space: nowrap;
                                 // text-overflow: ellipsis;
                                 word-break: break-all;
+                                &.css-username {
+                                    overflow: hidden;
+                                    white-space: nowrap;
+                                    text-overflow: ellipsis;
+                                }
                             }
                         }
                     }
@@ -241,6 +245,9 @@
                         padding: 12px 0;
                         word-break: break-all;
                         padding-right: 8%;
+                        @media (max-width: 350px) {
+                            padding-right: 20%;
+                        }
                     }
                     &.bgcolor {
                         background-color: #e7e7e7;
@@ -270,7 +277,7 @@
                             border: 1px solid rgba(0, 0, 0, 0.2);
                         }
                         &.css-delinebtn {
-                            margin-right: 21px;
+                            margin-right: 0;
                             color: #9b9b9b;
                             border: 1px solid rgba(0, 0, 0, 0.2);
                             &:active {
@@ -279,7 +286,7 @@
                             }
                         }
                         &.css-acceptbtn {
-                            margin-left: 0;
+                            margin-left: 21px;
                             background-color: #88b1ff;
                             color: #fff;
                             &:active {
@@ -314,7 +321,7 @@
                         <div class="css-list-item-main">
                             <span class="right-ribbon" :class="{'unaccept':mtr.mtrStatu===0||mtr.mtrStatu===2||mtr.mtrStatu===4}">{{mtr.mtrStatuText}}</span>
                             <div class="css-list-item-main-info">
-                                <h3 class="css-list-item-main-title">{{mtr.Subject}}</h3>
+                                <h3 class="css-list-item-main-title">{{mtr.Subject===''||mtr.Subject===null?'[无主题]':mtr.Subject}}</h3>
                                 <div v-on:click="toDetail(mtr.IsShowAttentdeesStat,index)">
                                     <div class="inside-item css-list-item-main-info-time">
                                         <span class="leftdom col9b">时间</span>
@@ -326,7 +333,7 @@
                                     </div>
                                     <div class="inside-item">
                                         <span class="leftdom col9b">人员</span>
-                                        <span class="rightdom">{{mtr.UseStr}}</span>
+                                        <span class="rightdom css-username">{{mtr.UseStr}}</span>
                                     </div>
                                 </div>
                                 <div class="css-bottombar" v-if="mtr.mtrStatu===1">
@@ -355,8 +362,6 @@ import urldata from '../../config/urldata.js';
 import storageList from '../../config/storageList.js';
 import loading from '../loading/loading.vue';
 import notice from '../popNotice/popNotice.vue';
-// import service from '../../services/getMeetingNotificationList';
-// import service1 from '../../services/postReplyMeetingInvitation';
 
 export default {
     name: 'mtMineMeeting',
@@ -395,13 +400,63 @@ export default {
         //清除详情页缓存
         localdata.removedata('mtrSelected');
         localdata.removedata('meetDetailView');
-        // service.get(this.getMineMtr, this.$http, { currentDate: '2017-7-19', pageSize: 5, offset: 0, searchDirection: 1 }).then(data => {
-        //     this.data = data.list
-        //     this.$refs.scroller.finishInfinite(!data.hasMore)
-        // }, status => {
-        //     this.$refs.scroller.finishInfinite(true)
-        // })
     },
+    activated() {
+        setTimeout(() => {
+            this.$moaapi.updateNavTitle('我的会议');
+        }, 100)
+        //原生右上角菜单
+        let _this = this;
+        window.orderMtr = function() {
+            _this.$router.push({ path: '/mtlocationselect' });
+        }
+        window.mineMtr = function() {
+            _this.$router.push({ path: '/' });
+        }
+        window.searchMtr = function() {
+            _this.$router.push({ path: '/mtsearchmtr' });
+        }
+        window.noticeSet = function() {
+            _this.$router.push({ path: '/mtnoticeset' });
+        }
+        let list = '[{ "name": "预订会议", "action": "orderMtr()" }, { "name": "会议日程", "action": "mineMtr()" },{ "name": "搜索会议", "action": "searchMtr()" }, { "name": "会议通知设置", "action": "noticeSet()" }]';
+        setTimeout(() => {
+            this.$moaapi.showListNavMenu(list);
+        }, 100)
+        if (localdata.getdata('needreload')) {
+            // setTimeout(() => {
+            window.location.reload();
+            // }, 100)
+            localdata.removedata('needreload')
+        }
+        this.$refs.scroller.finishInfinite(false);
+        //清除本地存储已存在的数据
+        this.clearStorage();
+    },
+    beforeRouteLeave(to, from, next) {
+        if (to.fullPath === "/") {
+            localdata.setdata('needreload', true);
+            // if (localdata.getdata('isVisitedCachePage')) {
+            //     localdata.removedata('isVisitedCachePage');
+            // this.$destroy(true)
+            // } else {
+            //     localdata.setdata('isVisitedCachePage', true);
+            // }
+        } else if (to.fullPath === "/mtmeetdetailinvite"&&!localdata.getdata('meetDetailView')) {
+            this.$router.push({ path: '/' });
+        } else if (to.fullPath === "/mtmeetdetailaccept"&&!localdata.getdata('meetDetailView')) {
+            this.$router.push({ path: '/' });
+        }
+        next();
+    },
+    // deactivated() {
+    //     if (localdata.getdata('isVisitedCachePage')) {
+    //         localdata.removedata('isVisitedCachePage');
+    //         this.$destroy(true)
+    //     } else {
+    //         localdata.setdata('isVisitedCachePage', true);
+    //     }
+    // },
     data() {
         return {
             isShowerr: false,//错误提示关闭
@@ -447,9 +502,13 @@ export default {
                     }
 
                     if (this.resultLen === 0) {
-                        this.$refs.scroller.finishInfinite(true)
+                        this.$refs.scroller.finishInfinite(true);
                     } else {
-                        this.$refs.scroller.finishInfinite(false)
+                        try {
+                            this.$refs.scroller.finishInfinite(false);
+                        } catch (e) {
+                            console.log(e);
+                        }
                     }
 
                     this.mtrData.forEach(function(el) {
@@ -504,7 +563,6 @@ export default {
                                 }, this);
                             } else {
                                 el.RequiredAttendees.forEach(function(elreA) {
-
                                     if (elreA.ResponseType === null && elreA.Name.substr(0, 1) === '[' && elreA.Name.substr(elreA.Name.length - 1, 1) === ']') {
                                         //判断是否来自email
                                         if (JSON.parse(elreA.Name).length !== 0) {
@@ -514,7 +572,9 @@ export default {
                                         }
                                     } else {
                                         if (el.UseStr) {
-                                            el.UseStr = el.UseStr + '/' + elreA.Name.split('[')[0];
+                                            if (el.UseStr !== elreA.Name.split('[')[0]) {
+                                                el.UseStr = el.UseStr + '/' + elreA.Name.split('[')[0];
+                                            }
                                         } else {
                                             el.UseStr = elreA.Name.split('[')[0];
                                         }
@@ -528,10 +588,16 @@ export default {
                                     }
                                 }, this);
                             }
-
+                            //状态显示
                             if (el.MyResponseType === 1) {
                                 el.mtrStatu = 1;
-                                el.mtrStatuText = '已预订';
+                                if (el.ApprovedStatus === 1) {
+                                    el.mtrStatuText = '待审批'
+                                } else if (el.ApprovedStatus === 3) {
+                                    el.mtrStatuText = '不通过';
+                                } else {
+                                    el.mtrStatuText = '已预订';
+                                }
                             } else if (el.MyResponseType === 3) {
                                 el.mtrStatu = 3;
                                 el.mtrStatuText = '已接受';
@@ -547,12 +613,24 @@ export default {
                                 if (el.MyResponseType === 3 || el.MyResponseType === 4) {
                                     el.mtrStatu = 6;
                                 } else {
-                                    el.mtrStatuText = '进行中';
+                                    if (el.ApprovedStatus === 1) {
+                                        el.mtrStatuText = '待审批'
+                                    } else if (el.ApprovedStatus === 3) {
+                                        el.mtrStatuText = '不通过';
+                                    } else {
+                                        el.mtrStatuText = '进行中';
+                                    }
                                 }
 
                             } else if (!el.IsCancelled && el.Processing === 3) {
                                 el.mtrStatu = 6;
-                                el.mtrStatuText = '已结束';
+                                if (el.ApprovedStatus === 1) {
+                                    el.mtrStatuText = '待审批'
+                                } else if (el.ApprovedStatus === 3) {
+                                    el.mtrStatuText = '不通过';
+                                } else {
+                                    el.mtrStatuText = '已结束';
+                                }
                             }
 
                             if (el.IsCancelled) {
@@ -573,7 +651,7 @@ export default {
                 // this.currentUserData = res.body.data;
                 // localdata.setdata('currentUserData', JSON.stringify(res.body.data));
             }, error => {
-                alert(error.body.errorMessage);
+                // alert(error.body.errorMessage);
             })
         },
         refresh() {
@@ -629,6 +707,7 @@ export default {
                     window.location.reload();
                     // this.$router.push({ path: '/' });
                 } else {
+                    this.isShowCancel = false;
                     this.isShowerr = true;
                     this.errinfo = res.body.errorMessage;
                 }
@@ -681,7 +760,9 @@ export default {
                     this.errinfo = res.body.errorMessage;
                 }
             }, error => {
-                alert(error.body.errorMessage);
+                this.isShowerr = true;
+                this.errinfo = error.body.errorMessage;
+                // alert(error.body.errorMessage);
             })
         },
         //清除本地存储已存在的数据

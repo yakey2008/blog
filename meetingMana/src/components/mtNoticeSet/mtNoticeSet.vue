@@ -30,13 +30,69 @@
 $col9b:#9b9b9b;
 
 @include placeholder(#ccc);
-.weui-switch:after, .weui-switch-cp__box:after{
+.weui-cell_access .weui-cell__ft:after {
+    height: 8px;
+    width: 8px;
+    border-width: 1px 1px 0 0;
+}
+
+//修改设置页按钮相关 Start
+.weui-switch:after,
+.weui-switch-cp__box:after {
+    background-color: #9b9b9b;
+}
+
+// .weui-switch:checked,
+// .weui-switch-cp__input:checked~.weui-switch-cp__box:after {
+//     background-color: #000;
+// }
+.weui-switch:before,
+.weui-switch-cp__box:before {
+    width: 50px;
+    height: 23px;
+}
+
+.weui-switch:checked:after,
+.weui-switch-cp__input:checked~.weui-switch-cp__box:after {
+    -webkit-transform: translateX(27px);
+    transform: translateX(27px);
+}
+
+.weui-switch,
+.weui-switch-cp__box {
+    height: 25px;
+}
+
+.weui-switch:after,
+.weui-switch-cp__box:after {
+    height: 19px;
+    width: 19px;
+    margin: 2px;
+}
+
+.weui-switch:checked:after,
+.weui-switch-cp__input:checked~.weui-switch-cp__box:after {
     background-color: #ec4280;
 }
-.weui-switch:checked, .weui-switch-cp__input:checked ~ .weui-switch-cp__box{
+
+.weui-switch:checked:after,
+.weui-switch-cp__input:checked~.weui-switch-cp__box:after {
+    background-color: #ec4280;
+    ;
+}
+
+.weui-switch:after,
+.weui-switch-cp__box:after {
+    box-shadow: none;
+}
+
+.weui-switch:checked,
+.weui-switch-cp__input:checked~.weui-switch-cp__box {
     background-color: #fbd9e6;
     border-color: #fbd9e6;
 }
+//修改设置页按钮相关 End
+
 .css-mtnotice-page {
     background-color: #f6f7f8;
     .weui-media-box__title {
@@ -44,12 +100,27 @@ $col9b:#9b9b9b;
     }
     .css-main-container {
         .css-pageinfo {
+            position: relative;
             background-color: #fff;
             padding: 0px 10px;
             .css-pagebox {
                 height: 90px;
                 padding: 5px 0px;
-                border-bottom: 1px solid #e7e7e7;
+                &:after {
+                    content: " ";
+                    position: absolute;
+                    left: 0;
+                    bottom: 0;
+                    right: 0;
+                    height: 1px;
+                    border-bottom: 1px solid #e7e7e7;
+                    color: #e7e7e7;
+                    -webkit-transform-origin: 0 100%;
+                    transform-origin: 0 100%;
+                    -webkit-transform: scaleY(0.5);
+                    transform: scaleY(0.5);
+                    margin: 0 10px;
+                }
                 .css-status {
                     padding: 5px 0px 5px 0px;
                     .css-item {
@@ -119,16 +190,16 @@ $col9b:#9b9b9b;
             <div class="weui-tab">
                 <div class="css-main-container" v-if="!loading">
                     <!-- <section class="css-pageinfo">
-                                                <div class="css-pagebox">
-                                                    <div class="weui-cell weui-cell_switch">
-                                                        <div class="weui-cell__bd css-item">接收会议邀请通知</div>
-                                                        <div class="weui-cell__ft">
-                                                            <input class="weui-switch" type="checkbox" v-model="recNoti" @change="recNotiAct">
-                                                        </div>
-                                                    </div>
-                                                    <p class="css-explantime">开启后，当有您有受邀请的会议时，唯秘将推送消息到您的手机消息通知栏。</p>
-                                                </div>
-                                            </section> -->
+                                                                        <div class="css-pagebox">
+                                                                            <div class="weui-cell weui-cell_switch">
+                                                                                <div class="weui-cell__bd css-item">接收会议邀请通知</div>
+                                                                                <div class="weui-cell__ft">
+                                                                                    <input class="weui-switch" type="checkbox" v-model="recNoti" @change="recNotiAct">
+                                                                                </div>
+                                                                            </div>
+                                                                            <p class="css-explantime">开启后，当有您有受邀请的会议时，唯秘将推送消息到您的手机消息通知栏。</p>
+                                                                        </div>
+                                                                    </section> -->
                     <section class="css-pageinfo">
                         <div class="css-pagebox">
                             <div class="weui-cell weui-cell_switch">
@@ -160,8 +231,6 @@ $col9b:#9b9b9b;
     </div>
 </template>
 <script>
-// import service1 from '../../services/getMeetingSetting'
-// import service2 from '../../services/postMeetingSetting'
 import urldata from '../../config/urldata.js';
 import weui from '../../lib/js/weui.min.js';
 import loading from '../loading/loading.vue';
@@ -191,7 +260,7 @@ export default {
     },
     methods: {
         initSet(url) {
-            this.$http.get(url+'?num='+(+new Date().getTime())).then(res => {
+            this.$http.get(url + '?num=' + (+new Date().getTime())).then(res => {
                 if (res.body.status === 200) {
                     // this.recNoti = res.body.data.ReceiveMeetingPush;
                     this.remind = res.body.data.RemindMeetingPush;
@@ -208,11 +277,11 @@ export default {
                     this.remindTime = res.body.data.RemindMeetinTime;
                     this.loading = false
                 } else {
-                    alert(res.body.errorMessage);
+                    // alert(res.body.errorMessage);
                 }
             }, error => {
                 this.loading = false
-                alert(error.body.errorMessage);
+                // alert(error.body.errorMessage);
             })
         },
         setMeetingSetting(key, value) {
@@ -225,19 +294,6 @@ export default {
                 // console.log(status)
             })
         },
-
-        // getMeetingSetting() {
-        //     service1.get(this.$http, {}).then(data => {
-        //         this.recNoti = data.ReceiveMeetingPush === "true"
-        //         this.remind = data.RemindMeetingPush === "true"
-        //         this.remindTime = data.RemindMeetinTime
-        //         this.loading = false
-        //     }, status => {
-        //         console.log(status)
-        //         this.loading = false
-        //     })
-        // },
-
         timePicker() {
             let _this = this;
             weui.picker([{

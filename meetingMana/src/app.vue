@@ -1,7 +1,7 @@
 <template>
   <!-- <transition mode="out-in"> -->
-    <!-- <keep-alive include="mtLaunchMeet,mtMeetDetailInvite,mtNoticeList"> -->
+    <keep-alive include="mtMineMeeting,mtNoticeList,mtSearchMtr">
       <router-view></router-view>
-    <!-- </keep-alive> -->
+    </keep-alive>
   <!-- </transition> -->
 </template>

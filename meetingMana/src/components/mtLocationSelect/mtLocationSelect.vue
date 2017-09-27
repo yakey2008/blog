@@ -27,9 +27,10 @@
         position: fixed;
         z-index: 503;
         top: 50px;
-        background-color: #fff;
-        max-height: 150px;
+        background-color: #fff; // max-height: 250px;
+        // height: 250px;
         overflow-y: scroll;
+        -webkit-overflow-scrolling: touch;
         .css-selector-item {
             position: relative;
             padding: 0 22px;
@@ -209,6 +210,9 @@ $col9b:#9b9b9b;
                         margin: 10px 0;
                         line-height: 20px;
                         overflow: hidden;
+                        display: -webkit-box;
+                        -webkit-box-orient: vertical;
+                        -webkit-line-clamp: 3;
                     }
                     .css-meetingroom-timeline {
                         width: 61%;
@@ -238,6 +242,7 @@ $col9b:#9b9b9b;
     } //底部bar
     .css-bottombar {
         position: fixed;
+        bottom: 0;
         z-index: 400;
         background-color: #fff;
         &.weui-tabbar:before {
@@ -254,6 +259,18 @@ $col9b:#9b9b9b;
                 height: 25px;
                 background-image: url('../../images/custominput.png');
                 background-size: cover;
+            }
+            .css-input-next {
+                position: absolute;
+                right: 13px;
+                top: 10px;
+                color: #308ee3;
+                &.foucsColor {
+                    color: #ccc;
+                }
+                &.hasContent {
+                    color: #308ee3;
+                }
             }
             .weui-cell__bd .weui-input {
                 padding-left: 15%;
@@ -314,7 +331,7 @@ $col9b:#9b9b9b;
                                 <div class="css-meetingroom-item clearfix" v-on:click="totimeselect(meetingroom,index)">
                                     <div class="css-meetingroom-name fl-l">{{meetingroom.Location}}</div>
                                     <div class="css-meetingroom-timeline fl-l">
-                                        <div class="css-meetingroom-timeline-box fl-l" v-for="(ordered,index) in meetingroom.timeorder" :key="index" :class="[ordered?'room-ordered':'',index===0?'border-l2':'',index===17?'border-r2':'']"></div>
+                                        <div class="css-meetingroom-timeline-box fl-l" v-for="(ordered,index) in meetingroom.timeorder" :key="index" :class="[ordered?'room-ordered':'',index===0?'border-l2':'',index===17?'border-r2':'',index===8?'border-r2':'']"></div>
                                     </div>
                                 </div>
                                 <!-- </router-link> -->
@@ -328,18 +345,18 @@ $col9b:#9b9b9b;
             <div class="weui-tabbar css-bottombar">
                 <div class="weui-cell css-maxwidth">
                     <div class="weui-cell__bd">
-                        <i class="css-inputinco" v-on:click="addCustomMtr()"></i>
+                        <i class="css-inputinco"></i>
                         <form action="javascript:void(0);">
-                            <input class="weui-input" type="text" placeholder="其它地点" v-model="customMtr" v-on:keyup="keyAddCustomMtr($event)" v-on:focus="inputFocus()">
+                            <input class="weui-input" type="text" placeholder="其它地点" v-model="customMtr" v-on:keyup="keyAddCustomMtr($event)" v-on:focus="inputFocus()" v-on:blur="inputBlur()">
                         </form>
+                        <span class="css-input-next" :class="{'foucsColor':isFocusOtherMtr,'hasContent':customMtr.length>0}" v-show="isFocusOtherMtr" v-on:click="keyAddCustomMtr('click')">下一步</span>
                     </div>
                 </div>
             </div>
 
-            <!-- 区域弹出 End -->
-            <div class="css-selector-container" v-if="isShowregion">
+            <div class="css-selector-container" v-show="isShowregion">
                 <div class="css-mask" v-on:click="showregion()"></div>
-                <div class="css-selector-list">
+                <div class="css-selector-list" id="js-regionHeight">
                     <div class="css-selector-item" v-for="(item,index) in tabVal" :key="index" v-on:click="regionEvt(item)" :class="{'css-curregion':curRegionId===item.Address}" :curregionid="item.Address">{{item.Name}}</div>
                 </div>
             </div>
@@ -347,6 +364,7 @@ $col9b:#9b9b9b;
         <!-- 区域弹出 Start -->
         <loading v-bind:pageloading="pageloading"></loading>
         <notice v-show="isShowerr" v-bind:title="errtitle" v-bind:errinfo="errinfo" v-on:closenotice="closeShowerr()"></notice>
+        <!-- 区域弹出 End -->
         <!-- <psltor :list="tabVal" :curRegionId="curregionId" v-on:listclick="regionEvt()" v-if="isShowregion"></psltor> -->
     </div>
 </template>
@@ -369,20 +387,19 @@ export default {
     created() {
         this.$moaapi.resetNavTitle();
         this.$moaapi.updateNavTitle('选择地点');
-        this.$moaapi.hideNavMenu();
+
         // setTimeout(() => {
         // this.$moaapi.hideNavMenu();
         // }, 100)
-
+    },
+    mounted() {
         window.rightHeaderEvent = function() {
             window.location.href = '#/mtlocationsearch';
         }
         setTimeout(() => {
             this.$moaapi.showNavMenu(searchicon);
         }, 100)
-        localdata.removedata('launchPage');
-    },
-    mounted() {
+        // localdata.removedata('launchPage');
         this.today = +new Date(moment().format('YYYY/MM/DD'));
         let getParams = this.$route.query;
 
@@ -428,17 +445,17 @@ export default {
             this.isShowerr = true;
             this.errinfo = error.body.errorMessage;
         })
-
+        //记录日历上一步的日期
+        this.preDate = this.startTime.time;
         // this.curRegion = '广州-广新办公区会议室列表';
         // this.curRegionId = 'gd2wpds-room@vipshop.com';
         // this.ajaxMtrStatu('/mt/GetRoomsStatus?date=' + this.startTime.time + '&roomListAddress=' + this.curRegionId);
-        //兼容iphone5c
-        if (localdata.getdata('curRegionId')) {
-            document.querySelector('html').style.height = 'auto';
-            document.querySelector('body').style.height = 'auto';
-        }
+
+        document.getElementById('js-regionHeight').style.height = window.innerHeight - document.querySelector('.css-nav-container').scrollHeight + 'px';
     },
     destroyed() {
+        this.$moaapi.hideNavMenu();
+        window.rightHeaderEvent = '';
         document.querySelector('html').removeAttribute('style');
         document.querySelector('body').removeAttribute('style');
     },
@@ -454,6 +471,7 @@ export default {
             pageloading: false,
             // weekDate: '',
             today: '',//当天
+            preDate: '',//记录日历上一步的日期
 
             startTime: {
                 time: moment().format('YYYY/M/D')
@@ -506,6 +524,7 @@ export default {
             //会议室信息
             ordered: [],
             noUserMtrText: '',//无会议室提示
+            isFocusOtherMtr: false//是否其他地点获取焦点
         }
     },
     methods: {
@@ -634,12 +653,18 @@ export default {
                     })(res, this)
                 } else {
                     this.isShowerr = true;
-                    this.errinfo = res.body.errorMessage;
+                    // this.errinfo = res.body.errorMessage;
+                    this.errinfo = '暂时不可使用本区域会议室，请更换区域'
                 }
                 this.pageloading = false;
+                //兼容iphone5c
+                if (localdata.getdata('curRegionId')) {
+                    document.querySelector('html').style.height = 'auto';
+                    document.querySelector('body').style.height = 'auto';
+                }
             }, error => {
                 this.isShowerr = true;
-                this.errinfo = error.body.errorMessage;
+                this.errinfo = '网络出现意外错误，请稍后重试。';
             })
         },
         // swichTimeDom() {
@@ -650,13 +675,31 @@ export default {
             this.isShowregion = false;
             if (this.isShowtime) {
                 this.isShowtime = false;
+                document.querySelector('body').style.height = 'auto';
             } else {
                 this.isShowtime = true;
+                setTimeout(() => {
+                    document.querySelector('body').style.height = window.innerHeight + 'px';
+                }, 0)
             }
         },
         changeday() {
-            if (this.curRegionId != '') {
-                this.ajaxMtrStatu(urldata.basePath + urldata.GetRoomsStatus + '?date=' + this.startTime.time + '&roomListAddress=' + this.curRegionId);
+            //大于7天后提示
+            // console.log(+moment()>=this.today+(9*60*60*1000)+(30*60*1000)&&+new Date(this.startTime.time) > this.today + 24*60*60*1000*7)
+
+            if (+moment() < this.today + (9 * 60 * 60 * 1000) + (30 * 60 * 1000) && +new Date(this.startTime.time) > this.today + 24 * 60 * 60 * 1000 * 6) {
+                this.isShowerr = true;
+                this.errinfo = '只可预定七天内的会议室';
+                this.startTime.time = this.preDate;
+            } else if (+moment() >= this.today + (9 * 60 * 60 * 1000) + (30 * 60 * 1000) && +new Date(this.startTime.time) > this.today + 24 * 60 * 60 * 1000 * 7) {
+                this.isShowerr = true;
+                this.errinfo = '只可预定七天内的会议室';
+                this.startTime.time = this.preDate;
+            } else {
+                if (this.curRegionId != '') {
+                    this.ajaxMtrStatu(urldata.basePath + urldata.GetRoomsStatus + '?date=' + this.startTime.time + '&roomListAddress=' + this.curRegionId);
+                    this.preDate = this.startTime.time;
+                }
             }
         },
         //处理区域显示
@@ -664,6 +707,7 @@ export default {
             this.isPicker = true;
             if (this.isShowregion) {
                 this.isShowregion = false;
+                document.querySelector('body').style.height = 'auto';
             } else {
                 if (this.isShowtime) {
                     this.isPicker = false;
@@ -673,8 +717,13 @@ export default {
                     _this.isPicker = true;
                 }, 100)
                 this.isShowregion = true;
+                setTimeout(() => {
+                    document.querySelector('body').style.height = window.innerHeight + 'px';
+                }, 0)
             }
             this.isShowtime = false;
+
+
         },
         //选择区域
         regionEvt(item) {
@@ -779,61 +828,82 @@ export default {
             }
         },
         //添加其它地点
-        addCustomMtr() {
-            if (this.customMtr !== '') {
-                if (localdata.getdata('mtrSelected') && !JSON.parse(localdata.getdata('mtrSelected')).DIYResource && localdata.getdata('mtrSelected').isAdded) {
-                    this.isShowerr = true;
-                    this.errinfo = '已选择会议室，不可再添加其它地点';
-                    // localdata.setdata('mtrSelected', JSON.stringify(saveLocaldata));
-                    // this.$router.push({ path: '/mtlaunchmeet' });
-                } else {
-                    //来自详情修改
-                    if (localdata.getdata('isFromModified')) {
-                        let data = JSON.parse(localdata.getdata('mtrSelected'))
-                        data.mtrList.push({ mtrName: this.customMtr });
-                        localdata.setdata('mtrSelected', JSON.stringify(data))
-                        this.$router.push({ path: '/mtmeetdetailinvite' });
-                    } else {
-                        localdata.removedata('mtrSelected');
-                        localdata.setdata('mtrSelected', JSON.stringify({ "listindex": 0, "mtrList": [{ "isAdded": false, "mtrId": "", "mtrName": this.customMtr }], "dateTime": this.startTime.time, "isDIYResource": true }));
-                        this.$router.push({ path: '/mttimeselect' });
-                    }
-                }
-            }
-        },
+        // addCustomMtr() {
+        //     if (this.customMtr !== '') {
+        //         if (localdata.getdata('mtrSelected') && !JSON.parse(localdata.getdata('mtrSelected')).DIYResource && localdata.getdata('mtrSelected').isAdded) {
+        //             this.isShowerr = true;
+        //             this.errinfo = '已选择会议室，不可再添加其它地点';
+        //             // localdata.setdata('mtrSelected', JSON.stringify(saveLocaldata));
+        //             // this.$router.push({ path: '/mtlaunchmeet' });
+        //         } else {
+        //             //来自详情修改
+        //             if (localdata.getdata('isFromModified')) {
+        //                 let data = JSON.parse(localdata.getdata('mtrSelected'))
+        //                 data.mtrList.push({ mtrName: this.customMtr });
+        //                 localdata.setdata('mtrSelected', JSON.stringify(data))
+        //                 this.$router.push({ path: '/mtmeetdetailinvite' });
+        //             } else {
+        //                 localdata.removedata('mtrSelected');
+        //                 localdata.setdata('mtrSelected', JSON.stringify({ "listindex": 0, "mtrList": [{ "isAdded": false, "mtrId": "", "mtrName": this.customMtr }], "dateTime": this.startTime.time, "meetTimeDetail": this.startTime.time, "isDIYResource": true }));
+        //                 this.$router.push({ path: '/mttimeselect' });
+        //             }
+        //         }
+        //     }
+        // },
         keyAddCustomMtr(evt) {
             if (this.customMtr !== '') {
-                if (evt.keyCode === 13) {
-                    if (localdata.getdata('mtrSelected') && !JSON.parse(localdata.getdata('mtrSelected')).DIYResource && localdata.getdata('mtrSelected').isAdded) {
+                if (evt.keyCode === 13 || evt === 'click') {
+                    if (localdata.getdata('mtrSelected') && !JSON.parse(localdata.getdata('mtrSelected')).DIYResource && JSON.parse(localdata.getdata('mtrSelected')).mtrList.length > 0 && JSON.parse(localdata.getdata('mtrSelected')).mtrList[0].isAdded) {
                         this.isShowerr = true;
                         this.errinfo = '已选择会议室，不可再添加其它地点';
                         // localdata.setdata('mtrSelected', JSON.stringify(saveLocaldata));
                         // this.$router.push({ path: '/mtlaunchmeet' });
                     } else {
                         //来自详情修改
-                        if (localdata.getdata('isFromModified')) {
-                            let data = JSON.parse(localdata.getdata('mtrSelected'))
-                            data.mtrList.push({ mtrName: this.customMtr });
-                            localdata.setdata('mtrSelected', JSON.stringify(data))
-                            this.$router.push({ path: '/mtmeetdetailinvite' });
+                        if (localdata.getdata('isFromModified') || localdata.getdata('launchPage')) {
+                            let data = JSON.parse(localdata.getdata('mtrSelected'));
+                            data.isDIYResource = true;
+                            if (localdata.getdata('launchPage')) {
+
+                                this.$router.push({ path: '/mtlaunchmeet' });
+                            } else {
+                                this.$router.push({ path: '/mtmeetdetailinvite' });
+                            }
+                            data.mtrList[0] = { mtrName: this.customMtr };
+                            localdata.setdata('mtrSelected', JSON.stringify(data));
                         } else {
                             localdata.removedata('mtrSelected');
-                            localdata.setdata('mtrSelected', JSON.stringify({ "listindex": 0, "mtrList": [{ "isAdded": false, "mtrId": "", "mtrName": this.customMtr }], "dateTime": this.startTime.time, "isDIYResource": true }));
+                            localdata.setdata('mtrSelected', JSON.stringify({ "listindex": 0, "mtrList": [{ "isAdded": false, "mtrId": "", "mtrName": this.customMtr }], "dateTime": this.startTime.time, "meetTimeDetail": this.startTime.time, "isDIYResource": true }));
+                            // if (localdata.getdata('launchPage')) {
+                            //     this.$router.push({ path: '/mtlaunchmeet' });
+                            // } else {
                             this.$router.push({ path: '/mttimeselect' });
+                            // }
                         }
                     }
-                    evt.currentTarget.blur();
+                    try {
+                        evt.currentTarget.blur();
+                    } catch (e) {
+                        console.log(e)
+                    }
                 }
             }
         },
         inputFocus() {
+            this.isFocusOtherMtr = true;
             setTimeout(function() {
                 document.body.scrollTop = document.body.scrollHeight;
             }, 500)
         },
+        inputBlur() {
+            if (this.customMtr.length === 0) {
+                this.isFocusOtherMtr = false;
+            }
+        },
         //关闭错误提示
         closeShowerr() {
             this.isShowerr = false;
+            this.pageloading = false;
         }
     }
 } 

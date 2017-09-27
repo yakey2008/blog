@@ -1,3 +1,4 @@
+//请求的地址及根目录
 export default {
     basePath:"/",
     CurrentUserInfo: 'api/Meeting/CurrentUserInfo',//当前登录人信息

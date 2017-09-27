@@ -111,9 +111,22 @@ $col9b:#9b9b9b;
                 font-size: 1rem;
                 overflow: hidden;
                 position: relative;
-                padding: 17px 22px 17px 0;
-                border-top: 1px solid #e7e7e7;
+                padding: 17px 22px 17px 0; // border-top: 1px solid #e7e7e7;
                 margin-left: 22px;
+                &:after {
+                    content: " ";
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    right: 0;
+                    height: 1px;
+                    border-top: 1px solid #e7e7e7;
+                    color: #e7e7e7;
+                    -webkit-transform-origin: 0 100%;
+                    transform-origin: 0 100%;
+                    -webkit-transform: scaleY(0.5);
+                    transform: scaleY(0.5);
+                }
                 .css-mtlaunchmeet-mtl-location-info {
                     @include flexboxwidth(1);
                     text-align: left;
@@ -182,13 +195,28 @@ $col9b:#9b9b9b;
                 overflow: hidden;
                 position: relative;
                 padding: 17px 22px 17px 0;
-                border-top: 1px solid #e7e7e7;
+                // border-top: 1px solid #e7e7e7;
                 margin-left: 22px;
+                &:after {
+                    content: " ";
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    right: 0;
+                    height: 1px;
+                    border-top: 1px solid #e7e7e7;
+                    color: #e7e7e7;
+                    -webkit-transform-origin: 0 100%;
+                    transform-origin: 0 100%;
+                    -webkit-transform: scaleY(0.5);
+                    transform: scaleY(0.5);
+                }
                 .css-right-icon {
                     width: 31px;
                     height: 15px;
                     position: absolute;
-                    top: 0;
+                    z-index: 500;
+                    top: 1px;
                     right: 0;
                     background-size: cover;
                     &.css-must-icon {
@@ -447,7 +475,8 @@ export default {
         if (localdata.getdata('mtrSelected')) {
             this.mtrSelected = JSON.parse(localdata.getdata('mtrSelected'));
         } else {
-            this.$router.push({ path: '/' });
+            this.$moaapi.closeWin();
+            // this.$router.push({ path: '/' });
         }
         this.currentUserData = JSON.parse(localdata.getdata('currentUserData'));
 
@@ -730,15 +759,15 @@ export default {
         //删除人员 0 必选 1 可选
         delUser(type, idx) {
             if (type === 0) {
-                if (this.userMustList[idx].id === this.currentUserData.UserEmail) {
-                    this.isShowerr = true;
-                    this.errinfo = '不可以删除发起人';
-                } else {
-                    this.userMustList.splice(idx, 1);
-                    this.noDeptMustList = this.userMustList;
-                    this.eachSplit(this.noDeptMustList);
-                    localdata.setdata('userMustList', JSON.stringify(this.userMustList));
-                }
+                // if (this.userMustList[idx].id === this.currentUserData.UserEmail) {
+                //     this.isShowerr = true;
+                //     this.errinfo = '不可以删除发起人';
+                // } else {
+                this.userMustList.splice(idx, 1);
+                this.noDeptMustList = this.userMustList;
+                this.eachSplit(this.noDeptMustList);
+                localdata.setdata('userMustList', JSON.stringify(this.userMustList));
+                // }
             } else {
                 this.userOptionalList.splice(idx, 1);
                 this.noDeptOptionalList = this.userOptionalList;
@@ -755,12 +784,15 @@ export default {
         },
         //查看人员信息
         viewUserInfo(id) {
-            this.$moaapi.callUserProfile(id);
+            if (id !== '') {
+                this.$moaapi.callUserProfile(id);
+            }
         },
         //提交事件
         sendDataEvt() {
-            //拼接会议室
+            //拼接会议室 自定义地点使用mtrName
             if (this.mtrSelected.isDIYResource === true) {
+                // this.sendData.DIYResource = '';
                 this.sendData.DIYResource = this.mtrSelected.mtrList[0].mtrName;
             }
             // if (this.mtrSelected.isDIYResource === true && this.sendData.DIYResource === '') {
@@ -777,11 +809,14 @@ export default {
                 this.isShowerr = true;
                 this.errinfo = '请选择参会人';
             } else {
-                //拼接会议室
-                this.sendData.Resources = [];
-                this.mtrSelected.mtrList.forEach((el) => {
-                    this.sendData.Resources.push(el.mtrId);
-                }, this);
+                //拼接会议室 非自定义地点使用mtrId
+                if (!this.mtrSelected.isDIYResource) {
+                    this.sendData.Resources = [];
+                    this.mtrSelected.mtrList.forEach((el) => {
+                        this.sendData.Resources.push(el.mtrId);
+                    }, this);
+                }
+
                 //拼接时间
                 this.sendData.Start = this.mtrSelected.dateTime + ' ' + this.mtrSelected.startTime;
                 if (this.mtrSelected.endTime === '24:00') {
@@ -812,9 +847,10 @@ export default {
                         } else {
                             obj.AvatarUrl = '';
                         }
+
                         if (el.hasOwnProperty('isEmail')) {
                             //将email添加的人员email加入其他人员
-                            this.sendData.OtherAttendees.push(el.id);
+                            this.sendData.OtherAttendees.push(el.name);
                         } else {
                             this.sendData.RequiredAttendees.push(obj);
                             //拼接带有职位id全部信息
@@ -895,9 +931,9 @@ export default {
             localdata.removedata(storageList);
         },
         inputFocus() {
-            interval = setTimeout(function() {
+            setTimeout(function() {
                 if (document.body.scrollTop !== 0) {
-                    document.body.scrollTop = document.body.scrollHeight/2;
+                    document.body.scrollTop = document.body.scrollHeight / 2;
                 }
             }, 500)
             // clearInterval(interval);
@@ -905,6 +941,7 @@ export default {
         //关闭错误提示
         closeShowerr() {
             this.isShowerr = false;
+            this.pageloading = false;
             if (this.submitComplete) {
                 this.$router.push({ path: '/' });
             }

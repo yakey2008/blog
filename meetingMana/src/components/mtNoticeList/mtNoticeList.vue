@@ -33,9 +33,7 @@
             background-color: #fff;
             border-radius: 10px;
             overflow: hidden;
-            position: relative;
-
-            // &:after {
+            position: relative; // &:after {
             //     content: '';
             //     position: absolute;
             //     top: 0;
@@ -52,10 +50,8 @@
             // }
             .right-ribbon {
                 position: absolute;
-                right: -28px;
-                top: 5px;
-                // height: 31px;
-                // line-height: 31px;
+                right: -25px;
+                top: 6px;
                 padding: 5px 0;
                 width: 94px;
                 text-align: center;
@@ -84,6 +80,11 @@
                         // white-space: nowrap;
                         // text-overflow: ellipsis;
                         word-break: break-all;
+                        &.css-username {
+                            overflow: hidden;
+                            white-space: nowrap;
+                            text-overflow: ellipsis;
+                        }
                     }
                 }
             }
@@ -92,7 +93,9 @@
                 font-size: 1.125rem;
                 padding: 12px 0;
                 word-break: break-all;
-                padding-right: 8%;
+                padding-right: 8%; // @media (max-width: 350px) {
+                //     padding-right: 20%;
+                // }
                 &:after {
                     content: " ";
                     position: absolute;
@@ -135,7 +138,7 @@
                 border-radius: 6px;
                 font-size: 1rem;
                 &.css-delinebtn {
-                    margin-right: 21px;
+                    margin-right: 0;
                     color: #9b9b9b;
                     border: 1px solid rgba(0, 0, 0, 0.2);
                     &:active {
@@ -144,7 +147,7 @@
                     }
                 }
                 &.css-acceptbtn {
-                    margin-left: 0;
+                    margin-left: 21px;
                     background-color: #88b1ff;
                     &:active {
                         background-color: #6097ff;
@@ -154,22 +157,36 @@
         }
     }
 }
+
+.css-to-home {
+    position: fixed;
+    z-index: 550;
+    right: 5px;
+    bottom: 5px;
+    border-radius: 50px;
+    display: block;
+    width: 70px;
+    height: 70px;
+    background-size: cover;
+}
 </style>
 
 <template>
     <div>
         <scroller :on-refresh="refresh" :on-infinite="infinite" ref="scroller" class="css-mtnoticelist-page">
             <div v-for="(item,index) in data" :key="index">
-                <div v-if="item.DisplayType !== 2 &&item.DisplayType !== 4&& item.MeetingResponseType == 3" class="css-list-item">
-                    <p class="css-list-item-time col9b">{{item.CreateTime}}</p>
+
+                <div v-if="item.DisplayType !== 2 &&item.DisplayType !== 4&& item.MeetingResponseType >= 10" class="css-list-item">
+                    <p class="css-list-item-time col9b">{{item.CreateTime.substr(0,item.CreateTime.length-3)}}</p>
                     <div class="css-list-item-main bgcolor modify-title" v-if="item.DisplayType ===3">
                         <div class="css-list-item-main-info">{{item.Title}}</div>
                     </div>
                     <div class="css-list-item-main">
-                        <span class="right-ribbon">已接受</span>
+                        <span class="right-ribbon">已取消</span>
                         <div class="css-list-item-main-info">
-                            <h3 class="css-list-item-main-title">{{item.Subject}}</h3>
-                            <div v-on:click="toDetail(item.IsShowAttentdeesStat,item.ICalUid)">
+                            <h3 class="css-list-item-main-title">{{item.Subject===''||item.Subject===null?'[无主题]':item.Subject}}</h3>
+                            <!-- <div v-on:click="toDetail(item.IsShowAttentdeesStat,item.ICalUid)"> -->
+                            <div v-on:click="toDetail('mtrCanceled')">
                                 <div class="inside-item css-list-item-main-info-time">
                                     <span class="leftdom col9b">时间</span>
                                     <span class="rightdom">{{item.AttendeeTime}}</span>
@@ -180,21 +197,50 @@
                                 </div>
                                 <div class="inside-item">
                                     <span class="leftdom col9b">人员</span>
-                                    <span class="rightdom">{{item.RequiredAttendees}}</span>
+                                    <span class="rightdom css-username">{{item.RequiredAttendees}}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <div v-if="item.DisplayType !== 2 &&item.DisplayType !== 4&& item.MeetingResponseType == 4" class="css-list-item">
-                    <p class="css-list-item-time col9b">{{item.CreateTime}}</p>
+                    <p class="css-list-item-time col9b">{{item.CreateTime.substr(0,item.CreateTime.length-3)}}</p>
                     <div class="css-list-item-main bgcolor modify-title" v-if="item.DisplayType ===3">
                         <div class="css-list-item-main-info">{{item.Title}}</div>
                     </div>
                     <div class="css-list-item-main">
                         <span class="right-ribbon unaccept">已谢绝</span>
                         <div class="css-list-item-main-info">
-                            <h3 class="css-list-item-main-title">{{item.Subject}}</h3>
+                            <h3 class="css-list-item-main-title">{{item.Subject===''||item.Subject===null?'[无主题]':item.Subject}}</h3>
+                            <!-- <div v-on:click="toDetail(item.IsShowAttentdeesStat,item.ICalUid)"> -->
+                            <div v-on:click="toDetail('mtrDelined')">
+                                <div class="inside-item css-list-item-main-info-time">
+                                    <span class="leftdom col9b">时间</span>
+                                    <span class="rightdom">{{item.AttendeeTime}}</span>
+                                </div>
+                                <div class="inside-item">
+                                    <span class="leftdom col9b">地点</span>
+                                    <span class="rightdom">{{item.MeetingAddress}}</span>
+                                </div>
+                                <div class="inside-item">
+                                    <span class="leftdom col9b">人员</span>
+                                    <span class="rightdom css-username">{{item.RequiredAttendees}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-if="item.DisplayType !== 2 &&item.DisplayType !== 4&& item.MeetingResponseType == 3" class="css-list-item">
+                    <p class="css-list-item-time col9b">{{item.CreateTime.substr(0,item.CreateTime.length-3)}}</p>
+                    <div class="css-list-item-main bgcolor modify-title" v-if="item.DisplayType ===3">
+                        <div class="css-list-item-main-info">{{item.Title}}</div>
+                    </div>
+                    <div class="css-list-item-main">
+                        <span class="right-ribbon">已接受</span>
+                        <div class="css-list-item-main-info">
+                            <h3 class="css-list-item-main-title">{{item.Subject===''||item.Subject===null?'[无主题]':item.Subject}}</h3>
                             <div v-on:click="toDetail(item.IsShowAttentdeesStat,item.ICalUid)">
                                 <div class="inside-item css-list-item-main-info-time">
                                     <span class="leftdom col9b">时间</span>
@@ -206,21 +252,22 @@
                                 </div>
                                 <div class="inside-item">
                                     <span class="leftdom col9b">人员</span>
-                                    <span class="rightdom">{{item.RequiredAttendees}}</span>
+                                    <span class="rightdom css-username">{{item.RequiredAttendees}}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <div v-if="item.DisplayType !== 2 &&item.DisplayType !== 4&& item.MeetingResponseType == 0" class="css-list-item">
-                    <p class="css-list-item-time col9b">{{item.CreateTime}}</p>
+                    <p class="css-list-item-time col9b">{{item.CreateTime.substr(0,item.CreateTime.length-3)}}</p>
                     <div class="css-list-item-main bgcolor modify-title" v-if="item.DisplayType ===3">
                         <div class="css-list-item-main-info">{{item.Title}}</div>
                     </div>
                     <div class="css-list-item-main">
                         <span class="right-ribbon unaccept">未接受</span>
                         <div class="css-list-item-main-info">
-                            <h3 class="css-list-item-main-title">{{item.Subject}}</h3>
+                            <h3 class="css-list-item-main-title">{{item.Subject===''||item.Subject===null?'[无主题]':item.Subject}}</h3>
                             <div v-on:click="toDetail(item.IsShowAttentdeesStat,item.ICalUid)">
                                 <div class="inside-item css-list-item-main-info-time">
                                     <span class="leftdom col9b">时间</span>
@@ -232,7 +279,7 @@
                                 </div>
                                 <div class="inside-item">
                                     <span class="leftdom col9b">人员</span>
-                                    <span class="rightdom">{{item.RequiredAttendees}}</span>
+                                    <span class="rightdom css-username">{{item.RequiredAttendees}}</span>
                                 </div>
                             </div>
                             <div class="css-bottombar">
@@ -243,13 +290,13 @@
                     </div>
                 </div>
                 <div v-if="item.DisplayType == 2" class="css-list-item">
-                    <p class="css-list-item-time col9b">{{item.CreateTime}}</p>
+                    <p class="css-list-item-time col9b">{{item.CreateTime.substr(0,item.CreateTime.length-3)}}</p>
                     <div class="css-list-item-main bgcolor">
                         <div class="css-list-item-main-info">{{item.Subject}}</div>
                     </div>
                 </div>
                 <div v-if="item.DisplayType == 4" class="css-list-item" v-on:click="toDetail(item.IsShowAttentdeesStat,item.ICalUid)">
-                    <p class="css-list-item-time col9b">{{item.CreateTime}}</p>
+                    <p class="css-list-item-time col9b">{{item.CreateTime.substr(0,item.CreateTime.length-3)}}</p>
                     <div class="css-list-item-main bgcolor">
                         <div class="css-list-item-main-info">{{item.Subject}}</div>
                     </div>
@@ -259,18 +306,19 @@
         </scroller>
         <loading v-bind:pageloading="pageloading"></loading>
         <notice v-show="isShowerr" v-bind:isShowCancel="isShowCancel" v-bind:title="errtitle" v-bind:errinfo="errinfo" v-on:cancel="nocancel()" v-on:confirm="agreeconfirm()" v-on:closenotice="closeShowerr()"></notice>
+        <div class="css-to-home" v-on:click="gobackhome()" v-bind:style="{backgroundImage:'url('+tohome+')'}">
+        </div>
     </div>
 </template>
 
 <script>
+import tohome from '../../images/tohome.png';
 import Scroller from '../scroll/index.vue';
 import urldata from '../../config/urldata.js';
 import localdata from '../../js/localdata.js';
 import storageList from '../../config/storageList.js';
 import loading from '../loading/loading.vue';
 import notice from '../popNotice/popNotice.vue';
-// import service from '../../services/getMeetingNotificationList';
-// import service1 from '../../services/postReplyMeetingInvitation';
 
 export default {
     name: 'mtNoticeList',
@@ -285,21 +333,27 @@ export default {
             this.$moaapi.updateNavTitle('会易订');
             this.$moaapi.hideNavMenu();
         }, 100)
-        // service.get(this.getNoticeList, this.$http, {}).then(data => {
-        //     this.data = data.list;
-        //     this.$refs.scroller.finishInfinite(!data.hasMore)
-        // }, status => {
-        //     this.$refs.scroller.finishInfinite(true)
-        // })
+    },
+    activated() {
+        this.$moaapi.updateNavTitle('会易订');
+        this.$refs.scroller.finishInfinite(false);
+        if (localdata.getdata('needreload')) {
+            setTimeout(() => {
+                window.location.reload();
+            }, 100)
+            localdata.removedata('needreload')
+        }
     },
     data() {
         return {
+            tohome,//去会易订首页图片
             isShowerr: false,//错误提示关闭
             errtitle: "提示",
             errinfo: "请稍后再试",
             pageloading: false,
             isShowCancel: false,//是否取消弹出
             isUpdateDone: false,//是否已修改成功
+            isCanTodetail: false,//是否可以去到详情
 
             page: 1,
             pageSize: 10,//一页返回条数
@@ -318,12 +372,6 @@ export default {
                 }, error => {
                     console.log(error)
                 })
-                // service.reload(this.getNoticeList, this.$http, {}).then(data => {
-                //     this.data = data.list;
-                //     this.$refs.scroller.finishPullToRefresh()
-                // }, status => {
-                //     this.$refs.scroller.finishPullToRefresh()
-                // })
             }, 500)
         },
         infinite() {
@@ -339,32 +387,52 @@ export default {
                         this.data = this.data.concat(res.body.data.list);
                         this.$refs.scroller.finishInfinite(false);
                     }
-
-
                 }, error => {
                     // this.$refs.scroller.finishInfinite(true);
                 })
-                // service.get(this.getNoticeList, this.$http, {}).then(data => {
-                //     this.data = data.list
-                //     this.pageloading = false;
-                //     this.$refs.scroller.finishInfinite(!data.hasMore)
-                // }, status => {
-                //     this.$refs.scroller.finishInfinite(true)
-                // })
             }, 500)
         },
         //跳转到详情
         toDetail(isInvite, id) {
             // localdata.setdata('meetDetailView', JSON.stringify(this.mtrData[index]));
-            if (isInvite) {
+            localdata.setdata('isFromNoticeList', true);
+            // this.pageloading = true;
+            // this.$http.post(urldata.basePath + urldata.GetMeetingDetail, { ICalUid: id }).then(res => {
+            //     if (res.body.status === 200) {
+            //         this.pageloading = false;
+            //         if (isInvite) {
+            //             this.$router.push({ path: '/mtmeetdetailinvite?ICalUid=' + id });
+            //         } else {
+            //             this.$router.push({ path: '/mtmeetdetailaccept?ICalUid=' + id });
+            //         }
+            //     } else {
+            //         this.isCanTodetail = true;
+            //         this.pageloading = false;
+            //         this.isShowerr = true;
+            //         this.errinfo = res.body.errorMessage;
+            //     }
+            // }, error => {
+            //     console.log(error)
+            //     this.isShowerr = true;
+            //     this.errinfo = error.body.errorMessage;
+            // })
+            if (isInvite === 'mtrCanceled') {
+                this.isCanTodetail = true;
+                this.pageloading = false;
+                this.isShowerr = true;
+                this.errinfo = '此会议已取消';
+            } else if (isInvite === 'mtrDelined') {
+                this.isCanTodetail = true;
+                this.pageloading = false;
+                this.isShowerr = true;
+                this.errinfo = '此会议已谢绝';
+            } else if (isInvite) {
                 this.$router.push({ path: '/mtmeetdetailinvite?ICalUid=' + id });
             } else {
                 this.$router.push({ path: '/mtmeetdetailaccept?ICalUid=' + id });
             }
         },
         responseMeeting(ICalUid, accept) {
-            this.pageloading = true;
-            this.isShowCancel = false;
             let sendData = {
                 "ICalUid": ICalUid,
                 "IsAccept": accept
@@ -388,8 +456,11 @@ export default {
                 }
             }, status => {
                 this.isShowerr = true;
-                this.errinfo = status;
+                this.errinfo = status.body.errorMessage;
             })
+        },
+        gobackhome() {
+            this.$router.push({ path: '/' });
         },
         //清除本地存储已存在的数据
         clearStorage() {
@@ -399,7 +470,11 @@ export default {
         closeShowerr() {
             this.isShowerr = false;
             this.pageloading = false;
-            window.location.reload();
+            if (this.isCanTodetail) {
+                this.isCanTodetail = false;
+            } else {
+                window.location.reload();
+            }
             // this.$router.push({ path: '/' });
         }
     }

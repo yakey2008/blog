@@ -1,10 +1,11 @@
-<style lang="scss">
+<style lang="scss" scoped>
 .css-mtaddcontarct-page {
     background-color: #fff;
     .weui-cells_checkbox .weui-check:checked+.weui-icon-checked:before {
         color: #ec4280;
     }
     .css-bottombar {
+        position: fixed;
         background-color: #fff;
         &.weui-tabbar:before {
             border: none;
@@ -104,9 +105,10 @@ export default {
                 let isNotAdd = true;
                 let obj = {};
                 //适应原生 与后端返回字段
+                obj.email = this.inputemail;
                 obj.name = this.inputemail;
                 obj.Name = this.inputemail;
-                obj.id = this.inputemail;
+                obj.id = '';
                 obj.isEmail = true;
                 this.userMustList.forEach(function (el) {
                     if (el.name === obj.name) {

@@ -1,6 +1,9 @@
 <style lang="scss" scoped>
 $col9b:#9b9b9b;
 
+.weui-cell:before{
+    left: 0;
+}
 .css-mtnotice-page {
     background-color: white;
     .weui-media-box__title {
@@ -8,9 +11,23 @@ $col9b:#9b9b9b;
     }
     .css-main-container {
         .css-pageinfo {
+            position: relative;
             background-color: #fff;
-            margin-left: 22px;
-            border-bottom: 1px solid #e7e7e7;
+            margin-left: 22px; // border-bottom: 1px solid #e7e7e7;
+            &:after {
+                content: " ";
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                right: 0;
+                height: 1px;
+                border-bottom: 1px solid #e7e7e7;
+                color: #e7e7e7;
+                -webkit-transform-origin: 0 100%;
+                transform-origin: 0 100%;
+                -webkit-transform: scaleY(0.5);
+                transform: scaleY(0.5);
+            }
             .css-pageinfoBox {
                 padding-left: 0px;
                 padding-right: 0px;
@@ -169,8 +186,20 @@ export default {
             userLen = this.userFromEmail.length;
         }
         this.userMustList = JSON.parse(localdata.getdata('userMustList'));
+
         this.userMustList[0].isInitiator = true;
         this.userOptionalList = JSON.parse(localdata.getdata('userOptionalList'));
+        //兼容来自后端信息
+        this.userMustList.forEach(function(el) {
+            if (el.Id) {
+                el.id = el.Id;
+            }
+        }, this);
+        this.userOptionalList.forEach(function(el) {
+            if (el.Id) {
+                el.id = el.Id;
+            }
+        }, this);
         userLen = this.userMustList.length + this.userOptionalList.length;
         this.$moaapi.updateNavTitle('参与人员');
         // this.currentUserData = JSON.parse(localdata.getdata('currentUserData'));
@@ -189,7 +218,10 @@ export default {
     methods: {
         //查看人员信息
         viewUserInfo(id) {
-            this.$moaapi.callUserProfile(id);
+            if (id && id !== '') {
+                console.log(id)
+                this.$moaapi.callUserProfile(id);
+            }
         },
     }
 }

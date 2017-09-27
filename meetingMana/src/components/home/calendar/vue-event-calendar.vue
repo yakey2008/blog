@@ -10,7 +10,7 @@ $icon-border-size: 1px;
     max-width: 1200px;
     margin: 0 auto;
     .cal-wrapper {
-      width: 50%;
+      width: 100%;
       padding: 100px 50px;
       .date-num {
         line-height: 50px;
@@ -20,7 +20,7 @@ $icon-border-size: 1px;
       width: 50%;
       color: $white;
       padding: 40px 50px;
-      position: absolute;
+      // position: absolute;
       left: 50%;
       top: 0;
       bottom: 0;
@@ -280,7 +280,8 @@ $icon-border-size: 1px;
         // text-overflow: ellipsis;
         // height: 40px;
         // line-height: 40px;
-        padding: 8px 0;
+        // padding: 8px 0;
+        padding-top: 8px;
         width: 68%;
         color: #333;
         font-size: 16px;
@@ -301,6 +302,7 @@ $icon-border-size: 1px;
         padding: 7px 0;
         padding-right: 20px;
         .css-locaticon {
+          position: absolute;
           width: 10px;
           height: 14px;
           background-size: cover;
@@ -308,6 +310,10 @@ $icon-border-size: 1px;
           float: left;
           margin-right: 5px;
           margin-top: 4px;
+        }
+        .css-location-name {
+          display: inline-block;
+          padding-left: 15px;
         }
       }
     }

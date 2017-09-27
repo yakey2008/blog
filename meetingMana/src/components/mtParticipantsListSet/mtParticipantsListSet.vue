@@ -1,4 +1,13 @@
-<style lang="scss">
+<style lang="scss" scoped>
+.weui-cell:before {
+    left: 0;
+}
+.weui-navbar{
+    background-color: #fff;
+}
+.weui-navbar:after{
+border-bottom:1px solid #e7e7e7;
+}
 @mixin placeholder($color) {
      ::-webkit-input-placeholder {
         // WebKit browsers
@@ -30,7 +39,7 @@ $col9b:#9b9b9b;
 
 @include placeholder(#ccc);
 .css-mtnotice-page {
-    background-color: #fff;
+    // background-color: #fff;
     .css-top-btn {
         position: relative;
         display: block;
@@ -57,11 +66,11 @@ $col9b:#9b9b9b;
     .css-main-container {
         .css-pageinfo {
             background-color: #fff;
-            margin-left: 22px;
-            border-bottom: 1px solid #e7e7e7;
+            // border-bottom: 1px solid #e7e7e7;
             .css-pageinfoBox {
                 padding-left: 0px;
                 padding-right: 0px;
+                margin-left: 22px;
                 .css-avarar-box {
                     position: relative;
                     .css-picBox {
@@ -241,11 +250,8 @@ $col9b:#9b9b9b;
                             <div class="weui-cell__bd">
                                 <div class="css-username">{{must.Name}}
                                     <span class="css-label" v-if="must.isInitiator">会议组织者</span>
-                                    <span class="css-statutext fl-r" :class="{'green':must.ResponseType === 1||must.ResponseType === 4,'red':must.ResponseType === 3,'grey':must.ResponseType === 0||must.ResponseType === 2||must.ResponseType === 5||must.ResponseType === null||must.isEmail}">{{must.statuText}}</span>
+                                    <span class="css-statutext fl-r" :class="{'green':must.ResponseType === 1||must.ResponseType === 3,'red':must.ResponseType === 4,'grey':must.ResponseType === 0||must.ResponseType === 2||must.ResponseType === 5||must.ResponseType === null||must.isEmail}">{{must.statuText}}</span>
                                 </div>
-                                <!-- <div class="css-useractor" v-if="must.isInitiator">
-                                                            <span class="css-label">会议组织者</span>
-                                                        </div> -->
                                 <div class="clearfix"></div>
                                 <p class="css-userposition" v-if="!must.hasOwnProperty('isEmail')">{{must.job}}</p>
                                 <p class="css-userposition" v-if="must.hasOwnProperty('isEmail')">通过邮件邀请的人员</p>
@@ -266,11 +272,11 @@ $col9b:#9b9b9b;
                             <div class="weui-cell__bd">
                                 <div class="css-username">{{optional.Name}}
                                     <span class="css-label gray">可选参会者</span>
-                                    <span class="css-statutext fl-r" :class="{'green':optional.ResponseType === 1||optional.ResponseType === 4,'red':optional.ResponseType === 3,'grey':optional.ResponseType === 0||optional.ResponseType === 2||optional.ResponseType === 5}">{{optional.statuText}}</span>
+                                    <span class="css-statutext fl-r" :class="{'green':optional.ResponseType === 1||optional.ResponseType === 3,'red':optional.ResponseType === 4,'grey':optional.ResponseType === 0||optional.ResponseType === 2||optional.ResponseType === 5}">{{optional.statuText}}</span>
                                 </div>
                                 <!-- <div class="css-useractor">
-                                                    <span class="css-label gray">可选参会者</span>
-                                                </div> -->
+                                                            <span class="css-label gray">可选参会者</span>
+                                                        </div> -->
                                 <div class="clearfix"></div>
                                 <p class="css-userposition">{{optional.job}}</p>
                                 <!-- <p class="css-userposition" v-if="optional.hasOwnProperty('isMust')">通过邮件邀请的人员</p> -->
@@ -395,7 +401,7 @@ export default {
                         el.isShow = false;
                     }
                 }, this);
-                //已拒绝
+                //已谢绝
             } else if (type === 2) {
                 this.isHoverClass = 2;
                 this.userMustList.forEach(function(el) {
@@ -451,8 +457,10 @@ export default {
         },
         //查看人员信息
         viewUserInfo(id) {
-            console.log(id)
-            this.$moaapi.callUserProfile(id);
+            if (id && id !== '') {
+                console.log(id)
+                this.$moaapi.callUserProfile(id);
+            }
         }
     }
 }

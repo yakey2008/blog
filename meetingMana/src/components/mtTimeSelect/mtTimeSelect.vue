@@ -307,7 +307,7 @@ export default {
         }, this)
 
         // document.querySelector('.css-timeline').style.height = window.innerHeight+'px';
-        document.querySelector('#js-mainheight').style.paddingTop = document.querySelector('#js-locationbox').scrollHeight;
+        document.querySelector('#js-mainheight').style.paddingTop = document.querySelector('#js-locationbox').scrollHeight + 'px';
     },
     destroyed() {
         document.querySelector('html').removeAttribute('style');
@@ -352,10 +352,10 @@ export default {
                 this.matchAllTimezone.forEach((el, i) => {
                     if (now > +new Date(time + ' ' + el.value)) {
                         el.passed = true;
-                        el.selected = false;
                     } else {
                         el.passed = false;
                     }
+                    el.selected = false;
                 }, this)
             } else if (localdata.getdata('isFromModified')) {
                 this.matchAllTimezone.forEach((el, i) => {
@@ -453,32 +453,37 @@ export default {
                             if (localdata.getdata('launchPage')) {
                                 if (type !== 'changeday') {
                                     let modifyFirstIndex = undefined;
-                                    let st = _this.mtrSelected.timeInterval.split(' ')[1].split('-')[0].trim();
-                                    let ed = _this.mtrSelected.timeInterval.split(' ')[1].split('-')[1].trim();
-                                    _this.startTime = st;
-                                    _this.endTime = ed;
-                                    _this.matchAllTimezone.forEach((el, index) => {
-                                        if (el.value === st) {
-                                            modifyFirstIndex = index;
-                                            _this.firstIndex = index;
-                                            if (el.passed) {
-                                                el.selected = false;
-                                            } else {
-                                                el.selected = true;
+                                    try {
+                                        let st = _this.mtrSelected.timeInterval.split(' ')[1].split('-')[0].trim();
+                                        let ed = _this.mtrSelected.timeInterval.split(' ')[1].split('-')[1].trim();
+                                        _this.startTime = st;
+                                        _this.endTime = ed;
+                                        _this.matchAllTimezone.forEach((el, index) => {
+                                            if (el.value === st) {
+                                                modifyFirstIndex = index;
+                                                _this.firstIndex = index;
+                                                if (el.passed) {
+                                                    el.selected = false;
+                                                } else {
+                                                    el.selected = true;
+                                                }
+                                                el.ordered = false;
+                                            } else if (el.value === ed) {
+                                                modifyFirstIndex = undefined;
                                             }
-                                            el.ordered = false;
-                                        } else if (el.value === ed) {
-                                            modifyFirstIndex = undefined;
-                                        }
-                                        if (typeof modifyFirstIndex !== 'undefined') {
-                                            el.ordered = false;
-                                            if (el.passed) {
-                                                el.selected = false;
-                                            } else {
-                                                el.selected = true;
+                                            if (typeof modifyFirstIndex !== 'undefined') {
+                                                el.ordered = false;
+                                                if (el.passed) {
+                                                    el.selected = false;
+                                                } else {
+                                                    el.selected = true;
+                                                }
                                             }
-                                        }
-                                    }, _this)
+                                        }, _this)
+                                    } catch (e) {
+                                        console.info('兼容点击返回与手动返回');
+                                    }
+
                                 }
                             }
 
@@ -850,6 +855,7 @@ export default {
         //关闭错误提示
         closeShowerr() {
             this.isShowerr = false;
+            this.pageloading = false;
         }
     }
 } 

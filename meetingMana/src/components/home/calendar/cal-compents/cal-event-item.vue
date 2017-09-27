@@ -1,10 +1,10 @@
 <template>
   <div class="wrapper" v-on:click="nextPage()">
-    <h3 class="title">{{event.title}}</h3>
+    <h3 class="title">{{event.title===''?'[无主题]':event.title}}</h3>
     <!--<p class="time">{{dateTimeFormatter(Date.parse(new Date(event.date)),i18n[locale].fullFormat)}}</p>-->
     <p class="time">{{event.datetime}}</p>
     <p class="desc" v-for="(mtr,index) in event.desc" :key="index">
-      <i class="css-locaticon" v-bind:style="{backgroundImage:'url('+locaticon+')'}"></i>{{mtr.Name}}</p>
+      <i class="css-locaticon" v-bind:style="{backgroundImage:'url('+locaticon+')'}"></i><span class="css-location-name">{{mtr.Name}}</span></p>
   </div>
 </template>
 <script>

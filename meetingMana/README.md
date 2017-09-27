@@ -36,15 +36,4 @@ package.json整体修改 弃用
 > 详情页 提交修改  done
 > 详情页删除人员  全部人员查看删除人员 done
 
-> 详情页 时间带换行符
-#### 临时内容
-> home -- this.initData(this.datetoday, 'eric.hu@vipshop.com');//临时
-> 选择会议室页面时间写死，done
-    startTime: {
-        time: '2017-07-31'
-    },
-> mtTimeSelect.vue   let selectedDate = moment().format('YYYY-MM-DD');//临时 done
-
-> mtTimeSelect  this.ajaxMtrStatu(urldata.basePath + urldata.GetRoomsStatus+'?date=2017-08-09&roomListAddress=' + localdata.getdata('curRegionId')); 日期写死 done
-> 通过邮箱添加 暂时注释验证 done
 
